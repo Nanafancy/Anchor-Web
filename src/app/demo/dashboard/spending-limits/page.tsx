@@ -1,5 +1,7 @@
 import { SpendingLimitsCard } from "@/components/dashboard/SpendingLimitsCard";
 
+const BILLING_DOCS_URL = "https://docs.mux.com/billing";
+
 export default function SpendingLimitsPage() {
 	return (
 		<main className="min-h-screen bg-zinc-50 dark:bg-black p-8">
@@ -27,7 +29,9 @@ export default function SpendingLimitsPage() {
 							contacting our support team or upgrading your plan.
 						</p>
 						<a
-							href="#"
+							href={BILLING_DOCS_URL}
+							target="_blank"
+							rel="noreferrer"
 							className="text-sm font-medium text-zinc-900 dark:text-zinc-50 hover:underline inline-flex items-center gap-1"
 						>
 							View billing details
