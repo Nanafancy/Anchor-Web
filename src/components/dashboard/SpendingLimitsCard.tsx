@@ -1,13 +1,49 @@
 "use client";
 
 import { AlertCircle, DollarSign, TrendingUp, Wallet } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { getSpendingLimits, saveSpendingLimits } from "@/lib/api";
 
 export function SpendingLimitsCard() {
 	const [dailyLimit, setDailyLimit] = useState("5000");
 	const [transactionLimit, setTransactionLimit] = useState("1000");
+
+	const [loading, setLoading] = useState(false);
+	const [saving, setSaving] = useState(false);
+	const [message, setMessage] = useState<string | null>(null);
+
+	useEffect(() => {
+		let mounted = true;
+		setLoading(true);
+		getSpendingLimits()
+			.then((res) => {
+				if (!mounted) return;
+				if (res.data) {
+					if (typeof res.data.dailyLimit !== "undefined") {
+						setDailyLimit(String(res.data.dailyLimit));
+					}
+					if (typeof res.data.transactionLimit !== "undefined") {
+						setTransactionLimit(String(res.data.transactionLimit));
+					}
+				} else {
+					setMessage("Unable to load limits from server — using defaults.");
+				}
+			})
+			.catch(() => {
+				if (!mounted) return;
+				setMessage("Unable to load limits from server — using defaults.");
+			})
+			.finally(() => {
+				if (!mounted) return;
+				setLoading(false);
+			});
+
+		return () => {
+			mounted = false;
+		};
+	}, []);
 
 	// Dummy usage data: 750 / 5000 = 15%
 	const usedAmount = 750;
@@ -84,6 +120,7 @@ export function SpendingLimitsCard() {
 								type="number"
 								value={dailyLimit}
 								onChange={(e) => setDailyLimit(e.target.value)}
+								disabled={loading}
 								className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg py-2 pl-7 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
 								placeholder="0.00"
 							/>
@@ -111,6 +148,7 @@ export function SpendingLimitsCard() {
 								type="number"
 								value={transactionLimit}
 								onChange={(e) => setTransactionLimit(e.target.value)}
+								disabled={loading}
 								className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg py-2 pl-7 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
 								placeholder="0.00"
 							/>
@@ -133,8 +171,29 @@ export function SpendingLimitsCard() {
 				</div>
 			</div>
 
-			<div className="px-6 py-4 bg-zinc-50 dark:bg-zinc-900/50 flex justify-end">
-				<Button className="rounded-full px-6">Save Settings</Button>
+			<div className="px-6 py-4 bg-zinc-50 dark:bg-zinc-900/50 flex justify-end items-center gap-4">
+				{message && <div className="text-sm text-rose-600">{message}</div>}
+				<Button
+					className="rounded-full px-6"
+					onClick={async () => {
+						setSaving(true);
+						setMessage(null);
+						const payload = {
+							dailyLimit: Number.parseFloat(dailyLimit) || 0,
+							transactionLimit: Number.parseFloat(transactionLimit) || 0,
+						};
+						const res = await saveSpendingLimits(payload);
+						if (res.error) {
+							setMessage("Failed to save limits: " + res.error);
+						} else {
+							setMessage("Limits saved successfully.");
+						}
+						setSaving(false);
+					}}
+					disabled={saving || loading}
+				>
+					{saving ? "Saving…" : "Save Settings"}
+				</Button>
 			</div>
 		</div>
 	);

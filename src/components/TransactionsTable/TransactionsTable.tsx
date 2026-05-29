@@ -11,7 +11,8 @@ import {
 	Search,
 	X,
 } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { getTransactions } from "@/lib/api";
 
 type TransactionStatus = "completed" | "pending" | "failed";
 type TransactionType = "incoming" | "outgoing";
@@ -212,6 +213,10 @@ const AmountDisplay = ({
 
 export default function TransactionsTable() {
 	// State
+	const [transactions, setTransactions] = useState<Transaction[]>(INITIAL_DATA);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+	const [stale, setStale] = useState(false);
 	const [search, setSearch] = useState("");
 	const [statusFilter, setStatusFilter] = useState<"all" | TransactionStatus>(
 		"all",
@@ -225,7 +230,7 @@ export default function TransactionsTable() {
 	const itemsPerPage = 5;
 
 	const filteredData = useMemo(() => {
-		return INITIAL_DATA.filter((item) => {
+		return transactions.filter((item) => {
 			const matchesSearch =
 				item.description.toLowerCase().includes(search.toLowerCase()) ||
 				item.category.toLowerCase().includes(search.toLowerCase());
@@ -233,7 +238,64 @@ export default function TransactionsTable() {
 				statusFilter === "all" ? true : item.status === statusFilter;
 			return matchesSearch && matchesStatus;
 		});
-	}, [search, statusFilter]);
+	}, [search, statusFilter, transactions]);
+
+	useEffect(() => {
+		let mounted = true;
+		setLoading(true);
+		getTransactions()
+			.then((res) => {
+				if (!mounted) return;
+				if (res.data) {
+					const mapped = res.data.map((t) => {
+						const obj = t as Record<string, unknown>;
+						const maybe = (k: string) => obj[k];
+						const asString = (v: unknown) => (typeof v === "string" ? v : v != null ? String(v) : "");
+						const asNumber = (v: unknown) => (typeof v === "number" ? v : Number(v ?? 0));
+
+						const dateStr = maybe("date") ?? maybe("created_at") ?? new Date().toISOString();
+						const human = maybe("humanDate") ?? new Date(String(dateStr)).toLocaleDateString(undefined, {
+							month: "short",
+							day: "numeric",
+							year: "numeric",
+						});
+
+						const amountVal = asNumber(maybe("amount") ?? maybe("value") ?? 0);
+						const statusRaw = asString(maybe("status") ?? "");
+						const typeRaw = asString(maybe("type") ?? "");
+
+						return {
+							id: asString(maybe("id") ?? maybe("tx_id") ?? maybe("hash") ?? Math.random()),
+							description: asString(maybe("description") ?? maybe("memo") ?? typeRaw ?? "Transaction"),
+							date: String(dateStr).split("T")[0],
+							humanDate: asString(human),
+							category: asString(maybe("category") ?? ""),
+							status: (statusRaw === "pending" ? "pending" : statusRaw === "failed" ? "failed" : "completed") as TransactionStatus,
+							amount: amountVal,
+							currency: asString(maybe("currency") ?? maybe("asset") ?? "USD"),
+							type: typeRaw === "incoming" || typeRaw === "outgoing" ? (typeRaw as TransactionType) : amountVal < 0 ? "outgoing" : "incoming",
+						} as Transaction;
+					});
+					setTransactions(mapped);
+					setStale(false);
+					setError(null);
+				} else {
+					setError(res.error ?? "Failed to load transactions");
+					setStale(true);
+				}
+			})
+			.catch((err) => {
+				setError(String(err));
+				setStale(true);
+			})
+			.finally(() => {
+				setLoading(false);
+			});
+
+		return () => {
+			mounted = false;
+		};
+	}, []);
 
 	const sortedData = useMemo(() => {
 		if (!sortConfig) return filteredData;
@@ -353,6 +415,21 @@ export default function TransactionsTable() {
 				</div>
 			</div>
 
+			{loading && (
+				<div className="mt-3 p-2 rounded-md text-sm bg-slate-50 text-slate-700 border border-slate-100">
+					Loading transactions...
+				</div>
+			)}
+			{stale && (
+				<div className="mt-3 p-2 rounded-md text-sm bg-amber-50 text-amber-700 border border-amber-100">
+					Unable to fetch latest transactions — showing cached data.
+				</div>
+			)}
+			{error && !stale && (
+				<div className="mt-3 p-2 rounded-md text-sm bg-rose-50 text-rose-700 border border-rose-100">
+					Error loading transactions: {error}
+				</div>
+			)}
 			<div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
 				<div className="hidden md:grid grid-cols-12 gap-4 p-4 border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-500 uppercase tracking-wider select-none">
 					<div
