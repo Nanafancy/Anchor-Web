@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { NetworkProvider } from "@/context/NetworkContext";
 import { Sidebar } from "./Sidebar";
 import { TopNav } from "./TopNav";
 
@@ -31,7 +32,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 	}, [sidebarOpen]);
 
 	return (
-		<div className="relative flex min-h-screen bg-gray-50">
+		<NetworkProvider>
+			<div className="relative flex min-h-screen bg-gray-50">
 			{/* Mobile Overlay */}
 			{sidebarOpen && (
 				<div
@@ -58,5 +60,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 				</main>
 			</div>
 		</div>
+		</NetworkProvider>
 	);
 }

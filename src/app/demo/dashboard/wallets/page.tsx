@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { useNetwork } from "@/context/NetworkContext";
 import { WalletTable } from "@/components/wallet/WalletTable";
 import { dummyWallets } from "@/mock-data/wallets";
-import { Wallet } from "@/types/wallet";
 
 export default function WalletsPage() {
-	const wallets: Wallet[] = dummyWallets;
+	const { network } = useNetwork();
+	const wallets = dummyWallets.filter((w) => w.network === network);
 
 	return (
 		<div className="min-h-screen bg-zinc-50 p-6 dark:bg-black md:p-12">
@@ -31,18 +31,7 @@ export default function WalletsPage() {
 					</div>
 				</header>
 
-				{wallets.length > 0 ? (
-					<WalletTable wallets={wallets} />
-				) : (
-					<EmptyState
-						title="No wallets found"
-						description="You haven't added any wallets to monitor yet. Add your first wallet to start tracking."
-						action={{
-							label: "Add Wallet",
-							onClick: () => {},
-						}}
-					/>
-				)}
+				<WalletTable wallets={wallets} />
 			</div>
 		</div>
 	);
