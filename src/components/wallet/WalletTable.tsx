@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
 	Table,
@@ -41,9 +41,24 @@ function WalletAddressCell({ address }: { address: string }) {
 	);
 }
 
-export function WalletTable({ wallets }: WalletTableProps) {
+export function WalletTable({ wallets, onAddWallet }: WalletTableProps) {
 	return (
 		<div className="rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+			{/* Table header bar */}
+			<div className="flex items-center justify-between border-b border-zinc-200 px-6 py-4 dark:border-zinc-800">
+				<div>
+					<p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+						{wallets.length} wallet{wallets.length !== 1 ? "s" : ""}
+					</p>
+				</div>
+				{onAddWallet && (
+					<Button size="sm" onClick={onAddWallet} className="rounded-full px-4">
+						<Plus className="h-4 w-4" aria-hidden="true" />
+						Add Wallet
+					</Button>
+				)}
+			</div>
+
 			<Table>
 				<TableHeader>
 					<TableRow className="hover:bg-transparent dark:hover:bg-transparent">

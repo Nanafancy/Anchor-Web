@@ -1,13 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { AddWalletModal } from "@/components/wallet/AddWalletModal";
 import { WalletTable } from "@/components/wallet/WalletTable";
 import { dummyWallets } from "@/mock-data/wallets";
-import { Wallet } from "@/types/wallet";
+import type { Wallet } from "@/types/wallet";
 
 export default function WalletsPage() {
-	const wallets: Wallet[] = dummyWallets;
+	const [wallets, setWallets] = useState<Wallet[]>(dummyWallets);
+	const [modalOpen, setModalOpen] = useState(false);
+
+	function handleAddWallet(newWallet: Wallet) {
+		setWallets((prev) => [newWallet, ...prev]);
+	}
 
 	return (
 		<div className="min-h-screen bg-zinc-50 p-6 dark:bg-black md:p-12">
@@ -32,18 +39,27 @@ export default function WalletsPage() {
 				</header>
 
 				{wallets.length > 0 ? (
-					<WalletTable wallets={wallets} />
+					<WalletTable
+						wallets={wallets}
+						onAddWallet={() => setModalOpen(true)}
+					/>
 				) : (
 					<EmptyState
 						title="No wallets found"
 						description="You haven't added any wallets to monitor yet. Add your first wallet to start tracking."
 						action={{
 							label: "Add Wallet",
-							onClick: () => {},
+							onClick: () => setModalOpen(true),
 						}}
 					/>
 				)}
 			</div>
+
+			<AddWalletModal
+				isOpen={modalOpen}
+				onClose={() => setModalOpen(false)}
+				onAdd={handleAddWallet}
+			/>
 		</div>
 	);
 }
