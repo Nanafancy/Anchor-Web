@@ -12,7 +12,9 @@ export default function UsersPage() {
 				</div>
 				<div className="flex min-h-[300px] items-center justify-center rounded-lg border-2 border-dashed border-gray-200 p-8">
 					<div className="text-center">
-						<h3 className="text-lg font-medium text-gray-600">Users Overview</h3>
+						<h3 className="text-lg font-medium text-gray-600">
+							Users Overview
+						</h3>
 						<p className="mt-2 text-sm text-gray-400">
 							User management features will be available here.
 						</p>

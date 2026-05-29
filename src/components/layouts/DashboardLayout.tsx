@@ -1,8 +1,13 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { type KeyboardEvent, useCallback, useEffect, useRef } from "react";
-import { useState } from "react";
+import {
+	type KeyboardEvent,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import { Sidebar } from "./Sidebar";
 import { TopNav } from "./TopNav";
 

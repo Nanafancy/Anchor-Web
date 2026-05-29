@@ -31,7 +31,9 @@ export function TopNav({ onMenuClick }: TopNavProps) {
 			"api-keys": "API Keys",
 			"spending-limits": "Spending Limits",
 		};
-		return titleMap[segment] ?? segment.charAt(0).toUpperCase() + segment.slice(1);
+		return (
+			titleMap[segment] ?? segment.charAt(0).toUpperCase() + segment.slice(1)
+		);
 	})();
 
 	return (
