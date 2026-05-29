@@ -18,11 +18,21 @@ export function TopNav({ onMenuClick }: TopNavProps) {
 	const pathname = usePathname();
 
 	// Get current page title from pathname
-	const pageTitle =
-		pathname === "/"
-			? "Dashboard"
-			: (pathname.split("/").pop() ?? "").charAt(0).toUpperCase() +
-				(pathname.split("/").pop() ?? "").slice(1);
+	const pageTitle = (() => {
+		const segment = pathname.split("/").pop() ?? "";
+		const titleMap: Record<string, string> = {
+			dashboard: "Dashboard",
+			analytics: "Analytics",
+			users: "Users",
+			orders: "Orders",
+			documents: "Documents",
+			settings: "Settings",
+			wallets: "Wallets",
+			"api-keys": "API Keys",
+			"spending-limits": "Spending Limits",
+		};
+		return titleMap[segment] ?? segment.charAt(0).toUpperCase() + segment.slice(1);
+	})();
 
 	return (
 		<header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white/95 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 backdrop-blur supports-backdrop-filter:bg-white/60">
