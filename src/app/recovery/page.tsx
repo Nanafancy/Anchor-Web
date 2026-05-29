@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { InitiateRecoveryCTA } from "@/components/recovery/InitiateRecoveryCTA";
 import { RecoveryExplanation } from "@/components/recovery/RecoveryExplanation";
+import { RecoveryFAQ } from "@/components/recovery/RecoveryFAQ";
 import { RecoveryLoadingState } from "@/components/recovery/RecoveryLoadingState";
 import { useRecovery } from "@/hooks/useRecovery";
 
@@ -43,6 +44,9 @@ export default function RecoveryPage() {
 
 						{/* Recovery Explanation Component */}
 						<RecoveryExplanation />
+
+						{/* FAQ Section */}
+						<RecoveryFAQ />
 					</>
 				)}
 			</div>

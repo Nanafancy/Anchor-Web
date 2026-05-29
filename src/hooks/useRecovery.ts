@@ -57,7 +57,8 @@ export function useRecovery(): UseRecoveryReturn {
 	}, []);
 
 	const initiateRecovery = useCallback(() => {
-		if (state !== "idle" && state !== "error") return;		setErrorMessage(null);
+		if (state !== "idle" && state !== "error") return;
+		setErrorMessage(null);
 		setState("confirming");
 	}, [state]);
 

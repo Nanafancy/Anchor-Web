@@ -3,7 +3,9 @@ import { describe, expect, it, vi } from "vitest";
 import { useRecovery } from "../useRecovery";
 
 /** Wait for the bootstrap loading → idle transition to complete. */
-async function waitForIdle(result: { current: ReturnType<typeof useRecovery> }) {
+async function waitForIdle(result: {
+	current: ReturnType<typeof useRecovery>;
+}) {
 	await waitFor(
 		() => {
 			expect(result.current.state).toBe("idle");
