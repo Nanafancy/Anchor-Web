@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { WalletTableSkeleton } from "@/components/ui/Skeleton";
 import { WalletTable } from "@/components/wallet/WalletTable";
-import { dummyWallets } from "@/mock-data/wallets";
-import { Wallet } from "@/types/wallet";
+import { useWallets } from "@/hooks/useWallets";
 
 export default function WalletsPage() {
-	const wallets: Wallet[] = dummyWallets;
+	const { wallets, loading, error, refetch } = useWallets();
 
 	return (
 		<div className="min-h-screen bg-zinc-50 p-6 dark:bg-black md:p-12">
@@ -31,17 +32,25 @@ export default function WalletsPage() {
 					</div>
 				</header>
 
-				{wallets.length > 0 ? (
-					<WalletTable wallets={wallets} />
-				) : (
+				{loading && <WalletTableSkeleton />}
+
+				{!loading && error && (
+					<ErrorState
+						description={error}
+						retry={{ onRetry: refetch }}
+					/>
+				)}
+
+				{!loading && !error && wallets.length === 0 && (
 					<EmptyState
 						title="No wallets found"
 						description="You haven't added any wallets to monitor yet. Add your first wallet to start tracking."
-						action={{
-							label: "Add Wallet",
-							onClick: () => {},
-						}}
+						action={{ label: "Add Wallet", onClick: () => {} }}
 					/>
+				)}
+
+				{!loading && !error && wallets.length > 0 && (
+					<WalletTable wallets={wallets} />
 				)}
 			</div>
 		</div>
