@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { InitiateRecoveryCTA } from "@/components/recovery/InitiateRecoveryCTA";
 import { RecoveryExplanation } from "@/components/recovery/RecoveryExplanation";
+import { RecoveryLoadingState } from "@/components/recovery/RecoveryLoadingState";
 import { useRecovery } from "@/hooks/useRecovery";
 
 export default function RecoveryPage() {
@@ -18,7 +19,8 @@ export default function RecoveryPage() {
 							Wallet Recovery
 						</h1>
 						<p className="text-zinc-500 dark:text-zinc-400 mt-1">
-							Learn how invisible wallet recovery works to keep your funds secure
+							Learn how invisible wallet recovery works to keep your funds
+							secure
 						</p>
 					</div>
 					<div className="flex gap-3">
@@ -31,11 +33,18 @@ export default function RecoveryPage() {
 					</div>
 				</header>
 
-				{/* Initiate Recovery CTA */}
-				<InitiateRecoveryCTA recovery={recovery} />
+				{/* Loading skeleton while initial status is fetched */}
+				{recovery.state === "loading" ? (
+					<RecoveryLoadingState />
+				) : (
+					<>
+						{/* Initiate Recovery CTA */}
+						<InitiateRecoveryCTA recovery={recovery} />
 
-				{/* Recovery Explanation Component */}
-				<RecoveryExplanation />
+						{/* Recovery Explanation Component */}
+						<RecoveryExplanation />
+					</>
+				)}
 			</div>
 		</main>
 	);

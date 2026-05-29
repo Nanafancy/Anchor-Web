@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { RecoveryStatus } from "../RecoveryStatus";
 import type { RecoveryStatusValue } from "../RecoveryStatus";
+import { RecoveryStatus } from "../RecoveryStatus";
 
 describe("RecoveryStatus", () => {
 	it("renders 'Active' badge by default", () => {
@@ -46,14 +46,18 @@ describe("RecoveryStatus", () => {
 
 	it("dot indicator is hidden from assistive technology", () => {
 		render(<RecoveryStatus status="active" />);
-		const badge = screen.getByRole("generic", { name: "Recovery status: active" });
+		const badge = screen.getByRole("generic", {
+			name: "Recovery status: active",
+		});
 		const dot = badge.querySelector("span");
 		expect(dot).toHaveAttribute("aria-hidden", "true");
 	});
 
 	it("monitoring badge has animated dot", () => {
 		render(<RecoveryStatus status="monitoring" />);
-		const badge = screen.getByRole("generic", { name: "Recovery status: monitoring" });
+		const badge = screen.getByRole("generic", {
+			name: "Recovery status: monitoring",
+		});
 		const dot = badge.querySelector("span");
 		expect(dot?.className).toContain("animate-pulse");
 	});

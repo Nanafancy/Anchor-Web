@@ -12,8 +12,14 @@ interface InitiateRecoveryCTAProps {
  * Renders different UI based on the current recovery state.
  */
 export function InitiateRecoveryCTA({ recovery }: InitiateRecoveryCTAProps) {
-	const { state, errorMessage, initiateRecovery, confirmRecovery, cancelRecovery, resetRecovery } =
-		recovery;
+	const {
+		state,
+		errorMessage,
+		initiateRecovery,
+		confirmRecovery,
+		cancelRecovery,
+		resetRecovery,
+	} = recovery;
 
 	if (state === "success") {
 		return (
@@ -32,7 +38,11 @@ export function InitiateRecoveryCTA({ recovery }: InitiateRecoveryCTAProps) {
 						className="w-5 h-5"
 						aria-hidden="true"
 					>
-						<path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							d="M4.5 12.75l6 6 9-13.5"
+						/>
 					</svg>
 				</div>
 				<div className="flex-1">
@@ -40,8 +50,8 @@ export function InitiateRecoveryCTA({ recovery }: InitiateRecoveryCTAProps) {
 						Recovery initiated
 					</h3>
 					<p className="text-sm text-green-800 dark:text-green-300 mt-1">
-						Your recovery request has been submitted. This process may take up to 24 hours.
-						You will be notified once it completes.
+						Your recovery request has been submitted. This process may take up
+						to 24 hours. You will be notified once it completes.
 					</p>
 					<Button
 						variant="ghost"
@@ -72,8 +82,9 @@ export function InitiateRecoveryCTA({ recovery }: InitiateRecoveryCTAProps) {
 						Confirm recovery initiation
 					</h3>
 					<p className="text-sm text-amber-800 dark:text-amber-300 mt-1">
-						This will start the wallet recovery process. Recovery operations are secure and
-						your private keys will never be exposed. Are you sure you want to proceed?
+						This will start the wallet recovery process. Recovery operations are
+						secure and your private keys will never be exposed. Are you sure you
+						want to proceed?
 					</p>
 				</div>
 				<div className="flex gap-3">
@@ -135,8 +146,8 @@ export function InitiateRecoveryCTA({ recovery }: InitiateRecoveryCTAProps) {
 					Initiate manual recovery
 				</h3>
 				<p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-					If you believe your wallet requires immediate attention, you can manually trigger
-					the recovery process.
+					If you believe your wallet requires immediate attention, you can
+					manually trigger the recovery process.
 				</p>
 			</div>
 
