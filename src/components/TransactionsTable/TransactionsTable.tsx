@@ -13,13 +13,15 @@ import {
 } from "lucide-react";
 import React, { useMemo, useState } from "react";
 
-type TransactionStatus = "completed" | "pending" | "failed";
-type TransactionType = "incoming" | "outgoing";
+export type TransactionStatus = "completed" | "pending" | "failed";
+export type TransactionType = "incoming" | "outgoing";
 
-interface Transaction {
+export interface Transaction {
 	id: string;
 	description: string;
+	/** ISO date string (YYYY-MM-DD). Used for sorting. */
 	date: string;
+	/** Human-readable display date, e.g. "Oct 24, 2023". */
 	humanDate: string;
 	category: string;
 	status: TransactionStatus;
@@ -28,8 +30,16 @@ interface Transaction {
 	type: TransactionType;
 }
 
+export type SortKey = keyof Transaction;
+export type SortDirection = "asc" | "desc";
+
+export interface SortConfig {
+	key: SortKey;
+	direction: SortDirection;
+}
+
 // --- Dummy Data ---
-const INITIAL_DATA: Transaction[] = [
+export const INITIAL_DATA: Transaction[] = [
 	{
 		id: "1",
 		description: "Spotify Premium",
@@ -164,6 +174,9 @@ const INITIAL_DATA: Transaction[] = [
 	},
 ];
 
+/** Default sort: newest transactions first. */
+const DEFAULT_SORT: SortConfig = { key: "date", direction: "desc" };
+
 const StatusPill = ({ status }: { status: TransactionStatus }) => {
 	const styles = {
 		completed: "bg-emerald-50 text-emerald-700 border-emerald-100",
@@ -210,16 +223,26 @@ const AmountDisplay = ({
 	);
 };
 
+/** Returns the sort indicator icon class for a given column. */
+function SortIndicator({
+	columnKey,
+	sortConfig,
+}: {
+	columnKey: SortKey;
+	sortConfig: SortConfig;
+}) {
+	if (sortConfig.key !== columnKey) return null;
+	return <ArrowUpDown size={12} aria-hidden="true" />;
+}
+
 export default function TransactionsTable() {
 	// State
 	const [search, setSearch] = useState("");
 	const [statusFilter, setStatusFilter] = useState<"all" | TransactionStatus>(
 		"all",
 	);
-	const [sortConfig, setSortConfig] = useState<{
-		key: keyof Transaction;
-		direction: "asc" | "desc";
-	} | null>(null);
+	// Default to newest-first so the date sort is immediately visible.
+	const [sortConfig, setSortConfig] = useState<SortConfig>(DEFAULT_SORT);
 	const [currentPage, setCurrentPage] = useState(1);
 
 	const itemsPerPage = 5;
@@ -236,8 +259,6 @@ export default function TransactionsTable() {
 	}, [search, statusFilter]);
 
 	const sortedData = useMemo(() => {
-		if (!sortConfig) return filteredData;
-
 		return [...filteredData].sort((a, b) => {
 			const aValue = a[sortConfig.key];
 			const bValue = b[sortConfig.key];
@@ -254,16 +275,13 @@ export default function TransactionsTable() {
 		currentPage * itemsPerPage,
 	);
 
-	const handleSort = (key: keyof Transaction) => {
-		let direction: "asc" | "desc" = "asc";
-		if (
-			sortConfig &&
-			sortConfig.key === key &&
-			sortConfig.direction === "asc"
-		) {
-			direction = "desc";
-		}
+	const handleSort = (key: SortKey) => {
+		// Toggle direction when clicking the active column; reset to asc for a new column.
+		const direction: SortDirection =
+			sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
 		setSortConfig({ key, direction });
+		// Reset to page 1 so the user sees the re-ordered results from the top.
+		setCurrentPage(1);
 	};
 
 	const handlePageChange = (newPage: number) => {
@@ -275,7 +293,7 @@ export default function TransactionsTable() {
 	const clearFilters = () => {
 		setSearch("");
 		setStatusFilter("all");
-		setSortConfig(null);
+		setSortConfig(DEFAULT_SORT);
 		setCurrentPage(1);
 	};
 
@@ -330,7 +348,6 @@ export default function TransactionsTable() {
 							className="w-full sm:w-40 pl-9 pr-4 py-2 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 appearance-none cursor-pointer transition-colors hover:bg-slate-50"
 							value={statusFilter}
 							onChange={(e) => {
-								// FIXED: Cast to the actual union type to satisfy ESLint/Husky
 								setStatusFilter(e.target.value as "all" | TransactionStatus);
 								setCurrentPage(1);
 							}}
@@ -354,22 +371,50 @@ export default function TransactionsTable() {
 			</div>
 
 			<div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+				{/* Table header row — desktop only */}
 				<div className="hidden md:grid grid-cols-12 gap-4 p-4 border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-500 uppercase tracking-wider select-none">
 					<div
-						className="col-span-5 pl-2 flex items-center gap-1 cursor-pointer hover:text-indigo-600"
+						className="col-span-4 pl-2 flex items-center gap-1 cursor-pointer hover:text-indigo-600"
 						onClick={() => handleSort("description")}
+						aria-sort={
+							sortConfig.key === "description"
+								? sortConfig.direction === "asc"
+									? "ascending"
+									: "descending"
+								: "none"
+						}
 					>
 						Description
-						{sortConfig?.key === "description" && <ArrowUpDown size={12} />}
+						<SortIndicator columnKey="description" sortConfig={sortConfig} />
 					</div>
-					<div className="col-span-2">Category</div>
+					<div
+						className="col-span-2 flex items-center gap-1 cursor-pointer hover:text-indigo-600"
+						onClick={() => handleSort("date")}
+						aria-sort={
+							sortConfig.key === "date"
+								? sortConfig.direction === "asc"
+									? "ascending"
+									: "descending"
+								: "none"
+						}
+					>
+						Date
+						<SortIndicator columnKey="date" sortConfig={sortConfig} />
+					</div>
 					<div className="col-span-2">Status</div>
 					<div
-						className="col-span-2 text-right flex items-center justify-end gap-1 cursor-pointer hover:text-indigo-600"
+						className="col-span-3 text-right flex items-center justify-end gap-1 cursor-pointer hover:text-indigo-600"
 						onClick={() => handleSort("amount")}
+						aria-sort={
+							sortConfig.key === "amount"
+								? sortConfig.direction === "asc"
+									? "ascending"
+									: "descending"
+								: "none"
+						}
 					>
 						Amount
-						{sortConfig?.key === "amount" && <ArrowUpDown size={12} />}
+						<SortIndicator columnKey="amount" sortConfig={sortConfig} />
 					</div>
 					<div className="col-span-1"></div>
 				</div>
@@ -381,7 +426,7 @@ export default function TransactionsTable() {
 								key={tx.id}
 								className="group md:grid md:grid-cols-12 md:gap-4 p-4 items-center hover:bg-slate-50 transition-colors"
 							>
-								<div className="col-span-12 md:col-span-5 flex items-center gap-4">
+								<div className="col-span-12 md:col-span-4 flex items-center gap-4">
 									<div
 										className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center border ${tx.type === "incoming" ? "bg-emerald-50 border-emerald-100 text-emerald-600" : "bg-slate-50 border-slate-200 text-slate-600"}`}
 									>
@@ -392,20 +437,22 @@ export default function TransactionsTable() {
 										)}
 									</div>
 									<div className="min-w-0">
-										<p className="font-medium text-slate-900 truncate">
+										<p
+											className="font-medium text-slate-900 truncate"
+											data-testid="tx-description"
+										>
 											{tx.description}
 										</p>
+										{/* Mobile: show date + category inline */}
 										<p className="text-xs text-slate-500 md:hidden">
 											{tx.humanDate} • {tx.category}
-										</p>
-										<p className="hidden md:block text-xs text-slate-500">
-											{tx.humanDate}
 										</p>
 									</div>
 								</div>
 
-								<div className="hidden md:block col-span-2 text-sm text-slate-600">
-									{tx.category}
+								{/* Date column — desktop */}
+								<div className="hidden md:block col-span-2 text-sm text-slate-500">
+									{tx.humanDate}
 								</div>
 
 								<div className="col-span-12 md:col-span-2 mt-3 md:mt-0 flex items-center justify-between md:block">
@@ -419,7 +466,7 @@ export default function TransactionsTable() {
 									</div>
 								</div>
 
-								<div className="hidden md:block col-span-2 text-right">
+								<div className="hidden md:block col-span-3 text-right">
 									<AmountDisplay
 										amount={tx.amount}
 										type={tx.type}
