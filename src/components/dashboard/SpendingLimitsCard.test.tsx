@@ -31,8 +31,12 @@ describe("SpendingLimitsCard", () => {
 	it("renders both input fields with default values", () => {
 		render(<SpendingLimitsCard />);
 
-		const dailyInput = screen.getByRole("spinbutton", { name: /daily spending limit/i });
-		const txInput = screen.getByRole("spinbutton", { name: /per-transaction limit/i });
+		const dailyInput = screen.getByRole("spinbutton", {
+			name: /daily spending limit/i,
+		});
+		const txInput = screen.getByRole("spinbutton", {
+			name: /per-transaction limit/i,
+		});
 
 		expect(dailyInput).toHaveValue(5000);
 		expect(txInput).toHaveValue(1000);
@@ -149,9 +153,7 @@ describe("SpendingLimitsCard", () => {
 		render(<SpendingLimitsCard />);
 
 		expect(screen.getByLabelText(/daily spending limit/i)).toBeInTheDocument();
-		expect(
-			screen.getByLabelText(/per-transaction limit/i),
-		).toBeInTheDocument();
+		expect(screen.getByLabelText(/per-transaction limit/i)).toBeInTheDocument();
 	});
 
 	it("renders helper text under each input", () => {
@@ -162,6 +164,49 @@ describe("SpendingLimitsCard", () => {
 		).toBeInTheDocument();
 		expect(
 			screen.getByText(/maximum cap for a single transaction/i),
+		).toBeInTheDocument();
+	});
+});
+
+describe("SpendingLimitsCard loading state", () => {
+	it("renders skeleton placeholders when loading is true", () => {
+		const { container } = render(<SpendingLimitsCard loading />);
+
+		const skeletons = container.querySelectorAll(".animate-pulse");
+		expect(skeletons.length).toBeGreaterThan(0);
+	});
+
+	it("does not render real content when loading", () => {
+		render(<SpendingLimitsCard loading />);
+
+		expect(
+			screen.queryByRole("heading", { name: /spending limits/i }),
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole("spinbutton", { name: /daily spending limit/i }),
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole("button", { name: /save settings/i }),
+		).not.toBeInTheDocument();
+		expect(screen.queryByText("Active")).not.toBeInTheDocument();
+	});
+
+	it("renders real content when loading is false", () => {
+		render(<SpendingLimitsCard loading={false} />);
+
+		expect(
+			screen.getByRole("heading", { name: /spending limits/i }),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: /save settings/i }),
+		).toBeInTheDocument();
+	});
+
+	it("renders real content by default (loading not set)", () => {
+		render(<SpendingLimitsCard />);
+
+		expect(
+			screen.getByRole("heading", { name: /spending limits/i }),
 		).toBeInTheDocument();
 	});
 });
