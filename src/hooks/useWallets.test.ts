@@ -63,9 +63,10 @@ describe("useWallets", () => {
 	});
 
 	it("refetch triggers a new request", async () => {
-		const fetchMock = vi
-			.fn()
-			.mockResolvedValue({ ok: true, json: () => Promise.resolve([mockWallet]) });
+		const fetchMock = vi.fn().mockResolvedValue({
+			ok: true,
+			json: () => Promise.resolve([mockWallet]),
+		});
 		vi.stubGlobal("fetch", fetchMock);
 
 		const { result } = renderHook(() => useWallets());

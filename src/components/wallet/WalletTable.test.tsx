@@ -36,28 +36,20 @@ const wallets: Wallet[] = [
 describe("WalletTable", () => {
 	it("renders a row for each wallet", () => {
 		render(<WalletTable wallets={wallets} />);
-		expect(
-			screen.getByTestId("wallet-row-wallet-001"),
-		).toBeInTheDocument();
-		expect(
-			screen.getByTestId("wallet-row-wallet-002"),
-		).toBeInTheDocument();
+		expect(screen.getByTestId("wallet-row-wallet-001")).toBeInTheDocument();
+		expect(screen.getByTestId("wallet-row-wallet-002")).toBeInTheDocument();
 	});
 
 	it("navigates to wallet detail on row click", async () => {
 		render(<WalletTable wallets={wallets} />);
 		await userEvent.click(screen.getByTestId("wallet-row-wallet-001"));
-		expect(mockPush).toHaveBeenCalledWith(
-			"/demo/dashboard/wallets/wallet-001",
-		);
+		expect(mockPush).toHaveBeenCalledWith("/demo/dashboard/wallets/wallet-001");
 	});
 
 	it("navigates to the correct wallet for each row", async () => {
 		render(<WalletTable wallets={wallets} />);
 		await userEvent.click(screen.getByTestId("wallet-row-wallet-002"));
-		expect(mockPush).toHaveBeenCalledWith(
-			"/demo/dashboard/wallets/wallet-002",
-		);
+		expect(mockPush).toHaveBeenCalledWith("/demo/dashboard/wallets/wallet-002");
 	});
 
 	it("does not navigate when copy button is clicked", async () => {

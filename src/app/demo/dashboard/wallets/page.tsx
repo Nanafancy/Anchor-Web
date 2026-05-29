@@ -35,10 +35,7 @@ export default function WalletsPage() {
 				{loading && <WalletTableSkeleton />}
 
 				{!loading && error && (
-					<ErrorState
-						description={error}
-						retry={{ onRetry: refetch }}
-					/>
+					<ErrorState description={error} retry={{ onRetry: refetch }} />
 				)}
 
 				{!loading && !error && wallets.length === 0 && (
