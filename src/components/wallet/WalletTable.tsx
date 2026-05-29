@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy } from "lucide-react";
+import { AlertCircle, Check, Copy } from "lucide-react";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { ExplorerLink } from "@/components/ui/ExplorerLink";
@@ -27,7 +27,11 @@ function WalletAddressCell({
 	address: string;
 	network: "mainnet" | "testnet";
 }) {
-	const { copy, copied } = useCopyToClipboard();
+	const { copy, copied, error } = useCopyToClipboard();
+
+	const handleCopy = async () => {
+		await copy(address, address);
+	};
 
 	return (
 		<div className="flex items-center gap-1">
@@ -37,10 +41,19 @@ function WalletAddressCell({
 			<Button
 				variant="ghost"
 				size="icon-sm"
-				onClick={() => copy(address)}
-				title={copied ? "Copied!" : "Copy address"}
+				onClick={handleCopy}
+				title={
+					error
+						? error
+						: copied
+							? "Copied!"
+							: "Copy address"
+				}
+				disabled={error !== null}
 			>
-				{copied ? (
+				{error ? (
+					<AlertCircle className="h-4 w-4 text-red-500" />
+				) : copied ? (
 					<Check className="h-4 w-4 text-green-500" />
 				) : (
 					<Copy className="h-4 w-4" />
