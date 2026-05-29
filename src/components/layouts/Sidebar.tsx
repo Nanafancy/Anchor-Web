@@ -3,10 +3,10 @@
 import {
 	ChartBarIcon,
 	CogIcon,
-	DocumentTextIcon,
 	HomeIcon,
 	ShoppingCartIcon,
 	UsersIcon,
+	WalletIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
 import clsx from "clsx";
@@ -14,16 +14,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navigation = [
-	{ name: "Dashboard", href: "/demo/dashboard", icon: HomeIcon },
-	{ name: "Analytics", href: "/demo/dashboard/analytics", icon: ChartBarIcon },
-	{ name: "Users", href: "/demo/dashboard/users", icon: UsersIcon },
-	{ name: "Orders", href: "/demo/dashboard/orders", icon: ShoppingCartIcon },
-	{
-		name: "Documents",
-		href: "/demo/dashboard/documents",
-		icon: DocumentTextIcon,
-	},
-	{ name: "Settings", href: "/demo/dashboard/settings", icon: CogIcon },
+	{ name: "Dashboard", href: "/dashboard", icon: HomeIcon },
+	{ name: "Analytics", href: "/dashboard/analytics", icon: ChartBarIcon },
+	{ name: "Wallets", href: "/dashboard/wallets", icon: WalletIcon },
+	{ name: "Users", href: "/dashboard/users", icon: UsersIcon },
+	{ name: "Orders", href: "/dashboard/orders", icon: ShoppingCartIcon },
+	{ name: "Settings", href: "/dashboard/settings", icon: CogIcon },
 ];
 
 interface SidebarProps {
