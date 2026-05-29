@@ -1,18 +1,122 @@
 "use client";
 
 import { AlertCircle, DollarSign, TrendingUp, Wallet } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+
+const STORAGE_KEY = "spending-limits";
+const MIN_LIMIT = 1;
+const MAX_LIMIT = 1000000;
+
+function parseLimit(value: string) {
+	const number = Number(value);
+	return Number.isFinite(number) ? number : NaN;
+}
+
+function getLimitError(value: string, label: string) {
+	if (value.trim() === "") {
+		return `${label} is required.`;
+	}
+
+	const amount = parseLimit(value);
+
+	if (Number.isNaN(amount)) {
+		return `${label} must be a valid number.`;
+	}
+
+	if (amount < MIN_LIMIT) {
+		return `${label} must be at least $${MIN_LIMIT}.`;
+	}
+
+	if (amount > MAX_LIMIT) {
+		return `${label} cannot exceed $${MAX_LIMIT.toLocaleString()}.`;
+	}
+
+	return undefined;
+}
 
 export function SpendingLimitsCard() {
 	const [dailyLimit, setDailyLimit] = useState("5000");
 	const [transactionLimit, setTransactionLimit] = useState("1000");
+	const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
-	// Dummy usage data: 750 / 5000 = 15%
+	useEffect(() => {
+		try {
+			const stored = window.localStorage.getItem(STORAGE_KEY);
+			if (!stored) {
+				return;
+			}
+
+			const parsed = JSON.parse(stored);
+			if (
+				typeof parsed?.dailyLimit === "number" &&
+				isFinite(parsed.dailyLimit)
+			) {
+				setDailyLimit(String(parsed.dailyLimit));
+			}
+
+			if (
+				typeof parsed?.transactionLimit === "number" &&
+				isFinite(parsed.transactionLimit)
+			) {
+				setTransactionLimit(String(parsed.transactionLimit));
+			}
+		} catch {
+			// Ignore invalid stored data and continue with defaults.
+		}
+	}, []);
+
+	const dailyLimitError = getLimitError(dailyLimit, "Daily spending limit");
+	let transactionLimitError = getLimitError(
+		transactionLimit,
+		"Per-transaction limit",
+	);
+	const dailyLimitValue = parseLimit(dailyLimit);
+	const transactionLimitValue = parseLimit(transactionLimit);
+
+	if (
+		!dailyLimitError &&
+		!transactionLimitError &&
+		!Number.isNaN(transactionLimitValue) &&
+		!Number.isNaN(dailyLimitValue) &&
+		transactionLimitValue > dailyLimitValue
+	) {
+		transactionLimitError =
+			"Per-transaction limit cannot exceed the daily spending limit.";
+	}
+
+	const totalLimit = dailyLimitValue > 0 ? dailyLimitValue : 1;
 	const usedAmount = 750;
-	const totalLimit = Number.parseInt(dailyLimit) || 1;
 	const usagePercentage = Math.min((usedAmount / totalLimit) * 100, 100);
+	const canSave = !dailyLimitError && !transactionLimitError;
+
+	const handleSave = () => {
+		window.localStorage.setItem(
+			STORAGE_KEY,
+			JSON.stringify({
+				dailyLimit: dailyLimitValue,
+				transactionLimit: transactionLimitValue,
+			}),
+		);
+		setSaveMessage("Spending limits saved.");
+		window.setTimeout(() => setSaveMessage(null), 3000);
+	};
+
+	const inputBaseClass =
+		"w-full bg-zinc-50 dark:bg-zinc-900 rounded-lg py-2 pl-7 pr-3 text-sm focus:outline-none transition-all";
+
+	const dailyInputClass = `${inputBaseClass} ${
+		dailyLimitError
+			? "border border-red-400 focus:ring-2 focus:ring-red-500/20"
+			: "border border-zinc-200 dark:border-zinc-800 focus:ring-2 focus:ring-blue-500/20"
+	}`;
+
+	const transactionInputClass = `${inputBaseClass} ${
+		transactionLimitError
+			? "border border-red-400 focus:ring-2 focus:ring-red-500/20"
+			: "border border-zinc-200 dark:border-zinc-800 focus:ring-2 focus:ring-blue-500/20"
+	}`;
 
 	return (
 		<div className="rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950 overflow-hidden">
@@ -82,15 +186,25 @@ export function SpendingLimitsCard() {
 							<input
 								id="daily-limit"
 								type="number"
+								min={MIN_LIMIT}
+								max={MAX_LIMIT}
+								step={1}
 								value={dailyLimit}
 								onChange={(e) => setDailyLimit(e.target.value)}
-								className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg py-2 pl-7 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
+								className={dailyInputClass}
 								placeholder="0.00"
+								aria-invalid={Boolean(dailyLimitError)}
 							/>
 						</div>
-						<p className="text-xs text-zinc-500">
-							Maximum amount you can spend per day.
-						</p>
+						{dailyLimitError ? (
+							<p className="text-xs text-red-600 dark:text-red-400">
+								{dailyLimitError}
+							</p>
+						) : (
+							<p className="text-xs text-zinc-500">
+								Maximum amount you can spend per day.
+							</p>
+						)}
 					</div>
 
 					{/* Transaction Limit Input */}
@@ -109,15 +223,25 @@ export function SpendingLimitsCard() {
 							<input
 								id="tx-limit"
 								type="number"
+								min={MIN_LIMIT}
+								max={MAX_LIMIT}
+								step={1}
 								value={transactionLimit}
 								onChange={(e) => setTransactionLimit(e.target.value)}
-								className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg py-2 pl-7 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
+								className={transactionInputClass}
 								placeholder="0.00"
+								aria-invalid={Boolean(transactionLimitError)}
 							/>
 						</div>
-						<p className="text-xs text-zinc-500">
-							Maximum cap for a single transaction.
-						</p>
+						{transactionLimitError ? (
+							<p className="text-xs text-red-600 dark:text-red-400">
+								{transactionLimitError}
+							</p>
+						) : (
+							<p className="text-xs text-zinc-500">
+								Maximum cap for a single transaction.
+							</p>
+						)}
 					</div>
 				</div>
 
@@ -133,8 +257,21 @@ export function SpendingLimitsCard() {
 				</div>
 			</div>
 
-			<div className="px-6 py-4 bg-zinc-50 dark:bg-zinc-900/50 flex justify-end">
-				<Button className="rounded-full px-6">Save Settings</Button>
+			<div className="px-6 py-4 bg-zinc-50 dark:bg-zinc-900/50 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+				<div>
+					{saveMessage ? (
+						<p className="text-sm text-green-700 dark:text-green-300">
+							{saveMessage}
+						</p>
+					) : null}
+				</div>
+				<Button
+					className="rounded-full px-6"
+					onClick={handleSave}
+					disabled={!canSave}
+				>
+					Save Settings
+				</Button>
 			</div>
 		</div>
 	);
