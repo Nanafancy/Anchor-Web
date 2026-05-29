@@ -16,7 +16,6 @@ export function WalletTableSkeleton() {
 		<div className="rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
 			<div className="divide-y divide-zinc-100 dark:divide-zinc-800">
 				{Array.from({ length: 5 }).map((_, i) => (
-					// biome-ignore lint/suspicious/noArrayIndexKey: static skeleton rows
 					<div key={i} className="flex items-center gap-4 p-4">
 						<Skeleton className="h-4 w-48" />
 						<Skeleton className="h-4 w-20" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Wallet } from "@/types/wallet";
 
 interface UseWalletResult {
@@ -16,6 +16,9 @@ export function useWallet(id: string): UseWalletResult {
 	const [error, setError] = useState<string | null>(null);
 	const [tick, setTick] = useState(0);
 
+	const refetch = useCallback(() => setTick((t) => t + 1), []);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: tick is the refetch trigger
 	useEffect(() => {
 		if (!id) return;
 		let cancelled = false;
@@ -40,7 +43,9 @@ export function useWallet(id: string): UseWalletResult {
 			})
 			.catch((err: unknown) => {
 				if (!cancelled)
-					setError(err instanceof Error ? err.message : "Failed to load wallet.");
+					setError(
+						err instanceof Error ? err.message : "Failed to load wallet.",
+					);
 			})
 			.finally(() => {
 				if (!cancelled) setLoading(false);
@@ -51,5 +56,5 @@ export function useWallet(id: string): UseWalletResult {
 		};
 	}, [id, tick]);
 
-	return { wallet, loading, error, refetch: () => setTick((t) => t + 1) };
+	return { wallet, loading, error, refetch };
 }

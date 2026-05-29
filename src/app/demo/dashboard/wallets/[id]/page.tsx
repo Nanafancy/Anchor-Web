@@ -41,8 +41,7 @@ export default function WalletDetailPage() {
 					<section className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
 						<div className="grid gap-6 sm:grid-cols-2">
 							{Array.from({ length: 6 }).map((_, i) => (
-								// biome-ignore lint/suspicious/noArrayIndexKey: static skeleton
-								<div key={i} className="space-y-2">
+							<div key={i} className="space-y-2">
 									<Skeleton className="h-3 w-20" />
 									<Skeleton className="h-5 w-32" />
 								</div>
