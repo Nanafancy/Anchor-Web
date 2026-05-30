@@ -54,6 +54,16 @@ pnpm install
 pnpm run dev
 ```
 
+### Testing
+
+```bash
+pnpm run test
+```
+
+### Spending limits demo behavior
+
+The dashboard demo persists spending limit settings in browser storage and displays a daily usage meter that resets on a new day. If browser storage is unavailable, the UI falls back gracefully and notifies the user.
+
 ---
 
 ## Design Philosophy
