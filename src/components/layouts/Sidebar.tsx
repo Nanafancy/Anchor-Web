@@ -12,6 +12,7 @@ import {
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 const navigation = [
 	{ name: "Dashboard", href: "/demo/dashboard", icon: HomeIcon },
@@ -33,6 +34,7 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
 	const pathname = usePathname();
+	const { user, isLoading } = useAuth();
 
 	return (
 		<>
@@ -102,15 +104,41 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
 					{/* User Profile */}
 					<div className="border-t p-4">
-						<div className="flex items-center space-x-3">
-							<div className="h-10 w-10 rounded-full bg-linear-to-br from-gray-300 to-gray-400" />
-							<div className="flex-1 min-w-0">
-								<p className="text-sm font-medium text-gray-900 truncate">
-									Tali Nanzing Moses
-								</p>
-								<p className="text-xs text-gray-500 truncate">User</p>
+						{isLoading ? (
+							<div className="flex items-center space-x-3">
+								<div className="h-10 w-10 rounded-full bg-gray-200 animate-pulse" />
+								<div className="flex-1 space-y-2">
+									<div className="h-3 w-24 rounded bg-gray-200 animate-pulse" />
+									<div className="h-2 w-16 rounded bg-gray-200 animate-pulse" />
+								</div>
 							</div>
-						</div>
+						) : user ? (
+							<div className="flex items-center space-x-3">
+								<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-purple-600 text-sm font-semibold text-white">
+									{user.name
+										.split(" ")
+										.map((n) => n[0])
+										.slice(0, 2)
+										.join("")
+										.toUpperCase()}
+								</div>
+								<div className="flex-1 min-w-0">
+									<p className="text-sm font-medium text-gray-900 truncate">
+										{user.name}
+									</p>
+									<p className="text-xs text-gray-500 truncate">{user.role}</p>
+								</div>
+							</div>
+						) : (
+							<div className="flex items-center space-x-3">
+								<div className="h-10 w-10 rounded-full bg-linear-to-br from-gray-300 to-gray-400" />
+								<div className="flex-1 min-w-0">
+									<p className="text-sm font-medium text-gray-500 truncate">
+										Not signed in
+									</p>
+								</div>
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

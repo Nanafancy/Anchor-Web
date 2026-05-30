@@ -8,6 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 interface TopNavProps {
 	onMenuClick: () => void;
@@ -16,6 +17,7 @@ interface TopNavProps {
 export function TopNav({ onMenuClick }: TopNavProps) {
 	const [searchOpen, setSearchOpen] = useState(false);
 	const pathname = usePathname();
+	const { user, isLoading } = useAuth();
 
 	// Get current page title from pathname
 	const pageTitle =
@@ -108,12 +110,27 @@ export function TopNav({ onMenuClick }: TopNavProps) {
 							className="flex items-center gap-x-3 rounded-lg p-1.5 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
 							id="user-menu-button"
 						>
-							<div className="h-8 w-8 rounded-full bg-linear-to-br from-gray-300 to-gray-400" />
-							<div className="hidden lg:block text-left">
-								<p className="text-sm font-medium text-gray-900">
-									Tali Nanzing Moses
-								</p>
-							</div>
+							{isLoading ? (
+								<div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
+							) : user ? (
+								<>
+									<div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-purple-600 text-xs font-semibold text-white">
+										{user.name
+											.split(" ")
+											.map((n) => n[0])
+											.slice(0, 2)
+											.join("")
+											.toUpperCase()}
+									</div>
+									<div className="hidden lg:block text-left">
+										<p className="text-sm font-medium text-gray-900">
+											{user.name}
+										</p>
+									</div>
+								</>
+							) : (
+								<div className="h-8 w-8 rounded-full bg-linear-to-br from-gray-300 to-gray-400" />
+							)}
 							<ChevronDownIcon
 								className="hidden h-5 w-5 text-gray-400 lg:block"
 								aria-hidden="true"
