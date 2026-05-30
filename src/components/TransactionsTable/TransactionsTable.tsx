@@ -26,6 +26,7 @@ interface Transaction {
 	amount: number;
 	currency: string;
 	type: TransactionType;
+	walletId: string;
 }
 
 // --- Dummy Data ---
@@ -40,6 +41,7 @@ const INITIAL_DATA: Transaction[] = [
 		amount: 15.99,
 		currency: "USD",
 		type: "outgoing",
+		walletId: "wallet-001",
 	},
 	{
 		id: "2",
@@ -51,6 +53,7 @@ const INITIAL_DATA: Transaction[] = [
 		amount: 1250.0,
 		currency: "USD",
 		type: "incoming",
+		walletId: "wallet-002",
 	},
 	{
 		id: "3",
@@ -62,6 +65,7 @@ const INITIAL_DATA: Transaction[] = [
 		amount: 24.5,
 		currency: "USD",
 		type: "outgoing",
+		walletId: "wallet-001",
 	},
 	{
 		id: "4",
@@ -73,6 +77,7 @@ const INITIAL_DATA: Transaction[] = [
 		amount: 142.8,
 		currency: "USD",
 		type: "outgoing",
+		walletId: "wallet-004",
 	},
 	{
 		id: "5",
@@ -84,6 +89,7 @@ const INITIAL_DATA: Transaction[] = [
 		amount: 200.0,
 		currency: "USD",
 		type: "outgoing",
+		walletId: "wallet-002",
 	},
 	{
 		id: "6",
@@ -95,6 +101,7 @@ const INITIAL_DATA: Transaction[] = [
 		amount: 45.0,
 		currency: "USD",
 		type: "incoming",
+		walletId: "wallet-006",
 	},
 	{
 		id: "7",
@@ -106,6 +113,7 @@ const INITIAL_DATA: Transaction[] = [
 		amount: 95.2,
 		currency: "USD",
 		type: "outgoing",
+		walletId: "wallet-008",
 	},
 	{
 		id: "8",
@@ -117,6 +125,7 @@ const INITIAL_DATA: Transaction[] = [
 		amount: 12.99,
 		currency: "USD",
 		type: "outgoing",
+		walletId: "wallet-001",
 	},
 	{
 		id: "9",
@@ -128,6 +137,7 @@ const INITIAL_DATA: Transaction[] = [
 		amount: 850.0,
 		currency: "USD",
 		type: "incoming",
+		walletId: "wallet-004",
 	},
 	{
 		id: "10",
@@ -139,6 +149,7 @@ const INITIAL_DATA: Transaction[] = [
 		amount: 6.5,
 		currency: "USD",
 		type: "outgoing",
+		walletId: "wallet-006",
 	},
 	{
 		id: "11",
@@ -150,6 +161,7 @@ const INITIAL_DATA: Transaction[] = [
 		amount: 45.0,
 		currency: "USD",
 		type: "outgoing",
+		walletId: "wallet-002",
 	},
 	{
 		id: "12",
@@ -161,6 +173,7 @@ const INITIAL_DATA: Transaction[] = [
 		amount: 1299.0,
 		currency: "USD",
 		type: "outgoing",
+		walletId: "wallet-008",
 	},
 ];
 
@@ -216,13 +229,19 @@ export default function TransactionsTable() {
 	const [statusFilter, setStatusFilter] = useState<"all" | TransactionStatus>(
 		"all",
 	);
+	const [walletFilter, setWalletFilter] = useState<string>("all");
 	const [sortConfig, setSortConfig] = useState<{
 		key: keyof Transaction;
 		direction: "asc" | "desc";
 	} | null>(null);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [itemsPerPage, setItemsPerPage] = useState(5);
 
-	const itemsPerPage = 5;
+	// Get unique wallet IDs from transactions
+	const uniqueWalletIds = useMemo(
+		() => Array.from(new Set(INITIAL_DATA.map((tx) => tx.walletId))).sort(),
+		[],
+	);
 
 	const filteredData = useMemo(() => {
 		return INITIAL_DATA.filter((item) => {
@@ -231,9 +250,11 @@ export default function TransactionsTable() {
 				item.category.toLowerCase().includes(search.toLowerCase());
 			const matchesStatus =
 				statusFilter === "all" ? true : item.status === statusFilter;
-			return matchesSearch && matchesStatus;
+			const matchesWallet =
+				walletFilter === "all" ? true : item.walletId === walletFilter;
+			return matchesSearch && matchesStatus && matchesWallet;
 		});
-	}, [search, statusFilter]);
+	}, [search, statusFilter, walletFilter]);
 
 	const sortedData = useMemo(() => {
 		if (!sortConfig) return filteredData;
@@ -272,14 +293,22 @@ export default function TransactionsTable() {
 		}
 	};
 
+	const handleItemsPerPageChange = (newSize: number) => {
+		setItemsPerPage(newSize);
+		// Reset to page 1 when changing page size
+		setCurrentPage(1);
+	};
+
 	const clearFilters = () => {
 		setSearch("");
 		setStatusFilter("all");
+		setWalletFilter("all");
 		setSortConfig(null);
 		setCurrentPage(1);
 	};
 
-	const hasActiveFilters = search.length > 0 || statusFilter !== "all";
+	const hasActiveFilters =
+		search.length > 0 || statusFilter !== "all" || walletFilter !== "all";
 
 	return (
 		<div className="w-full max-w-5xl mx-auto p-4 md:p-8 space-y-6 font-sans">
@@ -339,6 +368,28 @@ export default function TransactionsTable() {
 							<option value="completed">Completed</option>
 							<option value="pending">Pending</option>
 							<option value="failed">Failed</option>
+						</select>
+					</div>
+
+					<div className="relative">
+						<Filter
+							className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+							size={16}
+						/>
+						<select
+							className="w-full sm:w-48 pl-9 pr-4 py-2 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 appearance-none cursor-pointer transition-colors hover:bg-slate-50"
+							value={walletFilter}
+							onChange={(e) => {
+								setWalletFilter(e.target.value);
+								setCurrentPage(1);
+							}}
+						>
+							<option value="all">All Wallets</option>
+							{uniqueWalletIds.map((walletId) => (
+								<option key={walletId} value={walletId}>
+									{walletId}
+								</option>
+							))}
 						</select>
 					</div>
 
@@ -459,21 +510,33 @@ export default function TransactionsTable() {
 				{/* Pagination Footer */}
 				{sortedData.length > 0 && (
 					<div className="border-t border-slate-100 p-4 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/50">
-						<span className="text-xs text-slate-500">
-							Showing{" "}
-							<span className="font-medium text-slate-700">
-								{(currentPage - 1) * itemsPerPage + 1}
-							</span>{" "}
-							to{" "}
-							<span className="font-medium text-slate-700">
-								{Math.min(currentPage * itemsPerPage, sortedData.length)}
-							</span>{" "}
-							of{" "}
-							<span className="font-medium text-slate-700">
-								{sortedData.length}
-							</span>{" "}
-							results
-						</span>
+						<div className="flex items-center gap-3">
+							<span className="text-xs text-slate-500">
+								Showing{" "}
+								<span className="font-medium text-slate-700">
+									{(currentPage - 1) * itemsPerPage + 1}
+								</span>{" "}
+								to{" "}
+								<span className="font-medium text-slate-700">
+									{Math.min(currentPage * itemsPerPage, sortedData.length)}
+								</span>{" "}
+								of{" "}
+								<span className="font-medium text-slate-700">
+									{sortedData.length}
+								</span>{" "}
+								results
+							</span>
+							<select
+								className="px-2 py-1 bg-white border border-slate-200 text-slate-700 text-xs rounded focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer transition-colors hover:bg-slate-50"
+								value={itemsPerPage}
+								onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+							>
+								<option value="5">5 per page</option>
+								<option value="10">10 per page</option>
+								<option value="20">20 per page</option>
+								<option value="50">50 per page</option>
+							</select>
+						</div>
 
 						<div className="flex items-center gap-1 select-none">
 							<button
