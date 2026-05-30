@@ -5,18 +5,45 @@ import { useState } from 'react';
 interface APIKeyModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onKeyCreated?: (keyData: { name: string; key: string }) => void;
 }
 
-export default function APIKeyModal({ isOpen, onClose }: APIKeyModalProps) {
+export default function APIKeyModal({ isOpen, onClose, onKeyCreated }: APIKeyModalProps) {
   const [showWarning, setShowWarning] = useState(true);
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [keyName, setKeyName] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const generateApiKey = () => {
-    // Generate a mock API key for UI purposes
-    const newKey = `mux_${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
-    setApiKey(newKey);
-    setShowWarning(false);
+  const generateApiKey = async () => {
+    if (!keyName.trim()) {
+      setError('Please enter a name for your API key');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      setError(null);
+
+      // Simulate API call to create key
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Generate a mock API key for UI purposes
+      const newKey = `mux_${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
+      setApiKey(newKey);
+      setShowWarning(false);
+
+      // Notify parent component of key creation
+      if (onKeyCreated) {
+        onKeyCreated({ name: keyName, key: newKey });
+      }
+    } catch (err) {
+      setError('Failed to create API key. Please try again.');
+      console.error('Error creating API key:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const copyToClipboard = async () => {
@@ -31,6 +58,8 @@ export default function APIKeyModal({ isOpen, onClose }: APIKeyModalProps) {
     setShowWarning(true);
     setApiKey(null);
     setCopied(false);
+    setKeyName('');
+    setError(null);
     onClose();
   };
 
@@ -47,22 +76,41 @@ export default function APIKeyModal({ isOpen, onClose }: APIKeyModalProps) {
 
         <div className="p-6 space-y-6">
           {showWarning && !apiKey && (
-            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-              <div className="flex gap-3">
-                <div className="text-amber-600 dark:text-amber-500 text-xl leading-none mt-0.5">
-                  ⚠️
-                </div>
-                <div>
-                  <h3 className="font-semibold text-amber-900 dark:text-amber-200 mb-1">
-                    Save your API key
-                  </h3>
-                  <p className="text-sm text-amber-800 dark:text-amber-300">
-                    This key will only be displayed once. Make sure to copy and
-                    store it somewhere safe. You won't be able to see it again.
-                  </p>
+            <>
+              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                <div className="flex gap-3">
+                  <div className="text-amber-600 dark:text-amber-500 text-xl leading-none mt-0.5">
+                    ⚠️
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-amber-900 dark:text-amber-200 mb-1">
+                      Save your API key
+                    </h3>
+                    <p className="text-sm text-amber-800 dark:text-amber-300">
+                      This key will only be displayed once. Make sure to copy and
+                      store it somewhere safe. You won't be able to see it again.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+
+              <div>
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                  Key Name
+                </label>
+                <input
+                  type="text"
+                  value={keyName}
+                  onChange={(e) => setKeyName(e.target.value)}
+                  placeholder="e.g., Production Key"
+                  className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
+                  disabled={isSubmitting}
+                />
+                {error && (
+                  <p className="text-sm text-red-600 dark:text-red-400 mt-1">{error}</p>
+                )}
+              </div>
+            </>
           )}
 
           {apiKey ? (
@@ -106,15 +154,17 @@ export default function APIKeyModal({ isOpen, onClose }: APIKeyModalProps) {
           <button
             onClick={handleClose}
             className="px-4 py-2 rounded font-medium border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-50 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            disabled={isSubmitting}
           >
             Close
           </button>
           {!apiKey && (
             <button
               onClick={generateApiKey}
-              className="px-4 py-2 rounded font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+              disabled={isSubmitting || !keyName.trim()}
+              className="px-4 py-2 rounded font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Generate Key
+              {isSubmitting ? 'Creating...' : 'Generate Key'}
             </button>
           )}
         </div>
