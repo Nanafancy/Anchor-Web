@@ -6,6 +6,7 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
+		"test": "node ./tests/run-tests.js",
 		"lint": "eslint",
 		"lint:fix": "biome format . --write && biome check . --write",
 		"prepare": "husky"
