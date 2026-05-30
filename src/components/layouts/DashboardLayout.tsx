@@ -15,7 +15,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: close sidebar on route change
 	useEffect(() => {
-		setSidebarOpen(false);
+		const timeout = window.setTimeout(() => {
+			setSidebarOpen(false);
+		}, 0);
+
+		return () => window.clearTimeout(timeout);
 	}, [pathname]);
 
 	useEffect(() => {
