@@ -12,10 +12,14 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { type ApiKey, mockApiKeys } from "@/mock-data/api-keys";
+import { type ApiKey } from "@/mock-data/api-keys";
+import { useApiKeys } from "@/hooks/useApiKeys";
+import { useRevokeApiKey } from "@/hooks/useRevokeApiKey";
 
 export function ApiKeysTable() {
 	const [copiedId, setCopiedId] = useState<string | null>(null);
+	const { data: keys, loading, error, refetch } = useApiKeys();
+	const { revoke, loading: revoking } = useRevokeApiKey();
 
 	const handleCopy = (id: string, text: string) => {
 		navigator.clipboard.writeText(text);
@@ -54,7 +58,21 @@ export function ApiKeysTable() {
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{mockApiKeys.map((key) => (
+					{loading && (
+						<TableRow>
+							<TableCell colSpan={5} className="p-6">
+								Loading...
+							</TableCell>
+						</TableRow>
+					)}
+					{error && (
+						<TableRow>
+							<TableCell colSpan={5} className="p-6 text-red-600">
+								Failed to load keys
+							</TableCell>
+						</TableRow>
+					)}
+					{keys?.map((key) => (
 						<TableRow key={key.id} className="group transition-colors">
 							<TableCell className="font-medium pl-6 text-zinc-900 dark:text-zinc-100">
 								{key.name}
@@ -100,13 +118,19 @@ export function ApiKeysTable() {
 								{new Date(key.createdAt).toLocaleDateString()}
 							</TableCell>
 							<TableCell className="text-right pr-6">
-								<Button
-									variant="ghost"
-									size="sm"
-									className="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 h-8 px-3 rounded-lg"
-								>
-									Revoke
-								</Button>
+									<Button
+										variant="ghost"
+										size="sm"
+										className="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 h-8 px-3 rounded-lg"
+										onClick={async () => {
+											await revoke(key.id);
+											// refetch to update UI
+											void refetch();
+										}}
+										disabled={key.status === "Revoked" || revoking}
+									>
+										{key.status === "Revoked" ? "Revoked" : revoking ? "Revoking..." : "Revoke"}
+									</Button>
 							</TableCell>
 						</TableRow>
 					))}
