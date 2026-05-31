@@ -1,174 +1,124 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 interface APIKeyModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onKeyCreated?: (keyData: { name: string; key: string }) => void;
+	isOpen: boolean;
+	onClose: () => void;
 }
 
-export default function APIKeyModal({ isOpen, onClose, onKeyCreated }: APIKeyModalProps) {
-  const [showWarning, setShowWarning] = useState(true);
-  const [apiKey, setApiKey] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
-  const [keyName, setKeyName] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export default function APIKeyModal({ isOpen, onClose }: APIKeyModalProps) {
+	const [showWarning, setShowWarning] = useState(true);
+	const [apiKey, setApiKey] = useState<string | null>(null);
+	const [copied, setCopied] = useState(false);
 
-  const generateApiKey = async () => {
-    if (!keyName.trim()) {
-      setError('Please enter a name for your API key');
-      return;
-    }
+	const generateApiKey = () => {
+		// Generate a mock API key for UI purposes
+		const newKey = `mux_${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
+		setApiKey(newKey);
+		setShowWarning(false);
+	};
 
-    try {
-      setIsSubmitting(true);
-      setError(null);
+	const copyToClipboard = async () => {
+		if (apiKey) {
+			await navigator.clipboard.writeText(apiKey);
+			setCopied(true);
+			setTimeout(() => setCopied(false), 2000);
+		}
+	};
 
-      // Simulate API call to create key
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+	const handleClose = () => {
+		setShowWarning(true);
+		setApiKey(null);
+		setCopied(false);
+		onClose();
+	};
 
-      // Generate a mock API key for UI purposes
-      const newKey = `mux_${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
-      setApiKey(newKey);
-      setShowWarning(false);
+	if (!isOpen) return null;
 
-      // Notify parent component of key creation
-      if (onKeyCreated) {
-        onKeyCreated({ name: keyName, key: newKey });
-      }
-    } catch (err) {
-      setError('Failed to create API key. Please try again.');
-      console.error('Error creating API key:', err);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+	return (
+		<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+			<div className="bg-white dark:bg-zinc-900 rounded-lg shadow-lg max-w-md w-full mx-4">
+				<div className="border-b border-zinc-200 dark:border-zinc-800 p-6">
+					<h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+						Create API Key
+					</h2>
+				</div>
 
-  const copyToClipboard = async () => {
-    if (apiKey) {
-      await navigator.clipboard.writeText(apiKey);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
+				<div className="p-6 space-y-6">
+					{showWarning && !apiKey && (
+						<div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+							<div className="flex gap-3">
+								<div className="text-amber-600 dark:text-amber-500 text-xl leading-none mt-0.5">
+									⚠️
+								</div>
+								<div>
+									<h3 className="font-semibold text-amber-900 dark:text-amber-200 mb-1">
+										Save your API key
+									</h3>
+									<p className="text-sm text-amber-800 dark:text-amber-300">
+										This key will only be displayed once. Make sure to copy and
+										store it somewhere safe. You won't be able to see it again.
+									</p>
+								</div>
+							</div>
+						</div>
+					)}
 
-  const handleClose = () => {
-    setShowWarning(true);
-    setApiKey(null);
-    setCopied(false);
-    setKeyName('');
-    setError(null);
-    onClose();
-  };
+					{apiKey ? (
+						<div className="space-y-4">
+							<div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+								<p className="text-sm font-medium text-green-900 dark:text-green-200">
+									✓ API Key successfully created
+								</p>
+							</div>
 
-  if (!isOpen) return null;
+							<div>
+								<label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+									Your API Key:
+								</label>
+								<div className="flex gap-2">
+									<div className="flex-1 bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded px-3 py-2 font-mono text-sm text-zinc-900 dark:text-zinc-50 overflow-x-auto">
+										{apiKey}
+									</div>
+									<button
+										onClick={copyToClipboard}
+										className={`px-4 py-2 rounded font-medium transition-colors ${
+											copied
+												? "bg-green-500 text-white"
+												: "bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-50 hover:bg-zinc-300 dark:hover:bg-zinc-600"
+										}`}
+									>
+										{copied ? "✓ Copied" : "Copy"}
+									</button>
+								</div>
+							</div>
+						</div>
+					) : (
+						<p className="text-zinc-600 dark:text-zinc-400">
+							Click the button below to generate a new API key. Remember to save
+							it securely as you won't be able to view it again.
+						</p>
+					)}
+				</div>
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-lg max-w-md w-full mx-4">
-        <div className="border-b border-zinc-200 dark:border-zinc-800 p-6">
-          <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-            Create API Key
-          </h2>
-        </div>
-
-        <div className="p-6 space-y-6">
-          {showWarning && !apiKey && (
-            <>
-              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-                <div className="flex gap-3">
-                  <div className="text-amber-600 dark:text-amber-500 text-xl leading-none mt-0.5">
-                    ⚠️
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-amber-900 dark:text-amber-200 mb-1">
-                      Save your API key
-                    </h3>
-                    <p className="text-sm text-amber-800 dark:text-amber-300">
-                      This key will only be displayed once. Make sure to copy and
-                      store it somewhere safe. You won't be able to see it again.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-                  Key Name
-                </label>
-                <input
-                  type="text"
-                  value={keyName}
-                  onChange={(e) => setKeyName(e.target.value)}
-                  placeholder="e.g., Production Key"
-                  className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
-                  disabled={isSubmitting}
-                />
-                {error && (
-                  <p className="text-sm text-red-600 dark:text-red-400 mt-1">{error}</p>
-                )}
-              </div>
-            </>
-          )}
-
-          {apiKey ? (
-            <div className="space-y-4">
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-                <p className="text-sm font-medium text-green-900 dark:text-green-200">
-                  ✓ API Key successfully created
-                </p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-                  Your API Key:
-                </label>
-                <div className="flex gap-2">
-                  <div className="flex-1 bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded px-3 py-2 font-mono text-sm text-zinc-900 dark:text-zinc-50 overflow-x-auto">
-                    {apiKey}
-                  </div>
-                  <button
-                    onClick={copyToClipboard}
-                    className={`px-4 py-2 rounded font-medium transition-colors ${
-                      copied
-                        ? 'bg-green-500 text-white'
-                        : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-50 hover:bg-zinc-300 dark:hover:bg-zinc-600'
-                    }`}
-                  >
-                    {copied ? '✓ Copied' : 'Copy'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <p className="text-zinc-600 dark:text-zinc-400">
-              Click the button below to generate a new API key. Remember to save it
-              securely as you won't be able to view it again.
-            </p>
-          )}
-        </div>
-
-        <div className="border-t border-zinc-200 dark:border-zinc-800 p-6 flex gap-3 justify-end">
-          <button
-            onClick={handleClose}
-            className="px-4 py-2 rounded font-medium border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-50 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-            disabled={isSubmitting}
-          >
-            Close
-          </button>
-          {!apiKey && (
-            <button
-              onClick={generateApiKey}
-              disabled={isSubmitting || !keyName.trim()}
-              className="px-4 py-2 rounded font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? 'Creating...' : 'Generate Key'}
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+				<div className="border-t border-zinc-200 dark:border-zinc-800 p-6 flex gap-3 justify-end">
+					<button
+						onClick={handleClose}
+						className="px-4 py-2 rounded font-medium border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-50 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+					>
+						Close
+					</button>
+					{!apiKey && (
+						<button
+							onClick={generateApiKey}
+							className="px-4 py-2 rounded font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+						>
+							Generate Key
+						</button>
+					)}
+				</div>
+			</div>
+		</div>
+	);
 }

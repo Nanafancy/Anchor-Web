@@ -1,6 +1,3 @@
-import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
-import { RecentActivityFeed } from "@/components/dashboard/RecentActivityFeed";
-
 export default function Home() {
 	return (
 		<div className="space-y-8">
