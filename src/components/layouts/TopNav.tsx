@@ -7,22 +7,51 @@ import {
 	MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNetwork } from "@/context/NetworkContext";
 
 interface TopNavProps {
 	onMenuClick: () => void;
 }
 
+const networkLabel = { mainnet: "Mainnet", testnet: "Testnet" } as const;
+const networkBadgeClass = {
+	mainnet: "bg-blue-100 text-blue-800",
+	testnet: "bg-amber-100 text-amber-800",
+} as const;
+
 export function TopNav({ onMenuClick }: TopNavProps) {
 	const [searchOpen, setSearchOpen] = useState(false);
 	const pathname = usePathname();
+	const { network, setNetwork } = useNetwork();
 
 	// Get current page title from pathname
-	const pageTitle =
-		pathname === "/"
-			? "Dashboard"
-			: (pathname.split("/").pop() ?? "").charAt(0).toUpperCase() +
-				(pathname.split("/").pop() ?? "").slice(1);
+	const pageTitle = (() => {
+		const segment = pathname.split("/").pop() ?? "";
+		const titleMap: Record<string, string> = {
+			dashboard: "Dashboard",
+			analytics: "Analytics",
+			users: "Users",
+			orders: "Orders",
+			documents: "Documents",
+			settings: "Settings",
+			wallets: "Wallets",
+			"api-keys": "API Keys",
+			"spending-limits": "Spending Limits",
+		};
+		return (
+			titleMap[segment] ?? segment.charAt(0).toUpperCase() + segment.slice(1)
+		);
+	})();
+
+	useEffect(() => {
+		document.title = `${pageTitle} · ${networkLabel[network]} — Mux`;
+	}, [pageTitle, network]);
+
+	// Sync browser tab title
+	useEffect(() => {
+		document.title = `${pageTitle} · ${networkLabel[network]} — Mux`;
+	}, [pageTitle, network]);
 
 	return (
 		<header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white/95 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 backdrop-blur supports-backdrop-filter:bg-white/60">
@@ -42,8 +71,11 @@ export function TopNav({ onMenuClick }: TopNavProps) {
 			{/* Page title and breadcrumbs */}
 			<div className="flex flex-1 items-center gap-x-4 self-stretch lg:gap-x-6">
 				<div className="flex flex-1 items-center">
-					<h1 className="text-lg font-semibold text-gray-900 sm:text-xl">
+					<h1 className="flex items-center gap-2 text-lg font-semibold text-gray-900 sm:text-xl">
 						{pageTitle}
+						<span className={`rounded-full px-2 py-0.5 text-xs font-medium ${networkBadgeClass[network]}`}>
+							{networkLabel[network]}
+						</span>
 					</h1>
 
 					{/* Breadcrumbs - hidden on mobile */}
@@ -54,13 +86,44 @@ export function TopNav({ onMenuClick }: TopNavProps) {
 						<ol className="flex items-center space-x-2 text-sm">
 							<li className="text-gray-500">Home</li>
 							<li className="text-gray-400">/</li>
-							<li className="font-medium text-gray-900">{pageTitle}</li>
+							<li className="flex items-center gap-1.5 font-medium text-gray-900">
+								{pageTitle}
+								<span className={`rounded-full px-2 py-0.5 text-xs font-medium ${networkBadgeClass[network]}`}>
+									{networkLabel[network]}
+								</span>
+							</li>
 						</ol>
 					</nav>
 				</div>
 
 				{/* Right side actions */}
 				<div className="flex items-center gap-x-3 sm:gap-x-6">
+					{/* Network Switcher */}
+					<div className="flex items-center rounded-lg border border-gray-200 bg-gray-50 p-0.5 text-sm font-medium">
+						<button
+							type="button"
+							onClick={() => setNetwork("testnet")}
+							className={`rounded-md px-3 py-1 transition-colors ${
+								network === "testnet"
+									? "bg-amber-100 text-amber-800"
+									: "text-gray-500 hover:text-gray-700"
+							}`}
+						>
+							Testnet
+						</button>
+						<button
+							type="button"
+							onClick={() => setNetwork("mainnet")}
+							className={`rounded-md px-3 py-1 transition-colors ${
+								network === "mainnet"
+									? "bg-blue-100 text-blue-800"
+									: "text-gray-500 hover:text-gray-700"
+							}`}
+						>
+							Mainnet
+						</button>
+					</div>
+
 					{/* Search - responsive */}
 					<div
 						className={`
