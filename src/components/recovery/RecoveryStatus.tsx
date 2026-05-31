@@ -71,9 +71,7 @@ const STATUS_STYLES: Record<RecoveryStatusValue, StatusStyle> = {
  * always renders gracefully instead of crashing.
  */
 function resolveStatus(status: string): RecoveryStatusValue {
-	return status in STATUS_STYLES
-		? (status as RecoveryStatusValue)
-		: "unknown";
+	return status in STATUS_STYLES ? (status as RecoveryStatusValue) : "unknown";
 }
 
 export function RecoveryStatus({
@@ -89,7 +87,10 @@ export function RecoveryStatus({
 			aria-label={ariaLabel}
 			className={cn(badge, className)}
 		>
-			<span className={cn("h-2 w-2 rounded-full shrink-0", dot)} aria-hidden="true" />
+			<span
+				className={cn("h-2 w-2 rounded-full shrink-0", dot)}
+				aria-hidden="true"
+			/>
 			{label}
 		</Badge>
 	);
