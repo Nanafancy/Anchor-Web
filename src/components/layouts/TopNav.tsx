@@ -48,6 +48,11 @@ export function TopNav({ onMenuClick }: TopNavProps) {
 		document.title = `${pageTitle} · ${networkLabel[network]} — Mux`;
 	}, [pageTitle, network]);
 
+	// Sync browser tab title
+	useEffect(() => {
+		document.title = `${pageTitle} · ${networkLabel[network]} — Mux`;
+	}, [pageTitle, network]);
+
 	return (
 		<header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white/95 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 backdrop-blur supports-backdrop-filter:bg-white/60">
 			{/* Menu button for mobile */}
