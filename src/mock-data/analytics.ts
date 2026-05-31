@@ -1,140 +1,116 @@
-import type { Transaction } from "@/types/analytics";
+export interface Metric {
+	label: string;
+	value: string;
+	change: number;
+	changeLabel: string;
+}
 
-/**
- * Mock transaction data for the analytics dashboard.
- * In production this would be fetched from the Mux Protocol API.
- */
-export const mockTransactions: Transaction[] = [
+export interface ChartDataPoint {
+	date: string;
+	value: number;
+}
+
+export interface AssetData {
+	rank: number;
+	name: string;
+	symbol: string;
+	volume: string;
+	volumeChange: number;
+	tvl: string;
+	txCount: number;
+}
+
+export const metrics: Metric[] = [
 	{
-		id: "1",
-		description: "Spotify Premium",
-		date: "2023-10-24",
-		humanDate: "Oct 24, 2023",
-		category: "Subscription",
-		status: "completed",
-		amount: 15.99,
-		currency: "USD",
-		type: "outgoing",
+		label: "Total Volume",
+		value: "$12.4M",
+		change: 12.5,
+		changeLabel: "vs last period",
 	},
 	{
-		id: "2",
-		description: "Design Project #4",
-		date: "2023-10-23",
-		humanDate: "Oct 23, 2023",
-		category: "Income",
-		status: "completed",
-		amount: 1250.0,
-		currency: "USD",
-		type: "incoming",
+		label: "Total Transactions",
+		value: "84,231",
+		change: 8.2,
+		changeLabel: "vs last period",
 	},
 	{
-		id: "3",
-		description: "Uber Ride",
-		date: "2023-10-22",
-		humanDate: "Oct 22, 2023",
-		category: "Transport",
-		status: "pending",
-		amount: 24.5,
-		currency: "USD",
-		type: "outgoing",
+		label: "Active Wallets",
+		value: "3,842",
+		change: -2.1,
+		changeLabel: "vs last period",
 	},
 	{
-		id: "4",
-		description: "Whole Foods Market",
-		date: "2023-10-21",
-		humanDate: "Oct 21, 2023",
-		category: "Groceries",
-		status: "completed",
-		amount: 142.8,
-		currency: "USD",
-		type: "outgoing",
+		label: "Success Rate",
+		value: "99.2%",
+		change: 0.3,
+		changeLabel: "vs last period",
+	},
+];
+
+export const volumeData: ChartDataPoint[] = [
+	{ date: "Mon", value: 2400000 },
+	{ date: "Tue", value: 3200000 },
+	{ date: "Wed", value: 2800000 },
+	{ date: "Thu", value: 4100000 },
+	{ date: "Fri", value: 3800000 },
+	{ date: "Sat", value: 2900000 },
+	{ date: "Sun", value: 3600000 },
+];
+
+export const transactionsData: ChartDataPoint[] = [
+	{ date: "Mon", value: 12000 },
+	{ date: "Tue", value: 15600 },
+	{ date: "Wed", value: 13400 },
+	{ date: "Thu", value: 18900 },
+	{ date: "Fri", value: 17200 },
+	{ date: "Sat", value: 14800 },
+	{ date: "Sun", value: 16331 },
+];
+
+export const topAssets: AssetData[] = [
+	{
+		rank: 1,
+		name: "Mux Protocol",
+		symbol: "MUX",
+		volume: "$4,234,567",
+		volumeChange: 15.2,
+		tvl: "$18.2M",
+		txCount: 28432,
 	},
 	{
-		id: "5",
-		description: "ATM Withdrawal",
-		date: "2023-10-20",
-		humanDate: "Oct 20, 2023",
-		category: "Cash",
-		status: "failed",
-		amount: 200.0,
-		currency: "USD",
-		type: "outgoing",
+		rank: 2,
+		name: "Stellar",
+		symbol: "XLM",
+		volume: "$3,456,789",
+		volumeChange: 8.7,
+		tvl: "$12.8M",
+		txCount: 21890,
 	},
 	{
-		id: "6",
-		description: "Refund: Amazon",
-		date: "2023-10-19",
-		humanDate: "Oct 19, 2023",
-		category: "Shopping",
-		status: "completed",
-		amount: 45.0,
-		currency: "USD",
-		type: "incoming",
+		rank: 3,
+		name: "USDC",
+		symbol: "USDC",
+		volume: "$2,345,678",
+		volumeChange: -3.1,
+		tvl: "$45.6M",
+		txCount: 15678,
 	},
 	{
-		id: "7",
-		description: "Electric Bill",
-		date: "2023-10-18",
-		humanDate: "Oct 18, 2023",
-		category: "Utilities",
-		status: "completed",
-		amount: 95.2,
-		currency: "USD",
-		type: "outgoing",
+		rank: 4,
+		name: "Ethereum",
+		symbol: "ETH",
+		volume: "$1,234,567",
+		volumeChange: 5.4,
+		tvl: "$8.9M",
+		txCount: 10234,
 	},
 	{
-		id: "8",
-		description: "Netflix",
-		date: "2023-10-17",
-		humanDate: "Oct 17, 2023",
-		category: "Subscription",
-		status: "completed",
-		amount: 12.99,
-		currency: "USD",
-		type: "outgoing",
-	},
-	{
-		id: "9",
-		description: "Upwork Payout",
-		date: "2023-10-16",
-		humanDate: "Oct 16, 2023",
-		category: "Income",
-		status: "completed",
-		amount: 850.0,
-		currency: "USD",
-		type: "incoming",
-	},
-	{
-		id: "10",
-		description: "Coffee Shop",
-		date: "2023-10-15",
-		humanDate: "Oct 15, 2023",
-		category: "Food",
-		status: "pending",
-		amount: 6.5,
-		currency: "USD",
-		type: "outgoing",
-	},
-	{
-		id: "11",
-		description: "Gym Membership",
-		date: "2023-10-14",
-		humanDate: "Oct 14, 2023",
-		category: "Health",
-		status: "completed",
-		amount: 45.0,
-		currency: "USD",
-		type: "outgoing",
-	},
-	{
-		id: "12",
-		description: "Apple Store",
-		date: "2023-10-13",
-		humanDate: "Oct 13, 2023",
-		category: "Tech",
-		status: "failed",
-		amount: 1299.0,
-		currency: "USD",
-		type: "outgoing",
+		rank: 5,
+		name: "Bitcoin",
+		symbol: "BTC",
+		volume: "$987,654",
+		volumeChange: -1.8,
+		tvl: "$6.7M",
+		txCount: 5678,
 	},
 ];
