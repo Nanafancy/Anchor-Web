@@ -1,7 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { InitiateRecoveryCTA } from "@/components/recovery/InitiateRecoveryCTA";
 import { RecoveryExplanation } from "@/components/recovery/RecoveryExplanation";
+import { RecoveryLoadingState } from "@/components/recovery/RecoveryLoadingState";
+import { useRecovery } from "@/hooks/useRecovery";
 
 export default function RecoveryPage() {
+	const recovery = useRecovery();
+
 	return (
 		<main className="min-h-screen bg-zinc-50 dark:bg-black p-6 md:p-12">
 			<div className="max-w-5xl mx-auto space-y-8">
@@ -26,8 +33,18 @@ export default function RecoveryPage() {
 					</div>
 				</header>
 
-				{/* Recovery Explanation Component */}
-				<RecoveryExplanation />
+				{/* Loading skeleton while initial status is fetched */}
+				{recovery.state === "loading" ? (
+					<RecoveryLoadingState />
+				) : (
+					<>
+						{/* Initiate Recovery CTA */}
+						<InitiateRecoveryCTA recovery={recovery} />
+
+						{/* Recovery Explanation Component */}
+						<RecoveryExplanation />
+					</>
+				)}
 			</div>
 		</main>
 	);

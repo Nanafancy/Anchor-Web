@@ -1,70 +1,78 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { WalletTable } from "@/components/wallet/WalletTable";
 import type { Wallet } from "@/types/wallet";
+import { WalletTable } from "./WalletTable";
 
-const mockPush = vi.fn();
-
-vi.mock("next/navigation", () => ({
-	useRouter: () => ({ push: mockPush }),
-}));
-
-// Minimal stub — clipboard API not available in jsdom
-vi.mock("@/hooks/useCopyToClipboard", () => ({
-	useCopyToClipboard: () => ({ copy: vi.fn(), copied: false }),
-}));
-
-const wallets: Wallet[] = [
+const mockWallets: Wallet[] = [
 	{
-		id: "wallet-001",
+		id: "w-1",
 		address: "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI",
 		network: "mainnet",
 		status: "active",
-		createdAt: new Date("2024-01-15T10:30:00Z"),
+		createdAt: new Date("2024-01-15"),
 		balance: "1,250.50 XLM",
 	},
 	{
-		id: "wallet-002",
+		id: "w-2",
 		address: "GCFONE23AB7Y6C5YZOMKUKGETPIAJA752ZPMORQO5VKA6LHXHC7Y3YPE",
 		network: "testnet",
 		status: "pending",
-		createdAt: new Date("2024-02-20T08:15:00Z"),
+		createdAt: new Date("2024-02-20"),
 	},
 ];
 
 describe("WalletTable", () => {
 	it("renders a row for each wallet", () => {
-		render(<WalletTable wallets={wallets} />);
-		expect(screen.getByTestId("wallet-row-wallet-001")).toBeInTheDocument();
-		expect(screen.getByTestId("wallet-row-wallet-002")).toBeInTheDocument();
+		render(<WalletTable wallets={mockWallets} />);
+		// Each wallet address is truncated; check for the truncated prefix
+		expect(screen.getByText("GBZXN7...MADI")).toBeInTheDocument();
+		expect(screen.getByText("GCFONE...3YPE")).toBeInTheDocument();
 	});
 
-	it("navigates to wallet detail on row click", async () => {
-		render(<WalletTable wallets={wallets} />);
-		await userEvent.click(screen.getByTestId("wallet-row-wallet-001"));
-		expect(mockPush).toHaveBeenCalledWith("/demo/dashboard/wallets/wallet-001");
+	it("shows the wallet count in the header", () => {
+		render(<WalletTable wallets={mockWallets} />);
+		expect(screen.getByText("2 wallets")).toBeInTheDocument();
 	});
 
-	it("navigates to the correct wallet for each row", async () => {
-		render(<WalletTable wallets={wallets} />);
-		await userEvent.click(screen.getByTestId("wallet-row-wallet-002"));
-		expect(mockPush).toHaveBeenCalledWith("/demo/dashboard/wallets/wallet-002");
+	it("uses singular 'wallet' when there is exactly one", () => {
+		render(<WalletTable wallets={[mockWallets[0]]} />);
+		expect(screen.getByText("1 wallet")).toBeInTheDocument();
 	});
 
-	it("does not navigate when copy button is clicked", async () => {
-		mockPush.mockClear();
-		render(<WalletTable wallets={wallets} />);
-		const copyBtn = screen
-			.getByTestId("wallet-row-wallet-001")
-			.querySelector("button");
-		expect(copyBtn).not.toBeNull();
-		await userEvent.click(copyBtn!);
-		expect(mockPush).not.toHaveBeenCalled();
+	it("renders network badges", () => {
+		render(<WalletTable wallets={mockWallets} />);
+		expect(screen.getByText("Mainnet")).toBeInTheDocument();
+		expect(screen.getByText("Testnet")).toBeInTheDocument();
 	});
 
-	it("renders empty table body when no wallets provided", () => {
-		render(<WalletTable wallets={[]} />);
-		expect(screen.queryByTestId(/wallet-row/)).toBeNull();
+	it("renders status indicators", () => {
+		render(<WalletTable wallets={mockWallets} />);
+		expect(screen.getByText("Active")).toBeInTheDocument();
+		expect(screen.getByText("Pending")).toBeInTheDocument();
+	});
+
+	it("shows balance when provided, dash when absent", () => {
+		render(<WalletTable wallets={mockWallets} />);
+		expect(screen.getByText("1,250.50 XLM")).toBeInTheDocument();
+		expect(screen.getByText("—")).toBeInTheDocument();
+	});
+
+	it("renders the Add Wallet button when onAddWallet is provided", () => {
+		render(<WalletTable wallets={mockWallets} onAddWallet={vi.fn()} />);
+		expect(screen.getByRole("button", { name: /add wallet/i })).toBeInTheDocument();
+	});
+
+	it("does not render the Add Wallet button when onAddWallet is omitted", () => {
+		render(<WalletTable wallets={mockWallets} />);
+		expect(screen.queryByRole("button", { name: /add wallet/i })).not.toBeInTheDocument();
+	});
+
+	it("calls onAddWallet when the Add Wallet button is clicked", async () => {
+		const user = userEvent.setup();
+		const onAddWallet = vi.fn();
+		render(<WalletTable wallets={mockWallets} onAddWallet={onAddWallet} />);
+		await user.click(screen.getByRole("button", { name: /add wallet/i }));
+		expect(onAddWallet).toHaveBeenCalledOnce();
 	});
 });
