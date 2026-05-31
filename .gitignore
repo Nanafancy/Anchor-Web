@@ -37,6 +37,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# personal task tracking
+vrickish.md
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# somzilla issues document
+src/somzilla.md
+
