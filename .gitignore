@@ -43,3 +43,7 @@ vrickish.md
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# somzilla issues document
+src/somzilla.md
+
