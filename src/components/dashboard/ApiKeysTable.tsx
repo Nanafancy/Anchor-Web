@@ -2,8 +2,10 @@
 
 import { Check, Copy, Key, Shield, ShieldOff } from "lucide-react";
 import { useState } from "react";
+import APIKeyModal from "@/components/APIKeyModal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/EmptyState";
 import {
 	Table,
 	TableBody,
@@ -12,25 +14,133 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { mockApiKeys } from "@/mock-data/api-keys";
+import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
+import { type ApiKey, mockApiKeys } from "@/mock-data/api-keys";
 
-const statusOptions = ["All", "Active", "Revoked"] as const;
+// ---------------------------------------------------------------------------
+// Revoke confirmation — inline per-row
+// ---------------------------------------------------------------------------
+interface RevokeConfirmProps {
+	keyName: string;
+	onConfirm: () => void;
+	onCancel: () => void;
+}
 
-type StatusFilter = (typeof statusOptions)[number];
+function RevokeConfirm({ keyName, onConfirm, onCancel }: RevokeConfirmProps) {
+	return (
+		<div
+			role="alertdialog"
+			aria-modal="true"
+			aria-labelledby="revoke-title"
+			aria-describedby="revoke-desc"
+			className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+		>
+			<div className="w-full max-w-sm rounded-xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
+				<div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
+					<ShieldOff className="size-6 text-red-600 dark:text-red-400" />
+				</div>
+				<h3
+					id="revoke-title"
+					className="mb-1 text-base font-semibold text-zinc-900 dark:text-zinc-50"
+				>
+					Revoke API key?
+				</h3>
+				<p
+					id="revoke-desc"
+					className="mb-6 text-sm text-zinc-500 dark:text-zinc-400"
+				>
+					<span className="font-medium text-zinc-700 dark:text-zinc-300">
+						{keyName}
+					</span>{" "}
+					will be permanently revoked. Any applications using this key will lose
+					access immediately. This action cannot be undone.
+				</p>
+				<div className="flex justify-end gap-3">
+					<Button variant="outline" size="sm" onClick={onCancel}>
+						Cancel
+					</Button>
+					<Button
+						variant="destructive"
+						size="sm"
+						onClick={onConfirm}
+						data-testid="confirm-revoke"
+					>
+						Revoke key
+					</Button>
+				</div>
+			</div>
+		</div>
+	);
+}
 
-export function ApiKeysTable() {
-	const [copiedId, setCopiedId] = useState<string | null>(null);
-	const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
+// ---------------------------------------------------------------------------
+// Copy button with feedback — uses useCopyToClipboard hook
+// ---------------------------------------------------------------------------
+function CopyKeyButton({ apiKey }: { apiKey: ApiKey }) {
+	const { copy, copied } = useCopyToClipboard();
 
-	const filteredApiKeys =
-		statusFilter === "All"
-			? mockApiKeys
-			: mockApiKeys.filter((key) => key.status === statusFilter);
+	return (
+		<div className="flex items-center gap-2 font-mono text-xs text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-900/50 px-2 py-1 rounded w-fit">
+			<span>{apiKey.key}</span>
+			<button
+				type="button"
+				onClick={() => copy(apiKey.key)}
+				className="p-1 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+				title={copied ? "Copied!" : "Copy to clipboard"}
+				aria-label={copied ? "Copied!" : `Copy key ${apiKey.name}`}
+				data-testid={`copy-key-${apiKey.id}`}
+			>
+				{copied ? (
+					<Check className="size-3 text-green-500" aria-hidden="true" />
+				) : (
+					<Copy className="size-3" aria-hidden="true" />
+				)}
+			</button>
+			{copied && (
+				<span
+					role="status"
+					aria-live="polite"
+					className="sr-only"
+				>
+					Copied to clipboard
+				</span>
+			)}
+		</div>
+	);
+}
 
-	const handleCopy = (id: string, text: string) => {
-		navigator.clipboard.writeText(text);
-		setCopiedId(id);
-		setTimeout(() => setCopiedId(null), 2000);
+// ---------------------------------------------------------------------------
+// Main table
+// ---------------------------------------------------------------------------
+interface ApiKeysTableProps {
+	/** Override keys list (useful for testing / storybook). Defaults to mockApiKeys. */
+	initialKeys?: ApiKey[];
+}
+
+export function ApiKeysTable({ initialKeys = mockApiKeys }: ApiKeysTableProps) {
+	const [keys, setKeys] = useState<ApiKey[]>(initialKeys);
+	const [pendingRevokeId, setPendingRevokeId] = useState<string | null>(null);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const pendingKey = keys.find((k) => k.id === pendingRevokeId);
+
+	const handleRevoke = (id: string) => {
+		setKeys((prev) =>
+			prev.map((k) => (k.id === id ? { ...k, status: "Revoked" as const } : k)),
+		);
+		setPendingRevokeId(null);
+	};
+
+	const handleKeyCreated = ({ name, value }: { name: string; value: string }) => {
+		const newKey: ApiKey = {
+			id: `key-${Date.now()}`,
+			name,
+			// Show only a masked preview in the table; the full key was shown once in the modal
+			key: `${value.slice(0, 16)}...`,
+			status: "Active",
+			createdAt: new Date().toISOString(),
+		};
+		setKeys((prev) => [newKey, ...prev]);
 	};
 
 	const getStatusClassName = (status: "Active" | "Revoked") =>
@@ -41,9 +151,26 @@ export function ApiKeysTable() {
 		}`;
 
 	return (
-		<div className="rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950 overflow-hidden">
-			<div className="p-6 border-b border-zinc-200 dark:border-zinc-800">
-				<div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+		<>
+			{/* Revoke confirmation modal */}
+			{pendingRevokeId && pendingKey && (
+				<RevokeConfirm
+					keyName={pendingKey.name}
+					onConfirm={() => handleRevoke(pendingRevokeId)}
+					onCancel={() => setPendingRevokeId(null)}
+				/>
+			)}
+
+			{/* Create key modal */}
+			<APIKeyModal
+				isOpen={isModalOpen}
+				onClose={() => setIsModalOpen(false)}
+				onKeyCreated={handleKeyCreated}
+			/>
+
+			<div className="rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950 overflow-hidden">
+				{/* Header */}
+				<div className="p-6 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
 					<div className="flex items-center gap-3">
 						<div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-900">
 							<Key className="size-5 text-zinc-600 dark:text-zinc-400" />
@@ -57,68 +184,57 @@ export function ApiKeysTable() {
 							</p>
 						</div>
 					</div>
-					<div className="flex flex-wrap items-center gap-2">
-						{statusOptions.map((option) => (
-							<Button
-								key={option}
-								variant={statusFilter === option ? "default" : "outline"}
-								size="sm"
-								type="button"
-								onClick={() => setStatusFilter(option)}
-							>
-								{option}
-							</Button>
-						))}
-						<Button size="sm" className="rounded-full px-4" type="button">
-							Create new key
-						</Button>
-					</div>
+					<Button
+						size="sm"
+						className="rounded-full px-4"
+						onClick={() => setIsModalOpen(true)}
+						data-testid="create-key-btn"
+					>
+						Create new key
+					</Button>
 				</div>
-			</div>
-			<Table>
-				<TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/50">
-					<TableRow>
-						<TableHead className="w-[200px] pl-6">Name</TableHead>
-						<TableHead>Secret Key</TableHead>
-						<TableHead>Status</TableHead>
-						<TableHead>Created</TableHead>
-						<TableHead className="text-right pr-6">Action</TableHead>
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					{filteredApiKeys.length === 0 ? (
-						<TableRow>
-							<TableCell colSpan={5} className="text-center py-10 text-zinc-500 dark:text-zinc-400">
-								No API keys found for the selected status.
-							</TableCell>
-						</TableRow>
-					) : (
-						filteredApiKeys.map((key) => (
-							<TableRow key={key.id} className="group transition-colors">
-								<TableCell className="font-medium pl-6 text-zinc-900 dark:text-zinc-100">
-									{key.name}
-								</TableCell>
-								<TableCell>
-									<div className="flex items-center gap-2 font-mono text-xs text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-900/50 px-2 py-1 rounded w-fit">
-										<span>{key.key}</span>
-										<button
-											onClick={() => handleCopy(key.id, key.key)}
-											className="p-1 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-											title="Copy to clipboard"
-											type="button"
-										>
-											{copiedId === key.id ? (
-												<Check className="size-3 text-green-500" />
-											) : (
-												<Copy className="size-3" />
-											)}
-										</button>
-									</div>
-								</TableCell>
-								<TableCell>
-									<Badge
+
+				{/* Empty state */}
+				{keys.length === 0 ? (
+					<div className="p-6">
+						<EmptyState
+							icon={<Key className="h-10 w-10 text-zinc-400 dark:text-zinc-500" />}
+							title="No API keys yet"
+							description="Create your first API key to start integrating with the Mux Protocol."
+							action={{ label: "Create new key", onClick: () => setIsModalOpen(true) }}
+						/>
+					</div>
+				) : (
+					<Table>
+						<TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/50">
+							<TableRow>
+								<TableHead className="w-[200px] pl-6">Name</TableHead>
+								<TableHead>Secret Key</TableHead>
+								<TableHead>Status</TableHead>
+								<TableHead>Created</TableHead>
+								<TableHead className="text-right pr-6">Action</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{keys.map((key) => (
+								<TableRow key={key.id} className="group transition-colors">
+									<TableCell className="font-medium pl-6 text-zinc-900 dark:text-zinc-100">
+										{key.name}
+									</TableCell>
+									<TableCell>
+										<CopyKeyButton apiKey={key} />
+									</TableCell>
+									<TableCell>
+										<Badge
 											variant={key.status === "Active" ? "default" : "outline"}
-											className={getStatusClassName(key.status)}
+											className={`
+												gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border
+												${
+													key.status === "Active"
+														? "bg-green-50 text-green-700 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20"
+														: "bg-zinc-50 text-zinc-600 border-zinc-200 dark:bg-zinc-900 dark:text-zinc-500 dark:border-zinc-800"
+												}
+											`}
 										>
 											{key.status === "Active" ? (
 												<Shield className="size-3" />
@@ -127,24 +243,33 @@ export function ApiKeysTable() {
 											)}
 											{key.status}
 										</Badge>
-								</TableCell>
-								<TableCell className="text-zinc-500 dark:text-zinc-400">
-									{new Date(key.createdAt).toLocaleDateString()}
-								</TableCell>
-								<TableCell className="text-right pr-6">
-									<Button
-										variant="ghost"
-										size="sm"
-										className="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 h-8 px-3 rounded-lg"
-									>
-										Revoke
-									</Button>
-								</TableCell>
-							</TableRow>
-						))
-					)}
-				</TableBody>
-			</Table>
-		</div>
+									</TableCell>
+									<TableCell className="text-zinc-500 dark:text-zinc-400">
+										{new Date(key.createdAt).toLocaleDateString()}
+									</TableCell>
+									<TableCell className="text-right pr-6">
+										{key.status === "Active" ? (
+											<Button
+												variant="ghost"
+												size="sm"
+												className="text-zinc-500 hover:text-red-600 dark:hover:text-red-400 h-8 px-3 rounded-lg"
+												onClick={() => setPendingRevokeId(key.id)}
+												data-testid={`revoke-btn-${key.id}`}
+											>
+												Revoke
+											</Button>
+										) : (
+											<span className="text-xs text-zinc-400 dark:text-zinc-600 pr-1">
+												Revoked
+											</span>
+										)}
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				)}
+			</div>
+		</>
 	);
 }
