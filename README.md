@@ -33,6 +33,8 @@ End users do not interact with this dashboard — it is purely for developers in
 * **API Key Management**: generate, rotate, and revoke keys
 * **Wallet/Account Tracking**: monitor accounts created via the SDK
 * **Activity Metrics**: view transaction volumes and status
+* **Requests over time**: visualize API request traffic trends
+* **Wallet creation analytics**: monitor daily wallet creation volume
 * **Network Switching**: testnet vs mainnet tracking
 * **Usage Monitoring**: see platform-sponsored actions and account health
 
@@ -54,15 +56,22 @@ pnpm install
 pnpm run dev
 ```
 
-### Testing
+### Auth and API client behavior
+
+This repo now includes a minimal auth flow and API client support for dev mode:
+
+* `src/lib/api.js` adds request header support with `x-request-id` and automatic session refresh on `401`
+* `src/lib/session.js` persists auth state in `localStorage` and clears stale sessions gracefully
+* `src/hooks/useWallets.ts` adds a wallet query hook that loads wallets from `/api/wallets`
+* `src/app/api/auth/refresh/route.ts` and `/api/wallets/route.ts` simulate auth-protected backend behavior for local testing
+
+### Smoke tests
+
+Run full smoke tests with:
 
 ```bash
-pnpm run test
+npm test
 ```
-
-### Spending limits demo behavior
-
-The dashboard demo persists spending limit settings in browser storage and displays a daily usage meter that resets on a new day. If browser storage is unavailable, the UI falls back gracefully and notifies the user.
 
 ---
 
