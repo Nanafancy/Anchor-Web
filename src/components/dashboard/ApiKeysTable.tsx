@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { type ApiKey, mockApiKeys } from "@/mock-data/api-keys";
+import APIKeyModal from "@/components/APIKeyModal";
 
 // ---------------------------------------------------------------------------
 // Revoke confirmation — inline per-row
