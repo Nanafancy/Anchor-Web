@@ -2,6 +2,7 @@
 
 import { Check, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ExplorerLink } from "@/components/ui/ExplorerLink";
 import {
 	Table,
 	TableBody,
@@ -17,11 +18,17 @@ import type { WalletTableProps } from "@/types/wallet";
 import { truncateAddress } from "@/utils/addressFormatting";
 import { formatDate } from "@/utils/dateFormatting";
 
-function WalletAddressCell({ address }: { address: string }) {
+function WalletAddressCell({
+	address,
+	network,
+}: {
+	address: string;
+	network: "mainnet" | "testnet";
+}) {
 	const { copy, copied } = useCopyToClipboard();
 
 	return (
-		<div className="flex items-center gap-2">
+		<div className="flex items-center gap-1">
 			<code className="rounded bg-zinc-100 px-2 py-1 font-mono text-sm text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
 				{truncateAddress(address)}
 			</code>
@@ -37,6 +44,14 @@ function WalletAddressCell({ address }: { address: string }) {
 					<Copy className="h-4 w-4" />
 				)}
 			</Button>
+			<ExplorerLink
+				address={address}
+				network={network}
+				type="account"
+				size="icon-sm"
+				showIcon
+				title="View on Stellar Explorer"
+			/>
 		</div>
 	);
 }
@@ -67,7 +82,10 @@ export function WalletTable({ wallets }: WalletTableProps) {
 					) : wallets.map((wallet) => (
 						<TableRow key={wallet.id}>
 							<TableCell>
-								<WalletAddressCell address={wallet.address} />
+								<WalletAddressCell
+									address={wallet.address}
+									network={wallet.network}
+								/>
 							</TableCell>
 							<TableCell>
 								<NetworkBadge network={wallet.network} />
