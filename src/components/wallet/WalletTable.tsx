@@ -58,7 +58,13 @@ export function WalletTable({ wallets }: WalletTableProps) {
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{wallets.map((wallet) => (
+					{wallets.length === 0 ? (
+						<TableRow>
+							<TableCell colSpan={6} className="py-12 text-center text-zinc-500">
+								No wallets found for this network.
+							</TableCell>
+						</TableRow>
+					) : wallets.map((wallet) => (
 						<TableRow key={wallet.id}>
 							<TableCell>
 								<WalletAddressCell address={wallet.address} />
