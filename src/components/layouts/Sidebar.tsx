@@ -3,10 +3,10 @@
 import {
 	ChartBarIcon,
 	CogIcon,
-	DocumentTextIcon,
 	HomeIcon,
 	ShoppingCartIcon,
 	UsersIcon,
+	WalletIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
 import clsx from "clsx";
@@ -14,17 +14,23 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navigation = [
-	{ name: "Dashboard", href: "/demo/dashboard", icon: HomeIcon },
-	{ name: "Analytics", href: "/demo/dashboard/analytics", icon: ChartBarIcon },
-	{ name: "Users", href: "/demo/dashboard/users", icon: UsersIcon },
-	{ name: "Orders", href: "/demo/dashboard/orders", icon: ShoppingCartIcon },
-	{
-		name: "Documents",
-		href: "/demo/dashboard/documents",
-		icon: DocumentTextIcon,
-	},
-	{ name: "Settings", href: "/demo/dashboard/settings", icon: CogIcon },
+	{ name: "Dashboard", href: "/dashboard", icon: HomeIcon },
+	{ name: "Analytics", href: "/dashboard/analytics", icon: ChartBarIcon },
+	{ name: "Wallets", href: "/dashboard/wallets", icon: WalletIcon },
+	{ name: "Users", href: "/dashboard/users", icon: UsersIcon },
+	{ name: "Orders", href: "/dashboard/orders", icon: ShoppingCartIcon },
+	{ name: "Settings", href: "/dashboard/settings", icon: CogIcon },
 ];
+
+function isNavItemActive(pathname: string, itemHref: string): boolean {
+	// Exact match
+	if (pathname === itemHref) return true;
+	// For the Dashboard root item, only match exact
+	if (itemHref === "/demo/dashboard") return false;
+	// For other items, match if the pathname starts with the item's href
+	// (handles nested routes like /demo/dashboard/settings/profile)
+	return pathname.startsWith(itemHref + "/") || pathname.startsWith(itemHref);
+}
 
 interface SidebarProps {
 	isOpen: boolean;
@@ -68,7 +74,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 					{/* Navigation */}
 					<nav className="flex-1 space-y-1 px-4 py-6 overflow-y-auto">
 						{navigation.map((item) => {
-							const isActive = pathname === item.href;
+							const isActive = isNavItemActive(pathname, item.href);
 							return (
 								<Link
 									key={item.name}
