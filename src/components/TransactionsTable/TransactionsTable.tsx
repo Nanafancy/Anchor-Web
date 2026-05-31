@@ -36,6 +36,9 @@ function formatDate(iso: string): string {
 
 // --- Sub-components ---
 
+/** Default sort: newest transactions first. */
+const DEFAULT_SORT: SortConfig = { key: "date", direction: "desc" };
+
 const StatusPill = ({ status }: { status: TransactionStatus }) => {
 	const styles: Record<TransactionStatus, string> = {
 		completed: "bg-emerald-50 text-emerald-700 border-emerald-100",
