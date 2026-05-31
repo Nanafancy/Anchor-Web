@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertCircle, DollarSign, TrendingUp, Wallet } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/Skeleton";
