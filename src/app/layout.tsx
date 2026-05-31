@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { ReactQueryProvider } from "@/lib/reactQuery/ReactQueryProvider";
+import { ApiProvider } from "@/lib/api/ApiContext";
 
 const inter = Inter({
 	variable: "--font-sans",
