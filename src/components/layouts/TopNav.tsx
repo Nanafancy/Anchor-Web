@@ -7,23 +7,18 @@ import {
 	MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNetwork } from "@/context/NetworkContext";
 
 interface TopNavProps {
 	onMenuClick: () => void;
 }
 
-const networkLabel: Record<string, string> = {
-	testnet: "Testnet",
-	mainnet: "Mainnet",
-};
-
-const networkBadgeClass: Record<string, string> = {
-	testnet: "bg-amber-100 text-amber-800",
+const networkLabel = { mainnet: "Mainnet", testnet: "Testnet" } as const;
+const networkBadgeClass = {
 	mainnet: "bg-blue-100 text-blue-800",
-};
+	testnet: "bg-amber-100 text-amber-800",
+} as const;
 
 export function TopNav({ onMenuClick }: TopNavProps) {
 	const [searchOpen, setSearchOpen] = useState(false);
@@ -31,11 +26,27 @@ export function TopNav({ onMenuClick }: TopNavProps) {
 	const { network, setNetwork } = useNetwork();
 
 	// Get current page title from pathname
-	const pageTitle =
-		pathname === "/"
-			? "Dashboard"
-			: (pathname.split("/").pop() ?? "").charAt(0).toUpperCase() +
-				(pathname.split("/").pop() ?? "").slice(1);
+	const pageTitle = (() => {
+		const segment = pathname.split("/").pop() ?? "";
+		const titleMap: Record<string, string> = {
+			dashboard: "Dashboard",
+			analytics: "Analytics",
+			users: "Users",
+			orders: "Orders",
+			documents: "Documents",
+			settings: "Settings",
+			wallets: "Wallets",
+			"api-keys": "API Keys",
+			"spending-limits": "Spending Limits",
+		};
+		return (
+			titleMap[segment] ?? segment.charAt(0).toUpperCase() + segment.slice(1)
+		);
+	})();
+
+	useEffect(() => {
+		document.title = `${pageTitle} · ${networkLabel[network]} — Mux`;
+	}, [pageTitle, network]);
 
 	// Sync browser tab title
 	useEffect(() => {
@@ -112,6 +123,7 @@ export function TopNav({ onMenuClick }: TopNavProps) {
 							Mainnet
 						</button>
 					</div>
+
 					{/* Search - responsive */}
 					<div
 						className={`
