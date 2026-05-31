@@ -143,6 +143,13 @@ export function ApiKeysTable({ initialKeys = mockApiKeys }: ApiKeysTableProps) {
 		setKeys((prev) => [newKey, ...prev]);
 	};
 
+	const getStatusClassName = (status: "Active" | "Revoked") =>
+		`gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
+			status === "Active"
+				? "bg-green-50 text-green-700 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20"
+				: "bg-zinc-50 text-zinc-600 border-zinc-200 dark:bg-zinc-900 dark:text-zinc-500 dark:border-zinc-800"
+		}`;
+
 	return (
 		<>
 			{/* Revoke confirmation modal */}
