@@ -25,11 +25,24 @@ export function TopNav({ onMenuClick }: TopNavProps) {
 	const pathname = usePathname();
 	const { network, setNetwork } = useNetwork();
 
-	const pageTitle =
-		pathname === "/"
-			? "Dashboard"
-			: (pathname.split("/").pop() ?? "").charAt(0).toUpperCase() +
-				(pathname.split("/").pop() ?? "").slice(1);
+	// Get current page title from pathname
+	const pageTitle = (() => {
+		const segment = pathname.split("/").pop() ?? "";
+		const titleMap: Record<string, string> = {
+			dashboard: "Dashboard",
+			analytics: "Analytics",
+			users: "Users",
+			orders: "Orders",
+			documents: "Documents",
+			settings: "Settings",
+			wallets: "Wallets",
+			"api-keys": "API Keys",
+			"spending-limits": "Spending Limits",
+		};
+		return (
+			titleMap[segment] ?? segment.charAt(0).toUpperCase() + segment.slice(1)
+		);
+	})();
 
 	useEffect(() => {
 		document.title = `${pageTitle} · ${networkLabel[network]} — Mux`;
