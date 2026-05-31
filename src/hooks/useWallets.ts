@@ -1,37 +1,58 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { apiFetch } from "@/lib/api";
+import { useCallback, useEffect, useState } from "react";
 import type { Wallet } from "@/types/wallet";
 
-export function useWallets() {
+interface UseWalletsResult {
+	wallets: Wallet[];
+	loading: boolean;
+	error: string | null;
+	refetch: () => void;
+}
+
+export function useWallets(): UseWalletsResult {
 	const [wallets, setWallets] = useState<Wallet[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [tick, setTick] = useState(0);
 
-	const loadWallets = useCallback(async () => {
+	const refetch = useCallback(() => setTick((t) => t + 1), []);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: tick is the refetch trigger
+	useEffect(() => {
+		let cancelled = false;
 		setLoading(true);
 		setError(null);
 
-		try {
-			const data = await apiFetch<Wallet[]>("/api/wallets");
-			setWallets(Array.isArray(data) ? data : []);
-		} catch (err) {
-			setError(err instanceof Error ? err.message : "Unable to load wallets");
-			setWallets([]);
-		} finally {
+		const base = process.env.NEXT_PUBLIC_API_URL;
+		if (!base) {
+			setError("API URL is not configured.");
 			setLoading(false);
+			return;
 		}
-	}, []);
 
-	useEffect(() => {
-		loadWallets();
-	}, [loadWallets]);
+		fetch(`${base}/wallets`)
+			.then((res) => {
+				if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+				return res.json() as Promise<Wallet[]>;
+			})
+			.then((data) => {
+				if (!cancelled) setWallets(data);
+			})
+			.catch((err: unknown) => {
+				if (!cancelled)
+					setError(
+						err instanceof Error ? err.message : "Failed to load wallets.",
+					);
+			})
+			.finally(() => {
+				if (!cancelled) setLoading(false);
+			});
 
-	return {
-		wallets,
-		loading,
-		error,
-		refresh: loadWallets,
-	};
+		return () => {
+			cancelled = true;
+		};
+	}, [tick]);
+
+	return { wallets, loading, error, refetch };
 }

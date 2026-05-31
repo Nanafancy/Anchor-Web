@@ -33,6 +33,8 @@ End users do not interact with this dashboard — it is purely for developers in
 * **API Key Management**: generate, rotate, and revoke keys
 * **Wallet/Account Tracking**: monitor accounts created via the SDK
 * **Activity Metrics**: view transaction volumes and status
+* **Requests over time**: visualize API request traffic trends
+* **Wallet creation analytics**: monitor daily wallet creation volume
 * **Network Switching**: testnet vs mainnet tracking
 * **Usage Monitoring**: see platform-sponsored actions and account health
 
