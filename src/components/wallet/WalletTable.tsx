@@ -66,20 +66,52 @@ export function WalletTable({ wallets }: WalletTableProps) {
 	);
 
 	return (
-		<div className="space-y-4">
-			{hasTestnetWallets && <TestnetHint variant="default" />}
-			<div className="rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-				<Table>
-					<TableHeader>
-						<TableRow className="hover:bg-transparent dark:hover:bg-transparent">
-							<TableHead>Address</TableHead>
-							<TableHead>Network</TableHead>
-							<TableHead>Status</TableHead>
-							<TableHead className="hidden sm:table-cell">Balance</TableHead>
-							<TableHead className="hidden md:table-cell">Created</TableHead>
-							<TableHead className="hidden lg:table-cell">
-								Last Activity
-							</TableHead>
+		<div className="rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+			<Table>
+				<TableHeader>
+					<TableRow className="hover:bg-transparent dark:hover:bg-transparent">
+						<TableHead>Address</TableHead>
+						<TableHead>Network</TableHead>
+						<TableHead>Status</TableHead>
+						<TableHead className="hidden sm:table-cell">Balance</TableHead>
+						<TableHead className="hidden md:table-cell">Created</TableHead>
+						<TableHead className="hidden lg:table-cell">
+							Last Activity
+						</TableHead>
+					</TableRow>
+				</TableHeader>
+				<TableBody>
+					{wallets.length === 0 ? (
+						<TableRow>
+							<TableCell colSpan={6} className="py-12 text-center text-zinc-500">
+								No wallets found for this network.
+							</TableCell>
+						</TableRow>
+					) : wallets.map((wallet) => (
+						<TableRow key={wallet.id}>
+							<TableCell>
+								<WalletAddressCell
+									address={wallet.address}
+									network={wallet.network}
+								/>
+							</TableCell>
+							<TableCell>
+								<NetworkBadge network={wallet.network} />
+							</TableCell>
+							<TableCell>
+								<StatusIndicator status={wallet.status} />
+							</TableCell>
+							<TableCell className="hidden sm:table-cell">
+								<span className="text-zinc-700 dark:text-zinc-300">
+									{wallet.balance ?? "—"}
+								</span>
+							</TableCell>
+							<TableCell className="hidden text-zinc-500 md:table-cell dark:text-zinc-400">
+								{formatDate(wallet.createdAt)}
+							</TableCell>
+							<TableCell className="hidden text-zinc-500 lg:table-cell dark:text-zinc-400">
+								{formatDate(wallet.lastActivity)}
+							</TableCell>
 						</TableRow>
 					</TableHeader>
 					<TableBody>

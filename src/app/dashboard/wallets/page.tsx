@@ -7,8 +7,7 @@ import { dummyWallets } from "@/mock-data/wallets";
 import type { Wallet } from "@/types/wallet";
 
 export default function WalletsPage() {
-	const { network } = useNetwork();
-	const wallets = dummyWallets.filter((w) => w.network === network);
+	const wallets: Wallet[] = dummyWallets;
 
 	return (
 		<div className="space-y-8">
