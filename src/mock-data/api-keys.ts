@@ -1,6 +1,7 @@
 export interface ApiKey {
 	id: string;
 	name: string;
+	/** Masked key shown in the table (e.g. "sk_live_51M0...") */
 	key: string;
 	status: "Active" | "Revoked";
 	createdAt: string;
