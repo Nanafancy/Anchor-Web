@@ -89,8 +89,13 @@ export default function TransactionsTable() {
 		direction: "asc" | "desc";
 	} | null>(null);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [itemsPerPage, setItemsPerPage] = useState(5);
 
-	const itemsPerPage = 5;
+	// Get unique wallet IDs from transactions
+	const uniqueWalletIds = useMemo(
+		() => Array.from(new Set(INITIAL_DATA.map((tx) => tx.walletId))).sort(),
+		[],
+	);
 
 	const filteredData = useMemo(() => {
 		return mockTransactions.filter((tx) => {
@@ -135,6 +140,12 @@ export default function TransactionsTable() {
 
 	const handlePageChange = (page: number) => {
 		if (page >= 1 && page <= totalPages) setCurrentPage(page);
+	};
+
+	const handleItemsPerPageChange = (newSize: number) => {
+		setItemsPerPage(newSize);
+		// Reset to page 1 when changing page size
+		setCurrentPage(1);
 	};
 
 	const clearFilters = () => {
