@@ -27,7 +27,9 @@ export default function SpendingLimitsPage() {
 							contacting our support team or upgrading your plan.
 						</p>
 						<a
-							href="#"
+							href="https://docs.mux.com/billing"
+							target="_blank"
+							rel="noreferrer"
 							className="text-sm font-medium text-zinc-900 dark:text-zinc-50 hover:underline inline-flex items-center gap-1"
 						>
 							View billing details

@@ -1,18 +1,108 @@
 "use client";
 
 import { AlertCircle, DollarSign, TrendingUp, Wallet } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+
+function parseLimit(value: string) {
+	const number = Number(value);
+	return Number.isFinite(number) ? number : NaN;
+}
 
 export function SpendingLimitsCard() {
 	const [dailyLimit, setDailyLimit] = useState("5000");
 	const [transactionLimit, setTransactionLimit] = useState("1000");
+	const [notification, setNotification] = useState<string | null>(null);
+	const [notificationType, setNotificationType] = useState<
+		"success" | "error" | null
+	>(null);
 
-	// Dummy usage data: 750 / 5000 = 15%
+	const notificationTimeoutRef = useRef<number | null>(null);
+
+	const clearNotification = () => {
+		setNotification(null);
+		setNotificationType(null);
+		if (notificationTimeoutRef.current) {
+			window.clearTimeout(notificationTimeoutRef.current);
+			notificationTimeoutRef.current = null;
+		}
+	};
+
+	const showNotification = (message: string, type: "success" | "error") => {
+		clearNotification();
+		setNotification(message);
+		setNotificationType(type);
+		notificationTimeoutRef.current = window.setTimeout(() => {
+			clearNotification();
+		}, 3000);
+	};
+
+	useEffect(() => {
+		try {
+			const stored = window.localStorage.getItem("spending-limits");
+			if (!stored) {
+				return;
+			}
+
+			const parsed = JSON.parse(stored);
+			if (
+				typeof parsed?.dailyLimit === "number" &&
+				isFinite(parsed.dailyLimit)
+			) {
+				// eslint-disable-next-line react-hooks/set-state-in-effect
+				setDailyLimit(String(parsed.dailyLimit));
+			}
+
+			if (
+				typeof parsed?.transactionLimit === "number" &&
+				isFinite(parsed.transactionLimit)
+			) {
+				setTransactionLimit(String(parsed.transactionLimit));
+			}
+		} catch {
+			// Silently fail if storage is not available
+		}
+
+		return () => {
+			if (notificationTimeoutRef.current) {
+				window.clearTimeout(notificationTimeoutRef.current);
+			}
+		};
+	}, []);
+
 	const usedAmount = 750;
 	const totalLimit = Number.parseInt(dailyLimit) || 1;
 	const usagePercentage = Math.min((usedAmount / totalLimit) * 100, 100);
+
+	const handleSave = () => {
+		const dailyValue = parseLimit(dailyLimit);
+		const transactionValue = parseLimit(transactionLimit);
+
+		if (Number.isNaN(dailyValue) || Number.isNaN(transactionValue)) {
+			showNotification(
+				"Unable to save spending limits. Please enter valid numeric values.",
+				"error",
+			);
+			return;
+		}
+
+		try {
+			window.localStorage.setItem(
+				"spending-limits",
+				JSON.stringify({
+					dailyLimit: dailyValue,
+					transactionLimit: transactionValue,
+				}),
+			);
+			showNotification("Spending limits saved.", "success");
+		} catch {
+			showNotification(
+				"Unable to save spending limits. Please check your browser storage settings and try again.",
+				"error",
+			);
+		}
+	};
 
 	return (
 		<div className="rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950 overflow-hidden">
@@ -133,8 +223,25 @@ export function SpendingLimitsCard() {
 				</div>
 			</div>
 
-			<div className="px-6 py-4 bg-zinc-50 dark:bg-zinc-900/50 flex justify-end">
-				<Button className="rounded-full px-6">Save Settings</Button>
+			<div className="px-6 py-4 bg-zinc-50 dark:bg-zinc-900/50 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+				<div>
+					{notification ? (
+						<p
+							role="status"
+							aria-live="polite"
+							className={
+								notificationType === "error"
+									? "text-sm text-red-600 dark:text-red-400"
+									: "text-sm text-green-700 dark:text-green-300"
+							}
+						>
+							{notification}
+						</p>
+					) : null}
+				</div>
+				<Button className="rounded-full px-6" onClick={handleSave}>
+					Save Settings
+				</Button>
 			</div>
 		</div>
 	);
