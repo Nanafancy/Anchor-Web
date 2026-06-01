@@ -29,7 +29,7 @@ export default function AnalyticsPage() {
 
 	return (
 		<div className="space-y-8">
-			<AnalyticsHeader />
+			<AnalyticsHeader range={range} onRangeChange={setRange} />
 
 			<MetricsCards metrics={data.metrics} />
 
