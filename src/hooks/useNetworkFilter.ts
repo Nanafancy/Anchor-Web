@@ -29,26 +29,21 @@ export function useNetworkFilter() {
 	 * Validates and sets the selected network
 	 * Defaults to "all" if invalid value is provided
 	 */
-	const setSelectedNetwork = useCallback(
-		(network: WalletNetwork | "all") => {
-			const validNetworks: (WalletNetwork | "all")[] = [
-				"all",
-				"testnet",
-				"mainnet",
-			];
+	const setSelectedNetwork = useCallback((network: WalletNetwork | "all") => {
+		const validNetworks: (WalletNetwork | "all")[] = [
+			"all",
+			"testnet",
+			"mainnet",
+		];
 
-			if (validNetworks.includes(network)) {
-				setSelectedNetworkState(network);
-			} else {
-				// Gracefully handle invalid network values
-				console.warn(
-					`Invalid network value: ${network}. Defaulting to "all".`,
-				);
-				setSelectedNetworkState("all");
-			}
-		},
-		[],
-	);
+		if (validNetworks.includes(network)) {
+			setSelectedNetworkState(network);
+		} else {
+			// Gracefully handle invalid network values
+			console.warn(`Invalid network value: ${network}. Defaulting to "all".`);
+			setSelectedNetworkState("all");
+		}
+	}, []);
 
 	/**
 	 * Checks if a specific network is currently selected

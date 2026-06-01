@@ -93,14 +93,13 @@ export function validateEnv(
 	}
 
 	if (errors.length > 0) {
-		if (typeof process !== "undefined" && process.env?.NODE_ENV === "production") {
-			throw new Error(
-				`Environment validation failed:\n${errors.join("\n")}`,
-			);
+		if (
+			typeof process !== "undefined" &&
+			process.env?.NODE_ENV === "production"
+		) {
+			throw new Error(`Environment validation failed:\n${errors.join("\n")}`);
 		}
-		console.error(
-			`[env] Environment validation errors:\n${errors.join("\n")}`,
-		);
+		console.error(`[env] Environment validation errors:\n${errors.join("\n")}`);
 	}
 
 	if (warnings.length > 0) {

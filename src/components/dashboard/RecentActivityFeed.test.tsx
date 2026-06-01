@@ -1,35 +1,35 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
-import { RecentActivityFeed } from './RecentActivityFeed';
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import { RecentActivityFeed } from "./RecentActivityFeed";
 
-describe('RecentActivityFeed', () => {
-	it('renders loading skeleton initially', () => {
+describe("RecentActivityFeed", () => {
+	it("renders loading skeleton initially", () => {
 		render(<RecentActivityFeed />);
 		expect(screen.getAllByTestId(/skeleton/i)).toBeTruthy();
 	});
 
-	it('displays activity feed after loading', async () => {
+	it("displays activity feed after loading", async () => {
 		render(<RecentActivityFeed />);
-		
+
 		await waitFor(() => {
-			expect(screen.getByText('Recent Activity')).toBeInTheDocument();
+			expect(screen.getByText("Recent Activity")).toBeInTheDocument();
 		});
 	});
 
-	it('displays activity items', async () => {
+	it("displays activity items", async () => {
 		render(<RecentActivityFeed />);
-		
+
 		await waitFor(() => {
 			expect(screen.getByText(/wallet created/i)).toBeInTheDocument();
 			expect(screen.getByText(/transaction/i)).toBeInTheDocument();
 		});
 	});
 
-	it('shows empty state when no activities', async () => {
+	it("shows empty state when no activities", async () => {
 		render(<RecentActivityFeed />);
-		
+
 		await waitFor(() => {
-			const feed = screen.getByText('Recent Activity');
+			const feed = screen.getByText("Recent Activity");
 			expect(feed).toBeInTheDocument();
 		});
 	});

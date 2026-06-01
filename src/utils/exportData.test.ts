@@ -77,7 +77,9 @@ const withQuoteInDescription: Transaction = {
 describe("transactionsToCsv", () => {
 	it("returns only the header row for an empty array", () => {
 		const result = transactionsToCsv([]);
-		expect(result).toBe("ID,Date,Description,Category,Type,Status,Amount,Currency");
+		expect(result).toBe(
+			"ID,Date,Description,Category,Type,Status,Amount,Currency",
+		);
 	});
 
 	it("produces the correct number of lines (header + one per transaction)", () => {
@@ -198,7 +200,10 @@ describe("computeAnalyticsSummary", () => {
 	});
 
 	it("sums incoming amounts correctly", () => {
-		const summary = computeAnalyticsSummary([completedIncoming, pendingOutgoing]);
+		const summary = computeAnalyticsSummary([
+			completedIncoming,
+			pendingOutgoing,
+		]);
 		expect(summary.totalIncoming).toBe(1000);
 	});
 

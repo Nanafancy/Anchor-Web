@@ -72,7 +72,11 @@ describe("useAnalyticsExport", () => {
 			await result.current.exportAs("csv");
 		});
 
-		expect(spy).toHaveBeenCalledWith(sampleTransactions, "csv", "analytics-export");
+		expect(spy).toHaveBeenCalledWith(
+			sampleTransactions,
+			"csv",
+			"analytics-export",
+		);
 		expect(result.current.status).toBe("success");
 		expect(result.current.errorMessage).toBeNull();
 	});
@@ -182,7 +186,9 @@ describe("useAnalyticsExport", () => {
 		});
 
 		expect(result.current.status).toBe("error");
-		expect(result.current.errorMessage).toBe("Export failed. Please try again.");
+		expect(result.current.errorMessage).toBe(
+			"Export failed. Please try again.",
+		);
 	});
 
 	it("does not call exportTransactions again while already exporting", async () => {

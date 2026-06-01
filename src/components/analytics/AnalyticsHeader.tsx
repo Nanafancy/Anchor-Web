@@ -12,7 +12,10 @@ interface AnalyticsHeaderProps {
 	onRangeChange: (range: DateRange) => void;
 }
 
-export function AnalyticsHeader({ range, onRangeChange }: AnalyticsHeaderProps) {
+export function AnalyticsHeader({
+	range,
+	onRangeChange,
+}: AnalyticsHeaderProps) {
 	return (
 		<header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div>

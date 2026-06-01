@@ -72,7 +72,9 @@ export function TopNav({ onMenuClick }: TopNavProps) {
 				<div className="flex flex-1 items-center">
 					<h1 className="flex items-center gap-2 text-lg font-semibold text-gray-900 sm:text-xl">
 						{pageTitle}
-						<span className={`rounded-full px-2 py-0.5 text-xs font-medium ${networkBadgeClass[network]}`}>
+						<span
+							className={`rounded-full px-2 py-0.5 text-xs font-medium ${networkBadgeClass[network]}`}
+						>
 							{networkLabel[network]}
 						</span>
 					</h1>
@@ -87,7 +89,9 @@ export function TopNav({ onMenuClick }: TopNavProps) {
 							<li className="text-gray-400">/</li>
 							<li className="flex items-center gap-1.5 font-medium text-gray-900">
 								{pageTitle}
-								<span className={`rounded-full px-2 py-0.5 text-xs font-medium ${networkBadgeClass[network]}`}>
+								<span
+									className={`rounded-full px-2 py-0.5 text-xs font-medium ${networkBadgeClass[network]}`}
+								>
 									{networkLabel[network]}
 								</span>
 							</li>

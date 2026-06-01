@@ -8,7 +8,12 @@ import { useAnalytics } from "./useAnalytics";
 
 vi.mock("@/mock-data/analytics", () => ({
 	metrics: [
-		{ label: "Total Volume", value: "$12.4M", change: 12.5, changeLabel: "vs last period" },
+		{
+			label: "Total Volume",
+			value: "$12.4M",
+			change: 12.5,
+			changeLabel: "vs last period",
+		},
 	],
 	volumeData: [{ date: "Mon", value: 2400000 }],
 	transactionsData: [{ date: "Mon", value: 12000 }],

@@ -69,7 +69,9 @@ export function RecoveryTimelineList({
 	// Calculate statistics
 	const completedCount = events.filter((e) => e.status === "completed").length;
 	const failedCount = events.filter((e) => e.status === "failed").length;
-	const inProgressCount = events.filter((e) => e.status === "in_progress").length;
+	const inProgressCount = events.filter(
+		(e) => e.status === "in_progress",
+	).length;
 	const progressPercentage = Math.round((completedCount / events.length) * 100);
 
 	return (
@@ -121,7 +123,8 @@ export function RecoveryTimelineList({
 						onClick={() => onEventClick?.(event)}
 						className={cn(
 							"transition-all",
-							onEventClick && "cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-900/50 p-2 rounded",
+							onEventClick &&
+								"cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-900/50 p-2 rounded",
 						)}
 					/>
 				))}

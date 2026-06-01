@@ -19,12 +19,25 @@ vi.mock("@/lib/api", () => ({
 // Mock mock-data/analytics for the fallback path
 vi.mock("@/mock-data/analytics", () => ({
 	metrics: [
-		{ label: "Total Volume", value: "$12.4M", change: 12.5, changeLabel: "vs last period" },
+		{
+			label: "Total Volume",
+			value: "$12.4M",
+			change: 12.5,
+			changeLabel: "vs last period",
+		},
 	],
 	volumeData: [{ date: "Mon", value: 2400000 }],
 	transactionsData: [{ date: "Mon", value: 12000 }],
 	topAssets: [
-		{ rank: 1, name: "Mux Protocol", symbol: "MUX", volume: "$4M", volumeChange: 15, tvl: "$18M", txCount: 28000 },
+		{
+			rank: 1,
+			name: "Mux Protocol",
+			symbol: "MUX",
+			volume: "$4M",
+			volumeChange: 15,
+			tvl: "$18M",
+			txCount: 28000,
+		},
 	],
 }));
 
@@ -84,7 +97,9 @@ describe("useAnalyticsMetrics", () => {
 	it("calls fetchAllAnalytics when API URL is configured", async () => {
 		const { fetchAllAnalytics } = await import("@/services/analyticsService");
 		vi.mocked(fetchAllAnalytics).mockResolvedValue({
-			metrics: [{ label: "Vol", value: "$1M", change: 5, changeLabel: "vs last" }],
+			metrics: [
+				{ label: "Vol", value: "$1M", change: 5, changeLabel: "vs last" },
+			],
 			volumeData: [{ date: "Mon", value: 100 }],
 			transactionsData: [{ date: "Mon", value: 50 }],
 			topAssets: [],
@@ -96,10 +111,7 @@ describe("useAnalyticsMetrics", () => {
 
 		await waitFor(() => expect(result.current.status).toBe("success"));
 
-		expect(fetchAllAnalytics).toHaveBeenCalledWith(
-			expect.anything(),
-			RANGE,
-		);
+		expect(fetchAllAnalytics).toHaveBeenCalledWith(expect.anything(), RANGE);
 		expect(result.current.data?.metrics[0].label).toBe("Vol");
 	});
 
@@ -135,7 +147,9 @@ describe("useAnalyticsMetrics", () => {
 	it("re-fetches when the date range changes", async () => {
 		const { fetchAllAnalytics } = await import("@/services/analyticsService");
 		vi.mocked(fetchAllAnalytics).mockResolvedValue({
-			metrics: [{ label: "Vol", value: "$1M", change: 5, changeLabel: "vs last" }],
+			metrics: [
+				{ label: "Vol", value: "$1M", change: 5, changeLabel: "vs last" },
+			],
 			volumeData: [],
 			transactionsData: [],
 			topAssets: [],
@@ -154,10 +168,10 @@ describe("useAnalyticsMetrics", () => {
 		rerender({ range: { from: "2024-02-01", to: "2024-02-07" } });
 
 		await waitFor(() => expect(fetchAllAnalytics).toHaveBeenCalledTimes(2));
-		expect(fetchAllAnalytics).toHaveBeenLastCalledWith(
-			expect.anything(),
-			{ from: "2024-02-01", to: "2024-02-07" },
-		);
+		expect(fetchAllAnalytics).toHaveBeenLastCalledWith(expect.anything(), {
+			from: "2024-02-01",
+			to: "2024-02-07",
+		});
 	});
 
 	// -------------------------------------------------------------------------

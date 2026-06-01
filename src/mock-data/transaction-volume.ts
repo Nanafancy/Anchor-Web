@@ -24,7 +24,7 @@ function generateDailyData(): TransactionVolumePoint[] {
 		const dow = d.getDay();
 		const weekendFactor = dow === 0 || dow === 6 ? 0.5 : 1;
 		const count = Math.round((20 + r1 * 80) * weekendFactor);
-		const volume = Math.round((count * (500 + r2 * 2000)) * 100) / 100;
+		const volume = Math.round(count * (500 + r2 * 2000) * 100) / 100;
 		data.push({ date: dateStr, count, volume });
 	}
 	return data;

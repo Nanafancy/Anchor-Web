@@ -12,7 +12,10 @@ interface AnalyticsChartProps {
 function SparkBar({ height, label }: { height: number; label: string }) {
 	return (
 		<div className="flex flex-1 flex-col items-center gap-1.5">
-			<div className="flex w-full items-end justify-center" style={{ height: 120 }}>
+			<div
+				className="flex w-full items-end justify-center"
+				style={{ height: 120 }}
+			>
 				<div
 					className="w-full max-w-[32px] rounded-t-md bg-blue-500 transition-all duration-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500"
 					style={{ height: `${height}%` }}
@@ -74,9 +77,7 @@ export function AnalyticsChart({
 						<span>
 							Avg:{" "}
 							{formatValue(
-								Math.round(
-									data.reduce((a, b) => a + b.value, 0) / data.length,
-								),
+								Math.round(data.reduce((a, b) => a + b.value, 0) / data.length),
 							)}
 						</span>
 					</div>

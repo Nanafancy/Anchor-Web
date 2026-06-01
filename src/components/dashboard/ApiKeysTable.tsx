@@ -98,11 +98,7 @@ function CopyKeyButton({ apiKey }: { apiKey: ApiKey }) {
 				)}
 			</button>
 			{copied && (
-				<span
-					role="status"
-					aria-live="polite"
-					className="sr-only"
-				>
+				<span role="status" aria-live="polite" className="sr-only">
 					Copied to clipboard
 				</span>
 			)}
@@ -132,7 +128,13 @@ export function ApiKeysTable({ initialKeys = mockApiKeys }: ApiKeysTableProps) {
 		setPendingRevokeId(null);
 	};
 
-	const handleKeyCreated = ({ name, value }: { name: string; value: string }) => {
+	const handleKeyCreated = ({
+		name,
+		value,
+	}: {
+		name: string;
+		value: string;
+	}) => {
 		const newKey: ApiKey = {
 			id: `key-${Date.now()}`,
 			name,
@@ -199,10 +201,15 @@ export function ApiKeysTable({ initialKeys = mockApiKeys }: ApiKeysTableProps) {
 				{keys.length === 0 ? (
 					<div className="p-6">
 						<EmptyState
-							icon={<Key className="h-10 w-10 text-zinc-400 dark:text-zinc-500" />}
+							icon={
+								<Key className="h-10 w-10 text-zinc-400 dark:text-zinc-500" />
+							}
 							title="No API keys yet"
 							description="Create your first API key to start integrating with the Mux Protocol."
-							action={{ label: "Create new key", onClick: () => setIsModalOpen(true) }}
+							action={{
+								label: "Create new key",
+								onClick: () => setIsModalOpen(true),
+							}}
 						/>
 					</div>
 				) : (

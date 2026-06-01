@@ -12,7 +12,11 @@ export type RecoveryEventType =
 	| "completion"
 	| "error";
 
-export type RecoveryEventStatus = "pending" | "in_progress" | "completed" | "failed";
+export type RecoveryEventStatus =
+	| "pending"
+	| "in_progress"
+	| "completed"
+	| "failed";
 
 /**
  * Represents a single event in the recovery timeline

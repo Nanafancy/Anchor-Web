@@ -15,8 +15,10 @@ import {
 } from "../addressFormatter";
 
 describe("addressFormatter utilities", () => {
-	const validAddress = "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
-	const validAddress2 = "GCFONE23AB7Y6C5YZOMKUKGETPIAJA752ZPMORQO5VKA6LHXHC7Y3YPE";
+	const validAddress =
+		"GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
+	const validAddress2 =
+		"GCFONE23AB7Y6C5YZOMKUKGETPIAJA752ZPMORQO5VKA6LHXHC7Y3YPE";
 	const invalidAddress = "INVALID_ADDRESS";
 	const truncatedAddress = "GBZXN7...MADI";
 
@@ -365,7 +367,14 @@ describe("addressFormatter utilities", () => {
 		});
 
 		it("should return description for all formats", () => {
-			const formats = ["full", "truncated", "short", "chunked", "masked", "grouped"] as const;
+			const formats = [
+				"full",
+				"truncated",
+				"short",
+				"chunked",
+				"masked",
+				"grouped",
+			] as const;
 			formats.forEach((format) => {
 				const desc = getFormatDescription(format);
 				expect(desc).toBeTruthy();
@@ -444,7 +453,8 @@ describe("addressFormatter utilities", () => {
 		});
 
 		it("should handle mixed case addresses", () => {
-			const mixedCase = validAddress.slice(0, 10).toLowerCase() + validAddress.slice(10);
+			const mixedCase =
+				validAddress.slice(0, 10).toLowerCase() + validAddress.slice(10);
 			const result = formatAddress(mixedCase);
 			expect(result.isValid).toBe(true);
 		});
@@ -476,7 +486,9 @@ describe("addressFormatter utilities", () => {
 
 			// Compare all formats
 			expect(compareAddresses(full.formatted, truncated.formatted)).toBe(true);
-			expect(compareAddresses(truncated.formatted, chunked.formatted)).toBe(true);
+			expect(compareAddresses(truncated.formatted, chunked.formatted)).toBe(
+				true,
+			);
 		});
 
 		it("should handle batch formatting and comparison", () => {

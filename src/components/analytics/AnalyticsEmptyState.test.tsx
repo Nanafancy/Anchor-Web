@@ -53,15 +53,11 @@ describe("AnalyticsEmptyState — custom props", () => {
 
 	it("renders a custom description", () => {
 		render(<AnalyticsEmptyState description="Try a different date range." />);
-		expect(
-			screen.getByText(/try a different date range/i),
-		).toBeInTheDocument();
+		expect(screen.getByText(/try a different date range/i)).toBeInTheDocument();
 	});
 
 	it("renders a custom icon", () => {
-		render(
-			<AnalyticsEmptyState icon={<span data-testid="custom-icon" />} />,
-		);
+		render(<AnalyticsEmptyState icon={<span data-testid="custom-icon" />} />);
 		expect(screen.getByTestId("custom-icon")).toBeInTheDocument();
 	});
 });
@@ -92,9 +88,7 @@ describe("AnalyticsEmptyState — action button", () => {
 	});
 
 	it("action button has type='button' to avoid accidental form submission", () => {
-		render(
-			<AnalyticsEmptyState action={{ label: "Go", onClick: vi.fn() }} />,
-		);
+		render(<AnalyticsEmptyState action={{ label: "Go", onClick: vi.fn() }} />);
 		expect(screen.getByRole("button", { name: /go/i })).toHaveAttribute(
 			"type",
 			"button",

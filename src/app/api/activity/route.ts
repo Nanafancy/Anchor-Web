@@ -10,33 +10,39 @@ const VALID_ACCESS_TOKEN = "mock-access-token";
  * appropriately shaped data.
  */
 function mapTransactionToActivity(tx) {
-  // Determine activity type based on transaction status and direction (simplified)
-  const type = tx.from === "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI"
-    ? "wallet_created"
-    : "transaction";
+	// Determine activity type based on transaction status and direction (simplified)
+	const type =
+		tx.from === "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI"
+			? "wallet_created"
+			: "transaction";
 
-  return {
-    id: tx.hash,
-    type,
-    description: `${tx.from.slice(0, 4)} → ${tx.to.slice(0, 4)}: ${tx.amountXlm} XLM`,
-    timestamp: tx.createdAt,
-    status: tx.status === "completed" ? "success" : tx.status === "pending" ? "pending" : "error",
-  };
+	return {
+		id: tx.hash,
+		type,
+		description: `${tx.from.slice(0, 4)} → ${tx.to.slice(0, 4)}: ${tx.amountXlm} XLM`,
+		timestamp: tx.createdAt,
+		status:
+			tx.status === "completed"
+				? "success"
+				: tx.status === "pending"
+					? "pending"
+					: "error",
+	};
 }
 
 export async function GET(request: Request) {
-  const authorization = request.headers.get("authorization");
-  if (!authorization?.startsWith("Bearer ")) {
-    return NextResponse.json({ error: "missing_auth" }, { status: 401 });
-  }
+	const authorization = request.headers.get("authorization");
+	if (!authorization?.startsWith("Bearer ")) {
+		return NextResponse.json({ error: "missing_auth" }, { status: 401 });
+	}
 
-  const token = authorization.slice("Bearer ".length).trim();
-  if (token !== VALID_ACCESS_TOKEN) {
-    return NextResponse.json({ error: "invalid_token" }, { status: 401 });
-  }
+	const token = authorization.slice("Bearer ".length).trim();
+	if (token !== VALID_ACCESS_TOKEN) {
+		return NextResponse.json({ error: "invalid_token" }, { status: 401 });
+	}
 
-  // Map mock transactions to activity items
-  const activities = mockTransactions.map(mapTransactionToActivity);
+	// Map mock transactions to activity items
+	const activities = mockTransactions.map(mapTransactionToActivity);
 
-  return NextResponse.json(activities);
+	return NextResponse.json(activities);
 }

@@ -33,7 +33,14 @@ export function useAddressFormatter(
 ): FormattedAddress {
 	return useMemo(() => {
 		return formatAddress(address, options);
-	}, [address, options.format, options.chunkSize, options.separator, options.maskChar, options.groupSize]);
+	}, [
+		address,
+		options.format,
+		options.chunkSize,
+		options.separator,
+		options.maskChar,
+		options.groupSize,
+	]);
 }
 
 /**
@@ -53,7 +60,14 @@ export function useAddressFormatterBatch(
 ): FormattedAddress[] {
 	return useMemo(() => {
 		return formatAddresses(addresses, options);
-	}, [addresses, options.format, options.chunkSize, options.separator, options.maskChar, options.groupSize]);
+	}, [
+		addresses,
+		options.format,
+		options.chunkSize,
+		options.separator,
+		options.maskChar,
+		options.groupSize,
+	]);
 }
 
 /**
@@ -67,7 +81,10 @@ export function useAddressFormatterBatch(
  * @example
  * const isMatch = useAddressComparison(userInput, storedAddress);
  */
-export function useAddressComparison(address1: string, address2: string): boolean {
+export function useAddressComparison(
+	address1: string,
+	address2: string,
+): boolean {
 	return useMemo(() => {
 		return compareAddresses(address1, address2);
 	}, [address1, address2]);
@@ -135,7 +152,8 @@ export function useAddressFormatterWithSelection(
 	address: string,
 	defaultFormat: AddressFormatType = "full",
 ) {
-	const [selectedFormat, setSelectedFormat] = useState<AddressFormatType>(defaultFormat);
+	const [selectedFormat, setSelectedFormat] =
+		useState<AddressFormatType>(defaultFormat);
 	const formatted = useAddressFormatter(address, { format: selectedFormat });
 	const availableFormats = useAvailableFormats();
 

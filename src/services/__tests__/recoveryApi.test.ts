@@ -89,9 +89,7 @@ describe("Recovery API Service", () => {
 		});
 
 		it("should handle timeout errors", async () => {
-			(global.fetch as jest.Mock).mockRejectedValueOnce(
-				new Error("timeout"),
-			);
+			(global.fetch as jest.Mock).mockRejectedValueOnce(new Error("timeout"));
 			(global.fetch as jest.Mock).mockResolvedValueOnce({
 				ok: true,
 				json: async () => ({
@@ -381,9 +379,7 @@ describe("Recovery API Service", () => {
 
 	describe("Error handling", () => {
 		it("should handle fetch errors gracefully", async () => {
-			(global.fetch as jest.Mock).mockRejectedValue(
-				new Error("Network error"),
-			);
+			(global.fetch as jest.Mock).mockRejectedValue(new Error("Network error"));
 
 			const result = await fetchRecoveryStatus("wallet-123", {
 				retryAttempts: 1,

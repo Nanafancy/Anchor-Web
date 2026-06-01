@@ -3,18 +3,16 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { AddWalletModal } from "./AddWalletModal";
 
-const VALID_ADDRESS = "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
+const VALID_ADDRESS =
+	"GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
 
-function renderModal(props?: Partial<React.ComponentProps<typeof AddWalletModal>>) {
+function renderModal(
+	props?: Partial<React.ComponentProps<typeof AddWalletModal>>,
+) {
 	const onClose = vi.fn();
 	const onAdd = vi.fn();
 	render(
-		<AddWalletModal
-			isOpen={true}
-			onClose={onClose}
-			onAdd={onAdd}
-			{...props}
-		/>,
+		<AddWalletModal isOpen={true} onClose={onClose} onAdd={onAdd} {...props} />,
 	);
 	return { onClose, onAdd };
 }
@@ -29,9 +27,7 @@ describe("AddWalletModal visibility", () => {
 	});
 
 	it("does not render when isOpen is false", () => {
-		render(
-			<AddWalletModal isOpen={false} onClose={vi.fn()} onAdd={vi.fn()} />,
-		);
+		render(<AddWalletModal isOpen={false} onClose={vi.fn()} onAdd={vi.fn()} />);
 		expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 	});
 });
@@ -74,9 +70,14 @@ describe("AddWalletModal validation", () => {
 	it("shows an error for an address that doesn't start with G", async () => {
 		const user = userEvent.setup();
 		renderModal();
-		await user.type(screen.getByLabelText(/stellar address/i), "XBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI");
+		await user.type(
+			screen.getByLabelText(/stellar address/i),
+			"XBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI",
+		);
 		await user.click(screen.getByRole("button", { name: /add wallet/i }));
-		expect(await screen.findByRole("alert")).toHaveTextContent(/start with 'G'/i);
+		expect(await screen.findByRole("alert")).toHaveTextContent(
+			/start with 'G'/i,
+		);
 	});
 
 	it("shows an error for an address that is too short", async () => {
@@ -84,7 +85,9 @@ describe("AddWalletModal validation", () => {
 		renderModal();
 		await user.type(screen.getByLabelText(/stellar address/i), "GABC");
 		await user.click(screen.getByRole("button", { name: /add wallet/i }));
-		expect(await screen.findByRole("alert")).toHaveTextContent(/56 characters/i);
+		expect(await screen.findByRole("alert")).toHaveTextContent(
+			/56 characters/i,
+		);
 	});
 
 	it("clears the error when the user starts typing again", async () => {
@@ -111,7 +114,9 @@ describe("AddWalletModal successful submission", () => {
 
 		// Success banner
 		await waitFor(() =>
-			expect(screen.getByText(/wallet added successfully/i)).toBeInTheDocument(),
+			expect(
+				screen.getByText(/wallet added successfully/i),
+			).toBeInTheDocument(),
 		);
 
 		expect(onAdd).toHaveBeenCalledOnce();
@@ -130,7 +135,9 @@ describe("AddWalletModal successful submission", () => {
 		await user.click(screen.getByRole("button", { name: /add wallet/i }));
 
 		await waitFor(() =>
-			expect(screen.getByText(/wallet added successfully/i)).toBeInTheDocument(),
+			expect(
+				screen.getByText(/wallet added successfully/i),
+			).toBeInTheDocument(),
 		);
 
 		expect(screen.getByText("testnet")).toBeInTheDocument();
@@ -143,14 +150,18 @@ describe("AddWalletModal successful submission", () => {
 		await user.type(screen.getByLabelText(/stellar address/i), VALID_ADDRESS);
 		await user.click(screen.getByRole("button", { name: /add wallet/i }));
 		await waitFor(() =>
-			expect(screen.getByText(/wallet added successfully/i)).toBeInTheDocument(),
+			expect(
+				screen.getByText(/wallet added successfully/i),
+			).toBeInTheDocument(),
 		);
 
 		await user.click(screen.getByRole("button", { name: /add another/i }));
 
 		// Back to form
 		expect(screen.getByLabelText(/stellar address/i)).toBeInTheDocument();
-		expect((screen.getByLabelText(/stellar address/i) as HTMLInputElement).value).toBe("");
+		expect(
+			(screen.getByLabelText(/stellar address/i) as HTMLInputElement).value,
+		).toBe("");
 	});
 });
 
@@ -175,7 +186,9 @@ describe("AddWalletModal close behaviour", () => {
 		const user = userEvent.setup();
 		const { onClose } = renderModal();
 		// The backdrop is the sibling div with aria-hidden
-		const backdrop = document.querySelector('[aria-hidden="true"]') as HTMLElement;
+		const backdrop = document.querySelector(
+			'[aria-hidden="true"]',
+		) as HTMLElement;
 		await user.click(backdrop);
 		expect(onClose).toHaveBeenCalledOnce();
 	});

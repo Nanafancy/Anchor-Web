@@ -6,7 +6,8 @@ export default function Home() {
 					Dashboard
 				</h1>
 				<p className="text-zinc-500 dark:text-zinc-400">
-					Welcome back! Here's what's happening with your Mux Protocol integration.
+					Welcome back! Here's what's happening with your Mux Protocol
+					integration.
 				</p>
 			</div>
 
