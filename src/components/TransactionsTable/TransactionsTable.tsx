@@ -76,7 +76,7 @@ const NetworkBadge = ({ network }: { network: TransactionNetwork }) => {
 
 // --- Main Component ---
 
-export default function TransactionsTable() {
+export default function TransactionsTable({ address }: { address?: string } = {}) {
 	const [search, setSearch] = useState("");
 	const [statusFilter, setStatusFilter] = useState<"all" | TransactionStatus>(
 		"all",
@@ -91,14 +91,11 @@ export default function TransactionsTable() {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemsPerPage, setItemsPerPage] = useState(5);
 
-	// Get unique wallet IDs from transactions
-	const uniqueWalletIds = useMemo(
-		() => Array.from(new Set(INITIAL_DATA.map((tx) => tx.walletId))).sort(),
-		[],
-	);
-
 	const filteredData = useMemo(() => {
 		return mockTransactions.filter((tx) => {
+			if (address && tx.from !== address && tx.to !== address) {
+				return false;
+			}
 			const q = search.toLowerCase();
 			const matchesSearch =
 				tx.hash.toLowerCase().includes(q) ||
