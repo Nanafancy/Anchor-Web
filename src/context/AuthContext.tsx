@@ -14,14 +14,14 @@ export interface AuthUser {
 	role: string;
 }
 
-/** Shape of a persisted session record stored in sessionStorage. */
+/** Shape of a persisted session record. */
 interface SessionRecord {
 	user: AuthUser;
 	/** Unix timestamp (ms) when the session expires. */
 	expiresAt: number;
 }
 
-export interface AuthContextValue {
+interface AuthContextValue {
 	user: AuthUser | null;
 	isLoading: boolean;
 	isAuthenticated: boolean;
@@ -31,11 +31,11 @@ export interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-/** sessionStorage key for the persisted user record. */
-export const SESSION_STORAGE_KEY = "mux_auth_user";
+/** sessionStorage key for the user record (client-side rehydration). */
+const SESSION_STORAGE_KEY = "mux_auth_user";
 
-/** Cookie name checked by the Next.js middleware for server-side route protection. */
-export const SESSION_COOKIE_NAME = "mux_auth_session";
+/** Cookie name read by the Next.js middleware for server-side route protection. */
+const SESSION_COOKIE_NAME = "mux_auth_session";
 
 /** Default session lifetime: 8 hours. */
 const DEFAULT_TTL_MS = 8 * 60 * 60 * 1000;
@@ -46,6 +46,8 @@ const DEFAULT_TTL_MS = 8 * 60 * 60 * 1000;
 
 function setSessionCookie(ttlMs: number): void {
 	const maxAge = Math.floor(ttlMs / 1000);
+	// SameSite=Lax is safe for same-origin navigation; Secure is omitted here
+	// so it works on localhost — add "; Secure" in production via a server-set cookie.
 	document.cookie = `${SESSION_COOKIE_NAME}=1; path=/; max-age=${maxAge}; SameSite=Lax`;
 }
 
@@ -61,11 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [user, setUser] = useState<AuthUser | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 
-	/**
-	 * Rehydrate session from sessionStorage on mount.
-	 * isLoading stays true until this effect completes so consumers can
-	 * render a loading skeleton while the auth state is being resolved.
-	 */
+	/** Rehydrate session from sessionStorage on mount and validate expiry. */
 	useEffect(() => {
 		try {
 			const stored = sessionStorage.getItem(SESSION_STORAGE_KEY);
@@ -73,10 +71,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				const record = JSON.parse(stored) as SessionRecord;
 				if (record.expiresAt > Date.now()) {
 					setUser(record.user);
+					// Re-sync cookie in case it was cleared (e.g. browser restart)
 					const remainingMs = record.expiresAt - Date.now();
 					setSessionCookie(remainingMs);
 				} else {
-					// Expired — clean up stale data
+					// Session expired — clean up stale data
 					sessionStorage.removeItem(SESSION_STORAGE_KEY);
 					clearSessionCookie();
 				}
@@ -121,7 +120,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	);
 }
 
-/** Alias — consumers may import either name; they are the same component. */
+/**
+ * Alias exported for issue #40 — "Integrate session provider".
+ * Consumers can import either `AuthProvider` or `SessionProvider`; they are
+ * the same component.
+ */
 export const SessionProvider = AuthProvider;
 
 // ---------------------------------------------------------------------------
@@ -131,9 +134,7 @@ export const SessionProvider = AuthProvider;
 export function useAuth(): AuthContextValue {
 	const ctx = useContext(AuthContext);
 	if (!ctx) {
-		throw new Error(
-			"useAuth must be used within an AuthProvider / SessionProvider",
-		);
+		throw new Error("useAuth must be used within an AuthProvider / SessionProvider");
 	}
 	return ctx;
 }
