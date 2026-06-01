@@ -27,8 +27,12 @@ function renderButton(
 describe("AnalyticsExportButton — rendering", () => {
 	it("renders CSV and JSON buttons", () => {
 		renderButton();
-		expect(screen.getByRole("button", { name: /export.*csv/i })).toBeInTheDocument();
-		expect(screen.getByRole("button", { name: /export.*json/i })).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: /export.*csv/i }),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: /export.*json/i }),
+		).toBeInTheDocument();
 	});
 
 	it("shows the row count hint when rowCount > 0", () => {
@@ -49,13 +53,17 @@ describe("AnalyticsExportButton — rendering", () => {
 	it("disables both buttons when rowCount is 0", () => {
 		renderButton({ rowCount: 0 });
 		expect(screen.getByRole("button", { name: /export.*csv/i })).toBeDisabled();
-		expect(screen.getByRole("button", { name: /export.*json/i })).toBeDisabled();
+		expect(
+			screen.getByRole("button", { name: /export.*json/i }),
+		).toBeDisabled();
 	});
 
 	it("disables both buttons while exporting", () => {
 		renderButton({ status: "exporting" });
 		expect(screen.getByRole("button", { name: /export.*csv/i })).toBeDisabled();
-		expect(screen.getByRole("button", { name: /export.*json/i })).toBeDisabled();
+		expect(
+			screen.getByRole("button", { name: /export.*json/i }),
+		).toBeDisabled();
 	});
 
 	it("shows a spinner while exporting", () => {
@@ -76,7 +84,10 @@ describe("AnalyticsExportButton — rendering", () => {
 	});
 
 	it("shows the error message when status is error", () => {
-		renderButton({ status: "error", errorMessage: "No data available to export." });
+		renderButton({
+			status: "error",
+			errorMessage: "No data available to export.",
+		});
 		expect(screen.getByRole("alert")).toHaveTextContent(
 			"No data available to export.",
 		);
@@ -110,7 +121,9 @@ describe("AnalyticsExportButton — interactions", () => {
 	it("calls onExport('json') when JSON button is clicked", async () => {
 		const onExport = vi.fn();
 		renderButton({ onExport });
-		await userEvent.click(screen.getByRole("button", { name: /export.*json/i }));
+		await userEvent.click(
+			screen.getByRole("button", { name: /export.*json/i }),
+		);
 		expect(onExport).toHaveBeenCalledWith("json");
 	});
 

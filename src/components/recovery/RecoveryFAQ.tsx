@@ -84,7 +84,11 @@ function FAQRow({ item, isOpen, onToggle }: FAQItemProps) {
 						isOpen && "rotate-180",
 					)}
 				>
-					<path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+					<path
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						d="M19 9l-7 7-7-7"
+					/>
 				</svg>
 			</button>
 
@@ -106,7 +110,10 @@ function FAQRow({ item, isOpen, onToggle }: FAQItemProps) {
  * Each item is independently expandable/collapsible.
  * Handles an empty items array gracefully with a fallback message.
  */
-export function RecoveryFAQ({ items = FAQ_ITEMS, className }: RecoveryFAQProps) {
+export function RecoveryFAQ({
+	items = FAQ_ITEMS,
+	className,
+}: RecoveryFAQProps) {
 	const [openId, setOpenId] = useState<string | null>(null);
 
 	const toggle = (id: string) => {

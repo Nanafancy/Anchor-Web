@@ -27,9 +27,7 @@ describe("ApiKeysTable — empty state", () => {
 	it("shows empty state when no keys are provided", () => {
 		render(<ApiKeysTable initialKeys={[]} />);
 		expect(screen.getByText("No API keys yet")).toBeInTheDocument();
-		expect(
-			screen.getByText(/Create your first API key/i),
-		).toBeInTheDocument();
+		expect(screen.getByText(/Create your first API key/i)).toBeInTheDocument();
 	});
 
 	it("shows the table when keys exist", () => {
@@ -54,12 +52,8 @@ describe("ApiKeysTable — empty state", () => {
 describe("ApiKeysTable — revoke confirmation", () => {
 	it("shows Revoke button only for active keys", () => {
 		render(<ApiKeysTable initialKeys={[activeKey, revokedKey]} />);
-		expect(
-			screen.getByTestId("revoke-btn-test-1"),
-		).toBeInTheDocument();
-		expect(
-			screen.queryByTestId("revoke-btn-test-2"),
-		).not.toBeInTheDocument();
+		expect(screen.getByTestId("revoke-btn-test-1")).toBeInTheDocument();
+		expect(screen.queryByTestId("revoke-btn-test-2")).not.toBeInTheDocument();
 	});
 
 	it("opens confirmation dialog when Revoke is clicked", async () => {
@@ -77,9 +71,7 @@ describe("ApiKeysTable — revoke confirmation", () => {
 		render(<ApiKeysTable initialKeys={[activeKey]} />);
 		await user.click(screen.getByTestId("revoke-btn-test-1"));
 		await user.click(screen.getByRole("button", { name: /cancel/i }));
-		expect(
-			screen.queryByRole("alertdialog"),
-		).not.toBeInTheDocument();
+		expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
 		// Key should still be Active
 		expect(screen.getByText("Active")).toBeInTheDocument();
 	});
@@ -89,9 +81,7 @@ describe("ApiKeysTable — revoke confirmation", () => {
 		render(<ApiKeysTable initialKeys={[activeKey]} />);
 		await user.click(screen.getByTestId("revoke-btn-test-1"));
 		await user.click(screen.getByTestId("confirm-revoke"));
-		expect(
-			screen.queryByRole("alertdialog"),
-		).not.toBeInTheDocument();
+		expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
 		// Revoke button should be gone; "Revoked" text should appear
 		expect(screen.queryByTestId("revoke-btn-test-1")).not.toBeInTheDocument();
 		expect(screen.getByText("Revoked")).toBeInTheDocument();
@@ -113,9 +103,7 @@ describe("ApiKeysTable — copy key feedback", () => {
 			expect(copyBtn).toHaveAttribute("aria-label", "Copied!"),
 		);
 		// sr-only live region announces the copy
-		expect(screen.getByRole("status")).toHaveTextContent(
-			"Copied to clipboard",
-		);
+		expect(screen.getByRole("status")).toHaveTextContent("Copied to clipboard");
 	});
 
 	it("resets copy feedback after timeout", async () => {

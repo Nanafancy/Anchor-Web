@@ -44,8 +44,5 @@ export const config = {
 	 * Match all routes under /demo/dashboard.
 	 * Exclude Next.js internals and static assets so they are never blocked.
 	 */
-	matcher: [
-		"/demo/dashboard",
-		"/demo/dashboard/:path*",
-	],
+	matcher: ["/demo/dashboard", "/demo/dashboard/:path*"],
 };

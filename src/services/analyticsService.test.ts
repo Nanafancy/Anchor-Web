@@ -30,7 +30,14 @@ describe("fetchMetrics", () => {
 	it("calls the correct endpoint with date range params", async () => {
 		const client = makeClient({
 			get: vi.fn().mockResolvedValue({
-				metrics: [{ label: "Total Volume", value: "$1M", change: 5, changeLabel: "vs last period" }],
+				metrics: [
+					{
+						label: "Total Volume",
+						value: "$1M",
+						change: 5,
+						changeLabel: "vs last period",
+					},
+				],
 			}),
 		});
 
@@ -134,13 +141,29 @@ describe("fetchAllAnalytics", () => {
 	it("fetches all four endpoints in parallel and returns combined payload", async () => {
 		const getMock = vi.fn().mockImplementation((path: string) => {
 			if (path.startsWith("/analytics/metrics"))
-				return Promise.resolve({ metrics: [{ label: "Vol", value: "$1M", change: 1, changeLabel: "vs last" }] });
+				return Promise.resolve({
+					metrics: [
+						{ label: "Vol", value: "$1M", change: 1, changeLabel: "vs last" },
+					],
+				});
 			if (path.startsWith("/analytics/volume"))
 				return Promise.resolve({ data: [{ date: "Mon", value: 100 }] });
 			if (path.startsWith("/analytics/transactions"))
 				return Promise.resolve({ data: [{ date: "Mon", value: 50 }] });
 			if (path.startsWith("/analytics/top-assets"))
-				return Promise.resolve({ assets: [{ rank: 1, name: "MUX", symbol: "MUX", volume: "$1M", volumeChange: 5, tvl: "$5M", txCount: 1000 }] });
+				return Promise.resolve({
+					assets: [
+						{
+							rank: 1,
+							name: "MUX",
+							symbol: "MUX",
+							volume: "$1M",
+							volumeChange: 5,
+							tvl: "$5M",
+							txCount: 1000,
+						},
+					],
+				});
 			return Promise.reject(new Error(`Unexpected path: ${path}`));
 		});
 

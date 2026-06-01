@@ -45,7 +45,7 @@ export interface AnalyticsMetricsPayload {
 
 export interface DateRangeParams {
 	from: string; // YYYY-MM-DD
-	to: string;   // YYYY-MM-DD
+	to: string; // YYYY-MM-DD
 }
 
 function toQueryString(params: DateRangeParams): string {

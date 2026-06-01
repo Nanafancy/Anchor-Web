@@ -246,9 +246,15 @@ describe("NetworkFilter", () => {
 				/>,
 			);
 
-			expect(screen.getByTitle("Show wallets from all networks")).toBeInTheDocument();
-			expect(screen.getByTitle("Show testnet wallets only")).toBeInTheDocument();
-			expect(screen.getByTitle("Show mainnet wallets only")).toBeInTheDocument();
+			expect(
+				screen.getByTitle("Show wallets from all networks"),
+			).toBeInTheDocument();
+			expect(
+				screen.getByTitle("Show testnet wallets only"),
+			).toBeInTheDocument();
+			expect(
+				screen.getByTitle("Show mainnet wallets only"),
+			).toBeInTheDocument();
 		});
 
 		it("should have proper aria-labels for each button", () => {
@@ -259,7 +265,9 @@ describe("NetworkFilter", () => {
 				/>,
 			);
 
-			expect(screen.getByLabelText("Filter by All Networks")).toBeInTheDocument();
+			expect(
+				screen.getByLabelText("Filter by All Networks"),
+			).toBeInTheDocument();
 			expect(screen.getByLabelText("Filter by Testnet")).toBeInTheDocument();
 			expect(screen.getByLabelText("Filter by Mainnet")).toBeInTheDocument();
 		});

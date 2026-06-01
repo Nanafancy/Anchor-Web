@@ -21,23 +21,13 @@ describe("RecoveryTimelineEvent", () => {
 
 	describe("Rendering", () => {
 		it("should render event title", () => {
-			render(
-				<RecoveryTimelineEvent
-					event={mockEvent}
-					onClick={mockOnClick}
-				/>,
-			);
+			render(<RecoveryTimelineEvent event={mockEvent} onClick={mockOnClick} />);
 
 			expect(screen.getByText("Recovery Initiated")).toBeInTheDocument();
 		});
 
 		it("should render event description", () => {
-			render(
-				<RecoveryTimelineEvent
-					event={mockEvent}
-					onClick={mockOnClick}
-				/>,
-			);
+			render(<RecoveryTimelineEvent event={mockEvent} onClick={mockOnClick} />);
 
 			expect(
 				screen.getByText("Wallet recovery process started"),
@@ -45,24 +35,14 @@ describe("RecoveryTimelineEvent", () => {
 		});
 
 		it("should render event timestamp", () => {
-			render(
-				<RecoveryTimelineEvent
-					event={mockEvent}
-					onClick={mockOnClick}
-				/>,
-			);
+			render(<RecoveryTimelineEvent event={mockEvent} onClick={mockOnClick} />);
 
 			const timestamp = screen.getByText(/10:00/);
 			expect(timestamp).toBeInTheDocument();
 		});
 
 		it("should render event details when provided", () => {
-			render(
-				<RecoveryTimelineEvent
-					event={mockEvent}
-					onClick={mockOnClick}
-				/>,
-			);
+			render(<RecoveryTimelineEvent event={mockEvent} onClick={mockOnClick} />);
 
 			expect(
 				screen.getByText("User initiated recovery from device loss"),
@@ -92,10 +72,7 @@ describe("RecoveryTimelineEvent", () => {
 			};
 
 			render(
-				<RecoveryTimelineEvent
-					event={eventWithError}
-					onClick={mockOnClick}
-				/>,
+				<RecoveryTimelineEvent event={eventWithError} onClick={mockOnClick} />,
 			);
 
 			expect(
@@ -105,10 +82,7 @@ describe("RecoveryTimelineEvent", () => {
 
 		it("should render with proper ARIA attributes", () => {
 			const { container } = render(
-				<RecoveryTimelineEvent
-					event={mockEvent}
-					onClick={mockOnClick}
-				/>,
+				<RecoveryTimelineEvent event={mockEvent} onClick={mockOnClick} />,
 			);
 
 			const listItem = container.querySelector('[role="listitem"]');
@@ -122,10 +96,7 @@ describe("RecoveryTimelineEvent", () => {
 	describe("Status styling", () => {
 		it("should apply completed status styles", () => {
 			const { container } = render(
-				<RecoveryTimelineEvent
-					event={mockEvent}
-					onClick={mockOnClick}
-				/>,
+				<RecoveryTimelineEvent event={mockEvent} onClick={mockOnClick} />,
 			);
 
 			const statusButton = container.querySelector("button");
@@ -139,10 +110,7 @@ describe("RecoveryTimelineEvent", () => {
 			};
 
 			const { container } = render(
-				<RecoveryTimelineEvent
-					event={inProgressEvent}
-					onClick={mockOnClick}
-				/>,
+				<RecoveryTimelineEvent event={inProgressEvent} onClick={mockOnClick} />,
 			);
 
 			const statusButton = container.querySelector("button");
@@ -156,10 +124,7 @@ describe("RecoveryTimelineEvent", () => {
 			};
 
 			const { container } = render(
-				<RecoveryTimelineEvent
-					event={failedEvent}
-					onClick={mockOnClick}
-				/>,
+				<RecoveryTimelineEvent event={failedEvent} onClick={mockOnClick} />,
 			);
 
 			const statusButton = container.querySelector("button");
@@ -173,10 +138,7 @@ describe("RecoveryTimelineEvent", () => {
 			};
 
 			const { container } = render(
-				<RecoveryTimelineEvent
-					event={pendingEvent}
-					onClick={mockOnClick}
-				/>,
+				<RecoveryTimelineEvent event={pendingEvent} onClick={mockOnClick} />,
 			);
 
 			const statusButton = container.querySelector("button");
@@ -245,12 +207,7 @@ describe("RecoveryTimelineEvent", () => {
 
 	describe("Event interaction", () => {
 		it("should call onClick when event button is clicked", () => {
-			render(
-				<RecoveryTimelineEvent
-					event={mockEvent}
-					onClick={mockOnClick}
-				/>,
-			);
+			render(<RecoveryTimelineEvent event={mockEvent} onClick={mockOnClick} />);
 
 			const button = screen.getByRole("button");
 			fireEvent.click(button);
@@ -259,11 +216,7 @@ describe("RecoveryTimelineEvent", () => {
 		});
 
 		it("should not call onClick when onClick is not provided", () => {
-			render(
-				<RecoveryTimelineEvent
-					event={mockEvent}
-				/>,
-			);
+			render(<RecoveryTimelineEvent event={mockEvent} />);
 
 			const button = screen.getByRole("button");
 			fireEvent.click(button);
@@ -273,12 +226,7 @@ describe("RecoveryTimelineEvent", () => {
 		});
 
 		it("should have proper button title", () => {
-			render(
-				<RecoveryTimelineEvent
-					event={mockEvent}
-					onClick={mockOnClick}
-				/>,
-			);
+			render(<RecoveryTimelineEvent event={mockEvent} onClick={mockOnClick} />);
 
 			const button = screen.getByRole("button");
 			expect(button).toHaveAttribute("title", "Recovery Initiated");
@@ -316,7 +264,14 @@ describe("RecoveryTimelineEvent", () => {
 	});
 
 	describe("Event types", () => {
-		const eventTypes = ["initiated", "detection", "verification", "processing", "completion", "error"] as const;
+		const eventTypes = [
+			"initiated",
+			"detection",
+			"verification",
+			"processing",
+			"completion",
+			"error",
+		] as const;
 
 		eventTypes.forEach((type) => {
 			it(`should render ${type} event type`, () => {
@@ -325,12 +280,7 @@ describe("RecoveryTimelineEvent", () => {
 					type: type as any,
 				};
 
-				render(
-					<RecoveryTimelineEvent
-						event={event}
-						onClick={mockOnClick}
-					/>,
-				);
+				render(<RecoveryTimelineEvent event={event} onClick={mockOnClick} />);
 
 				expect(screen.getByText("Recovery Initiated")).toBeInTheDocument();
 			});
@@ -339,24 +289,14 @@ describe("RecoveryTimelineEvent", () => {
 
 	describe("Accessibility", () => {
 		it("should have proper button role", () => {
-			render(
-				<RecoveryTimelineEvent
-					event={mockEvent}
-					onClick={mockOnClick}
-				/>,
-			);
+			render(<RecoveryTimelineEvent event={mockEvent} onClick={mockOnClick} />);
 
 			const button = screen.getByRole("button");
 			expect(button).toBeInTheDocument();
 		});
 
 		it("should have aria-pressed attribute", () => {
-			render(
-				<RecoveryTimelineEvent
-					event={mockEvent}
-					onClick={mockOnClick}
-				/>,
-			);
+			render(<RecoveryTimelineEvent event={mockEvent} onClick={mockOnClick} />);
 
 			const button = screen.getByRole("button");
 			expect(button).toHaveAttribute("aria-pressed", "false");
@@ -364,10 +304,7 @@ describe("RecoveryTimelineEvent", () => {
 
 		it("should have proper list item role", () => {
 			const { container } = render(
-				<RecoveryTimelineEvent
-					event={mockEvent}
-					onClick={mockOnClick}
-				/>,
+				<RecoveryTimelineEvent event={mockEvent} onClick={mockOnClick} />,
 			);
 
 			const listItem = container.querySelector('[role="listitem"]');
@@ -383,10 +320,7 @@ describe("RecoveryTimelineEvent", () => {
 			};
 
 			render(
-				<RecoveryTimelineEvent
-					event={longTitleEvent}
-					onClick={mockOnClick}
-				/>,
+				<RecoveryTimelineEvent event={longTitleEvent} onClick={mockOnClick} />,
 			);
 
 			expect(screen.getByText("A".repeat(100))).toBeInTheDocument();
@@ -399,10 +333,7 @@ describe("RecoveryTimelineEvent", () => {
 			};
 
 			render(
-				<RecoveryTimelineEvent
-					event={longDescEvent}
-					onClick={mockOnClick}
-				/>,
+				<RecoveryTimelineEvent event={longDescEvent} onClick={mockOnClick} />,
 			);
 
 			expect(screen.getByText("B".repeat(200))).toBeInTheDocument();
@@ -419,22 +350,14 @@ describe("RecoveryTimelineEvent", () => {
 			};
 
 			render(
-				<RecoveryTimelineEvent
-					event={minimalEvent}
-					onClick={mockOnClick}
-				/>,
+				<RecoveryTimelineEvent event={minimalEvent} onClick={mockOnClick} />,
 			);
 
 			expect(screen.getByText("Test")).toBeInTheDocument();
 		});
 
 		it("should handle rapid clicks", () => {
-			render(
-				<RecoveryTimelineEvent
-					event={mockEvent}
-					onClick={mockOnClick}
-				/>,
-			);
+			render(<RecoveryTimelineEvent event={mockEvent} onClick={mockOnClick} />);
 
 			const button = screen.getByRole("button");
 			fireEvent.click(button);
@@ -448,10 +371,7 @@ describe("RecoveryTimelineEvent", () => {
 	describe("Dark mode", () => {
 		it("should have dark mode classes", () => {
 			const { container } = render(
-				<RecoveryTimelineEvent
-					event={mockEvent}
-					onClick={mockOnClick}
-				/>,
+				<RecoveryTimelineEvent event={mockEvent} onClick={mockOnClick} />,
 			);
 
 			const title = screen.getByText("Recovery Initiated");
@@ -466,10 +386,7 @@ describe("RecoveryTimelineEvent", () => {
 			};
 
 			render(
-				<RecoveryTimelineEvent
-					event={eventWithError}
-					onClick={mockOnClick}
-				/>,
+				<RecoveryTimelineEvent event={eventWithError} onClick={mockOnClick} />,
 			);
 
 			const errorMessage = screen.getByText("Test error");

@@ -14,7 +14,13 @@ jest.mock("@/components/ui/TestnetHint", () => ({
 
 // Mock the ExplorerLink component
 jest.mock("@/components/ui/ExplorerLink", () => ({
-	ExplorerLink: ({ address, network }: { address: string; network: string }) => (
+	ExplorerLink: ({
+		address,
+		network,
+	}: {
+		address: string;
+		network: string;
+	}) => (
 		<a
 			href={`https://stellar.expert/explorer/${network}/account/${address}`}
 			data-testid="explorer-link"

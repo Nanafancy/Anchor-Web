@@ -19,17 +19,20 @@ describe("friendbot utilities", () => {
 
 	describe("isValidAddressForFriendbot", () => {
 		it("should validate correct Stellar address", () => {
-			const address = "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
+			const address =
+				"GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
 			expect(isValidAddressForFriendbot(address)).toBe(true);
 		});
 
 		it("should validate another correct Stellar address", () => {
-			const address = "GCFONE23AB7Y6C5YZOMKUKGETPIAJA752ZPMORQO5VKA6LHXHC7Y3YPE";
+			const address =
+				"GCFONE23AB7Y6C5YZOMKUKGETPIAJA752ZPMORQO5VKA6LHXHC7Y3YPE";
 			expect(isValidAddressForFriendbot(address)).toBe(true);
 		});
 
 		it("should reject address not starting with G", () => {
-			const address = "ABZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
+			const address =
+				"ABZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
 			expect(isValidAddressForFriendbot(address)).toBe(false);
 		});
 
@@ -55,7 +58,8 @@ describe("friendbot utilities", () => {
 
 	describe("getFriendbotUrl", () => {
 		it("should generate correct Friendbot URL", () => {
-			const address = "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
+			const address =
+				"GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
 			const url = getFriendbotUrl(address);
 			expect(url).toContain(FRIENDBOT_URL);
 			expect(url).toContain(`addr=${address}`);
@@ -76,7 +80,8 @@ describe("friendbot utilities", () => {
 		});
 
 		it("should include addr parameter in query string", () => {
-			const address = "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
+			const address =
+				"GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
 			const url = getFriendbotUrl(address);
 			const urlObj = new URL(url);
 			expect(urlObj.searchParams.get("addr")).toBe(address);

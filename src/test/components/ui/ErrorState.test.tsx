@@ -24,12 +24,7 @@ describe("ErrorState", () => {
 	});
 
 	it("renders the retry button when retry prop is provided", () => {
-		render(
-			<ErrorState
-				description="Error."
-				retry={{ onRetry: vi.fn() }}
-			/>,
-		);
+		render(<ErrorState description="Error." retry={{ onRetry: vi.fn() }} />);
 		expect(
 			screen.getByRole("button", { name: "Try Again" }),
 		).toBeInTheDocument();

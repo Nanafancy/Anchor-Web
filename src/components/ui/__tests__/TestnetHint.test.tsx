@@ -8,7 +8,9 @@ describe("TestnetHint component", () => {
 		it("should render with title and description", () => {
 			render(<TestnetHint />);
 
-			expect(screen.getByText(/You're on Stellar Testnet/i)).toBeInTheDocument();
+			expect(
+				screen.getByText(/You're on Stellar Testnet/i),
+			).toBeInTheDocument();
 			expect(
 				screen.getByText(/This is a test network for development/i),
 			).toBeInTheDocument();
@@ -17,7 +19,9 @@ describe("TestnetHint component", () => {
 		it("should render Friendbot link", () => {
 			render(<TestnetHint />);
 
-			const friendbotLink = screen.getByRole("link", { name: /Open Friendbot/i });
+			const friendbotLink = screen.getByRole("link", {
+				name: /Open Friendbot/i,
+			});
 			expect(friendbotLink).toHaveAttribute("href", FRIENDBOT_URL);
 			expect(friendbotLink).toHaveAttribute("target", "_blank");
 			expect(friendbotLink).toHaveAttribute("rel", "noopener noreferrer");
@@ -62,9 +66,7 @@ describe("TestnetHint component", () => {
 		});
 
 		it("should apply custom className", () => {
-			const { container } = render(
-				<TestnetHint className="custom-class" />,
-			);
+			const { container } = render(<TestnetHint className="custom-class" />);
 
 			const hintDiv = container.querySelector(".custom-class");
 			expect(hintDiv).toBeInTheDocument();
@@ -91,7 +93,9 @@ describe("TestnetHint component", () => {
 		it("should render Friendbot link in compact variant", () => {
 			render(<TestnetHint variant="compact" />);
 
-			const friendbotLink = screen.getByRole("link", { name: /Fund with Friendbot/i });
+			const friendbotLink = screen.getByRole("link", {
+				name: /Fund with Friendbot/i,
+			});
 			expect(friendbotLink).toHaveAttribute("href", FRIENDBOT_URL);
 		});
 
@@ -149,7 +153,9 @@ describe("TestnetHint component", () => {
 			fireEvent.click(dismissButtons[0]);
 
 			// First hint should be dismissed, second should still be visible
-			expect(screen.getByText(/You're on Stellar Testnet/i)).toBeInTheDocument();
+			expect(
+				screen.getByText(/You're on Stellar Testnet/i),
+			).toBeInTheDocument();
 		});
 
 		it("should not persist dismissed state across re-renders", () => {
@@ -160,11 +166,15 @@ describe("TestnetHint component", () => {
 			});
 			fireEvent.click(dismissButton);
 
-			expect(screen.queryByText(/You're on Stellar Testnet/i)).not.toBeInTheDocument();
+			expect(
+				screen.queryByText(/You're on Stellar Testnet/i),
+			).not.toBeInTheDocument();
 
 			// Re-render should show the hint again (state is local)
 			rerender(<TestnetHint />);
-			expect(screen.getByText(/You're on Stellar Testnet/i)).toBeInTheDocument();
+			expect(
+				screen.getByText(/You're on Stellar Testnet/i),
+			).toBeInTheDocument();
 		});
 	});
 

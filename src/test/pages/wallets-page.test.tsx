@@ -75,9 +75,7 @@ describe("WalletsPage (/demo/dashboard/wallets)", () => {
 
 		it("does NOT render the EmptyState when wallets are present", () => {
 			render(<WalletsPage />);
-			expect(
-				screen.queryByText(/no wallets found/i),
-			).not.toBeInTheDocument();
+			expect(screen.queryByText(/no wallets found/i)).not.toBeInTheDocument();
 		});
 
 		it("displays wallet addresses in truncated form", () => {

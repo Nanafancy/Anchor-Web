@@ -103,7 +103,8 @@ const eventTypeIcons: Record<string, React.ReactNode> = {
 };
 
 const statusColors: Record<string, string> = {
-	completed: "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20",
+	completed:
+		"text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20",
 	in_progress:
 		"text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 animate-pulse",
 	pending: "text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800",
