@@ -46,6 +46,8 @@ const DEFAULT_TTL_MS = 8 * 60 * 60 * 1000;
 
 function setSessionCookie(ttlMs: number): void {
 	const maxAge = Math.floor(ttlMs / 1000);
+	// SameSite=Lax is safe for same-origin navigation; Secure is omitted here
+	// so it works on localhost — add "; Secure" in production via a server-set cookie.
 	document.cookie = `${SESSION_COOKIE_NAME}=1; path=/; max-age=${maxAge}; SameSite=Lax`;
 }
 
@@ -61,11 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [user, setUser] = useState<AuthUser | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 
-	/**
-	 * Rehydrate session from sessionStorage on mount and validate expiry.
-	 * isLoading stays true until this effect completes, allowing consumers
-	 * to render a loading skeleton (issue #44).
-	 */
+	/** Rehydrate session from sessionStorage on mount and validate expiry. */
 	useEffect(() => {
 		try {
 			const stored = sessionStorage.getItem(SESSION_STORAGE_KEY);
@@ -101,10 +99,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		setUser(authUser);
 	}, []);
 
-	/**
-	 * signOut — clears session storage, the auth cookie, and resets user state.
-	 * Exposed via context so any component can trigger logout (issue #45).
-	 */
 	const signOut = useCallback(() => {
 		sessionStorage.removeItem(SESSION_STORAGE_KEY);
 		clearSessionCookie();
@@ -127,8 +121,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * Alias exported for compatibility — consumers can import either
- * `AuthProvider` or `SessionProvider`; they are the same component.
+ * Alias exported for issue #40 — "Integrate session provider".
+ * Consumers can import either `AuthProvider` or `SessionProvider`; they are
+ * the same component.
  */
 export const SessionProvider = AuthProvider;
 
@@ -139,9 +134,7 @@ export const SessionProvider = AuthProvider;
 export function useAuth(): AuthContextValue {
 	const ctx = useContext(AuthContext);
 	if (!ctx) {
-		throw new Error(
-			"useAuth must be used within an AuthProvider / SessionProvider",
-		);
+		throw new Error("useAuth must be used within an AuthProvider / SessionProvider");
 	}
 	return ctx;
 }

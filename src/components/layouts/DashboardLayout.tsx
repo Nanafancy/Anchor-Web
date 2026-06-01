@@ -8,8 +8,6 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { AuthLoadingSkeleton } from "./AuthLoadingSkeleton";
 import { Sidebar } from "./Sidebar";
 import { TopNav } from "./TopNav";
 
@@ -21,7 +19,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const pathname = usePathname();
 	const sidebarRef = useRef<HTMLDivElement>(null);
-	const { isLoading } = useAuth();
 
 	const closeSidebar = useCallback(() => {
 		setSidebarOpen(false);
@@ -31,8 +28,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 		setSidebarOpen((prev) => !prev);
 	}, []);
 
-	// Close sidebar on route change
-	// biome-ignore lint/correctness/useExhaustiveDependencies: intentional — close on pathname change
+	// biome-ignore lint/correctness/useExhaustiveDependencies: close sidebar on route change
 	useEffect(() => {
 		closeSidebar();
 	}, [pathname]);
@@ -44,6 +40,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 		} else {
 			document.body.style.overflow = "auto";
 		}
+
 		return () => {
 			document.body.style.overflow = "auto";
 		};
@@ -59,7 +56,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 		[sidebarOpen, closeSidebar],
 	);
 
-	// Touch swipe to close on mobile
+	// Touch swipe to close on mobile - track touch start position
 	const touchStartX = useRef<number | null>(null);
 
 	const handleTouchStart = useCallback(
@@ -74,6 +71,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 			if (touchStartX.current === null || !sidebarOpen) return;
 			const endX = e.changedTouches[0]?.clientX ?? 0;
 			const deltaX = endX - touchStartX.current;
+			// If swiped left by more than 50px, close the sidebar
 			if (deltaX < -50) {
 				closeSidebar();
 			}
@@ -82,15 +80,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 		[sidebarOpen, closeSidebar],
 	);
 
-	/**
-	 * Show a full-page skeleton while the auth state is being rehydrated
-	 * from sessionStorage (issue #44). This prevents a flash of unstyled
-	 * or empty content on the initial client render.
-	 */
-	if (isLoading) {
-		return <AuthLoadingSkeleton />;
-	}
-
 	return (
 		<div
 			className="relative flex min-h-screen bg-gray-50"
@@ -98,7 +87,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 			onTouchStart={handleTouchStart}
 			onTouchEnd={handleTouchEnd}
 		>
-			{/* Mobile overlay */}
+			{/* Mobile Overlay */}
 			{sidebarOpen && (
 				<div
 					className="fixed inset-0 z-40 bg-black/50 lg:hidden"
@@ -116,7 +105,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 				{/* TopNav */}
 				<TopNav onMenuClick={toggleSidebar} />
 
-				{/* Main content */}
+				{/* Main */}
 				<main className="flex-1">
 					<div className="py-6">
 						<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -126,5 +115,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 				</main>
 			</div>
 		</div>
+		</NetworkProvider>
 	);
 }

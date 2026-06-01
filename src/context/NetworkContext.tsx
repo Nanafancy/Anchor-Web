@@ -1,22 +1,40 @@
 "use client";
 
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import type { WalletNetwork } from "@/types/wallet";
 
-export type Network = "mainnet" | "testnet";
+const STORAGE_KEY = "mux_network";
+const VALID: WalletNetwork[] = ["mainnet", "testnet"];
+const DEFAULT: WalletNetwork = "mainnet";
+
+function readStored(): WalletNetwork {
+	try {
+		const v = localStorage.getItem(STORAGE_KEY);
+		if (v && (VALID as string[]).includes(v)) return v as WalletNetwork;
+	} catch {}
+	return DEFAULT;
+}
 
 interface NetworkContextValue {
-	network: Network;
-	setNetwork: (network: Network) => void;
+	network: WalletNetwork;
+	setNetwork: (n: WalletNetwork) => void;
 }
 
 const NetworkContext = createContext<NetworkContextValue | null>(null);
 
 export function NetworkProvider({ children }: { children: React.ReactNode }) {
-	const [network, setNetworkState] = useState<Network>("mainnet");
+	const [network, setNetworkState] = useState<WalletNetwork>(DEFAULT);
 
-	const setNetwork = useCallback((next: Network) => {
-		setNetworkState(next);
+	useEffect(() => {
+		setNetworkState(readStored());
 	}, []);
+
+	function setNetwork(n: WalletNetwork) {
+		setNetworkState(n);
+		try {
+			localStorage.setItem(STORAGE_KEY, n);
+		} catch {}
+	}
 
 	return (
 		<NetworkContext.Provider value={{ network, setNetwork }}>
@@ -27,8 +45,6 @@ export function NetworkProvider({ children }: { children: React.ReactNode }) {
 
 export function useNetwork(): NetworkContextValue {
 	const ctx = useContext(NetworkContext);
-	if (!ctx) {
-		throw new Error("useNetwork must be used within a NetworkProvider");
-	}
+	if (!ctx) throw new Error("useNetwork must be used within NetworkProvider");
 	return ctx;
 }
