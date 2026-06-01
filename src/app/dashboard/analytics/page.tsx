@@ -1,34 +1,21 @@
 "use client";
 
-import { useState } from "react";
 import { AnalyticsHeader } from "@/components/analytics/AnalyticsHeader";
 import { MetricsCards } from "@/components/analytics/MetricsCards";
 import { AnalyticsChart } from "@/components/analytics/AnalyticsChart";
 import { TopAssetsTable } from "@/components/analytics/TopAssetsTable";
 import { AnalyticsLoadingSkeleton } from "@/components/analytics/AnalyticsLoadingSkeleton";
-import { AnalyticsEmptyState } from "@/components/analytics/AnalyticsEmptyState";
 import { ErrorState } from "@/components/ui/ErrorState";
-import { useAnalyticsMetrics } from "@/hooks/useAnalyticsMetrics";
-import type { DateRange } from "@/components/analytics/DateRangePicker";
-
-function defaultRange(): DateRange {
-	const to = new Date().toISOString().slice(0, 10);
-	const from = new Date(Date.now() - 6 * 24 * 60 * 60 * 1000)
-		.toISOString()
-		.slice(0, 10);
-	return { from, to };
-}
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 export default function AnalyticsPage() {
-	const [range, setRange] = useState<DateRange>(defaultRange);
-	const { data, isLoading, isEmpty, isError, error, refetch } =
-		useAnalyticsMetrics(range);
+	const { data, isLoading, isError, error, refetch } = useAnalytics();
 
 	if (isLoading) {
 		return <AnalyticsLoadingSkeleton />;
 	}
 
-	if (isError) {
+	if (isError || !data) {
 		return (
 			<ErrorState
 				title="Failed to load analytics"
@@ -38,20 +25,9 @@ export default function AnalyticsPage() {
 		);
 	}
 
-	if (isEmpty || !data) {
-		return (
-			<>
-				<AnalyticsHeader range={range} onRangeChange={setRange} />
-				<AnalyticsEmptyState
-					action={{ label: "Refresh", onClick: refetch }}
-				/>
-			</>
-		);
-	}
-
 	return (
 		<div className="space-y-6">
-			<AnalyticsHeader range={range} onRangeChange={setRange} />
+			<AnalyticsHeader />
 
 			<MetricsCards metrics={data.metrics} />
 

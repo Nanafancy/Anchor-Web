@@ -1,16 +1,29 @@
 import { ReactNode } from "react";
 
 interface AnalyticsEmptyStateProps {
+	/** Override the default icon. */
 	icon?: ReactNode;
+	/** Override the default title. */
 	title?: string;
+	/** Override the default description. */
 	description?: string;
-	action?: { label: string; onClick: () => void };
+	/** Optional action button (e.g. "Refresh" or "Connect wallet"). */
+	action?: {
+		label: string;
+		onClick: () => void;
+	};
 }
 
+/**
+ * Full-page empty state for the analytics dashboard.
+ *
+ * Shown when the data fetch succeeds but returns no metrics, charts, or
+ * assets — i.e. the account has no activity yet for the selected period.
+ */
 export function AnalyticsEmptyState({
 	icon,
 	title = "No analytics data yet",
-	description = "There is no activity to display for the selected period. Try a different date range or check back later.",
+	description = "There is no activity to display for the selected period. Data will appear here once transactions start flowing through the platform.",
 	action,
 }: AnalyticsEmptyStateProps) {
 	return (
@@ -19,20 +32,27 @@ export function AnalyticsEmptyState({
 			aria-label="No analytics data"
 			className="flex min-h-[480px] w-full flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50/50 p-8 text-center dark:border-zinc-800 dark:bg-zinc-900/50"
 		>
+			{/* Icon */}
 			<div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800">
 				{icon ?? <DefaultChartIcon />}
 			</div>
+
+			{/* Heading */}
 			<h2 className="mb-2 text-xl font-semibold text-zinc-900 dark:text-zinc-50">
 				{title}
 			</h2>
+
+			{/* Description */}
 			<p className="mb-6 max-w-sm text-sm text-zinc-500 dark:text-zinc-400">
 				{description}
 			</p>
+
+			{/* Optional action */}
 			{action && (
 				<button
 					type="button"
 					onClick={action.onClick}
-					className="inline-flex h-10 items-center justify-center rounded-lg bg-zinc-900 px-6 text-sm font-medium text-zinc-50 transition-colors hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+					className="inline-flex h-10 items-center justify-center rounded-lg bg-zinc-900 px-6 text-sm font-medium text-zinc-50 transition-colors hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-zinc-50"
 				>
 					{action.label}
 				</button>
@@ -41,6 +61,7 @@ export function AnalyticsEmptyState({
 	);
 }
 
+/** Bar-chart icon used as the default visual. */
 function DefaultChartIcon() {
 	return (
 		<svg
