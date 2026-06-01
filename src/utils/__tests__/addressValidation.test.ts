@@ -10,8 +10,10 @@ import {
 } from "../addressValidation";
 
 describe("addressValidation utilities", () => {
-	const validAddress = "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
-	const validAddress2 = "GCFONE23AB7Y6C5YZOMKUKGETPIAJA752ZPMORQO5VKA6LHXHC7Y3YPE";
+	const validAddress =
+		"GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
+	const validAddress2 =
+		"GCFONE23AB7Y6C5YZOMKUKGETPIAJA752ZPMORQO5VKA6LHXHC7Y3YPE";
 	const truncatedAddress = "GBZXN7...MADI";
 	const truncatedAddress2 = "GCFONE...YPE";
 	const invalidAddress = "INVALID_ADDRESS";
@@ -26,7 +28,8 @@ describe("addressValidation utilities", () => {
 		});
 
 		it("should reject address not starting with G", () => {
-			const address = "ABZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
+			const address =
+				"ABZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
 			expect(isValidStellarAddress(address)).toBe(false);
 		});
 
@@ -36,7 +39,8 @@ describe("addressValidation utilities", () => {
 		});
 
 		it("should reject address with invalid characters", () => {
-			const address = "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMAD!";
+			const address =
+				"GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMAD!";
 			expect(isValidStellarAddress(address)).toBe(false);
 		});
 
@@ -313,13 +317,15 @@ describe("addressValidation utilities", () => {
 		});
 
 		it("should handle mixed case addresses", () => {
-			const mixedCase = "GbZxN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
+			const mixedCase =
+				"GbZxN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
 			const result = validateAddressForCopy(mixedCase);
 			expect(result.isValid).toBe(false);
 		});
 
 		it("should handle addresses with spaces", () => {
-			const withSpaces = "GBZXN7 PIRZGNMHGA7 MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
+			const withSpaces =
+				"GBZXN7 PIRZGNMHGA7 MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
 			const result = validateAddressForCopy(withSpaces);
 			expect(result.isValid).toBe(false);
 		});

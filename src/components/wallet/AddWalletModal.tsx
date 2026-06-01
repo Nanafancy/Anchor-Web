@@ -26,7 +26,10 @@ function generateId(): string {
 
 function FieldError({ message }: { message: string }) {
 	return (
-		<p role="alert" className="mt-1.5 flex items-center gap-1.5 text-sm text-red-600 dark:text-red-400">
+		<p
+			role="alert"
+			className="mt-1.5 flex items-center gap-1.5 text-sm text-red-600 dark:text-red-400"
+		>
 			<AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
 			{message}
 		</p>
@@ -35,7 +38,11 @@ function FieldError({ message }: { message: string }) {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export function AddWalletModal({ isOpen, onClose, onAdd }: AddWalletModalProps) {
+export function AddWalletModal({
+	isOpen,
+	onClose,
+	onAdd,
+}: AddWalletModalProps) {
 	const addressId = useId();
 	const networkId = useId();
 
@@ -145,7 +152,10 @@ export function AddWalletModal({ isOpen, onClose, onAdd }: AddWalletModalProps) 
 				<div className="flex items-center justify-between border-b border-zinc-200 px-6 py-4 dark:border-zinc-800">
 					<div className="flex items-center gap-2">
 						<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
-							<Plus className="h-4 w-4 text-zinc-600 dark:text-zinc-400" aria-hidden="true" />
+							<Plus
+								className="h-4 w-4 text-zinc-600 dark:text-zinc-400"
+								aria-hidden="true"
+							/>
 						</div>
 						<h2
 							id="add-wallet-title"
@@ -188,7 +198,9 @@ export function AddWalletModal({ isOpen, onClose, onAdd }: AddWalletModalProps) 
 										placeholder="GABC...XYZ"
 										autoComplete="off"
 										spellCheck={false}
-										aria-describedby={addressError ? `${addressId}-error` : undefined}
+										aria-describedby={
+											addressError ? `${addressId}-error` : undefined
+										}
 										aria-invalid={!!addressError}
 										className={`
 											w-full rounded-lg border px-3 py-2 font-mono text-sm
@@ -224,7 +236,9 @@ export function AddWalletModal({ isOpen, onClose, onAdd }: AddWalletModalProps) 
 									<select
 										id={networkId}
 										value={network}
-										onChange={(e) => setNetwork(e.target.value as WalletNetwork)}
+										onChange={(e) =>
+											setNetwork(e.target.value as WalletNetwork)
+										}
 										className="
 											w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm
 											text-zinc-900 outline-none transition-colors
@@ -265,7 +279,8 @@ export function AddWalletModal({ isOpen, onClose, onAdd }: AddWalletModalProps) 
 										Wallet added successfully
 									</p>
 									<p className="mt-0.5 text-xs text-green-700 dark:text-green-400">
-										It will appear as <strong>Pending</strong> until confirmed on-chain.
+										It will appear as <strong>Pending</strong> until confirmed
+										on-chain.
 									</p>
 								</div>
 							</div>
@@ -273,13 +288,18 @@ export function AddWalletModal({ isOpen, onClose, onAdd }: AddWalletModalProps) 
 							<div className="rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-800">
 								<dl className="space-y-2 text-sm">
 									<div className="flex justify-between gap-4">
-										<dt className="text-zinc-500 dark:text-zinc-400">Address</dt>
+										<dt className="text-zinc-500 dark:text-zinc-400">
+											Address
+										</dt>
 										<dd className="truncate font-mono text-zinc-900 dark:text-zinc-50">
-											{addedWallet.address.slice(0, 8)}…{addedWallet.address.slice(-6)}
+											{addedWallet.address.slice(0, 8)}…
+											{addedWallet.address.slice(-6)}
 										</dd>
 									</div>
 									<div className="flex justify-between gap-4">
-										<dt className="text-zinc-500 dark:text-zinc-400">Network</dt>
+										<dt className="text-zinc-500 dark:text-zinc-400">
+											Network
+										</dt>
 										<dd className="capitalize text-zinc-900 dark:text-zinc-50">
 											{addedWallet.network}
 										</dd>

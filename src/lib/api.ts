@@ -19,11 +19,11 @@ export async function fetchJson<T>(url: string): Promise<ApiResult<T>> {
 }
 
 export async function getTransactions() {
-	return fetchJson<Record<string, unknown>[]>('/api/transactions');
+	return fetchJson<Record<string, unknown>[]>("/api/transactions");
 }
 
 export async function getSpendingLimits() {
-	return fetchJson<Record<string, unknown>>('/api/spending-limits');
+	return fetchJson<Record<string, unknown>>("/api/spending-limits");
 }
 
 export async function saveSpendingLimits(payload: {

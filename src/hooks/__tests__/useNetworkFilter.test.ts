@@ -373,13 +373,16 @@ describe("useNetworkFilter", () => {
 		it("should handle large wallet arrays efficiently", () => {
 			const { result } = renderHook(() => useNetworkFilter());
 
-			const largeWalletArray: Wallet[] = Array.from({ length: 1000 }, (_, i) => ({
-				id: `wallet-${i}`,
-				address: `GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI${i}`,
-				network: i % 2 === 0 ? "mainnet" : "testnet",
-				status: "active",
-				createdAt: new Date(),
-			}));
+			const largeWalletArray: Wallet[] = Array.from(
+				{ length: 1000 },
+				(_, i) => ({
+					id: `wallet-${i}`,
+					address: `GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI${i}`,
+					network: i % 2 === 0 ? "mainnet" : "testnet",
+					status: "active",
+					createdAt: new Date(),
+				}),
+			);
 
 			act(() => {
 				result.current.setSelectedNetwork("mainnet");

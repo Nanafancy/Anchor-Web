@@ -1,8 +1,4 @@
-const {
-	loadSession,
-	saveSession,
-	clearSession,
-} = require("./session");
+const { loadSession, saveSession, clearSession } = require("./session");
 
 const REQUEST_ID_HEADER = "x-request-id";
 
@@ -80,13 +76,13 @@ async function apiFetch(path, init = {}) {
 			credentials: "include",
 		});
 		if (!retry.ok) {
-			throw new Error(await retry.text() || "Request failed");
+			throw new Error((await retry.text()) || "Request failed");
 		}
 		return retry.json();
 	}
 
 	if (!response.ok) {
-		throw new Error(await response.text() || "Request failed");
+		throw new Error((await response.text()) || "Request failed");
 	}
 
 	return response.json();

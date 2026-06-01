@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { Wallet } from "@/types/wallet";
+import { getApiBaseUrl } from "@/lib/api/config";
 
 interface UseWalletsResult {
 	wallets: Wallet[];
@@ -24,7 +25,7 @@ export function useWallets(): UseWalletsResult {
 		setLoading(true);
 		setError(null);
 
-		const base = process.env.NEXT_PUBLIC_API_URL;
+		const base = getApiBaseUrl();
 		if (!base) {
 			setError("API URL is not configured.");
 			setLoading(false);

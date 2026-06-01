@@ -36,7 +36,9 @@ describe("RecoveryFAQ", () => {
 
 	it("expands an answer when its button is clicked", async () => {
 		render(<RecoveryFAQ items={SAMPLE} />);
-		await userEvent.click(screen.getByRole("button", { name: SAMPLE[0].question }));
+		await userEvent.click(
+			screen.getByRole("button", { name: SAMPLE[0].question }),
+		);
 		expect(screen.getByText(SAMPLE[0].answer)).toBeVisible();
 	});
 
@@ -59,8 +61,12 @@ describe("RecoveryFAQ", () => {
 
 	it("only one item is open at a time", async () => {
 		render(<RecoveryFAQ items={SAMPLE} />);
-		await userEvent.click(screen.getByRole("button", { name: SAMPLE[0].question }));
-		await userEvent.click(screen.getByRole("button", { name: SAMPLE[1].question }));
+		await userEvent.click(
+			screen.getByRole("button", { name: SAMPLE[0].question }),
+		);
+		await userEvent.click(
+			screen.getByRole("button", { name: SAMPLE[1].question }),
+		);
 		expect(screen.queryByText(SAMPLE[0].answer)).not.toBeVisible();
 		expect(screen.getByText(SAMPLE[1].answer)).toBeVisible();
 	});

@@ -45,11 +45,14 @@ export function useRecoveryTimeline(initialTimeline: RecoveryTimeline) {
 	/**
 	 * Updates the timeline with new data
 	 */
-	const updateTimeline = useCallback((newTimeline: RecoveryTimeline) => {
-		if (validateTimeline(newTimeline)) {
-			setTimeline(newTimeline);
-		}
-	}, [validateTimeline]);
+	const updateTimeline = useCallback(
+		(newTimeline: RecoveryTimeline) => {
+			if (validateTimeline(newTimeline)) {
+				setTimeline(newTimeline);
+			}
+		},
+		[validateTimeline],
+	);
 
 	/**
 	 * Selects an event from the timeline
@@ -137,12 +140,7 @@ export function useRecoveryTimeline(initialTimeline: RecoveryTimeline) {
 	 * Gets the first incomplete event
 	 */
 	const currentEvent = useMemo(() => {
-		return (
-			inProgressEvents[0] ||
-			pendingEvents[0] ||
-			failedEvents[0] ||
-			null
-		);
+		return inProgressEvents[0] || pendingEvents[0] || failedEvents[0] || null;
 	}, [inProgressEvents, pendingEvents, failedEvents]);
 
 	/**
@@ -164,9 +162,7 @@ export function useRecoveryTimeline(initialTimeline: RecoveryTimeline) {
 
 			if (!fromEvent || !toEvent) return null;
 
-			return (
-				toEvent.timestamp.getTime() - fromEvent.timestamp.getTime()
-			);
+			return toEvent.timestamp.getTime() - fromEvent.timestamp.getTime();
 		},
 		[timeline.events],
 	);

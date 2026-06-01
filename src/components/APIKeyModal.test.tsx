@@ -1,75 +1,84 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import APIKeyModal from './APIKeyModal';
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import APIKeyModal from "./APIKeyModal";
 
-describe('APIKeyModal', () => {
-	it('does not render when closed', () => {
+describe("APIKeyModal", () => {
+	it("does not render when closed", () => {
 		const { container } = render(
-			<APIKeyModal isOpen={false} onClose={vi.fn()} />
+			<APIKeyModal isOpen={false} onClose={vi.fn()} />,
 		);
 		expect(container.firstChild).toBeNull();
 	});
 
-	it('renders when open', () => {
+	it("renders when open", () => {
 		render(<APIKeyModal isOpen={true} onClose={vi.fn()} />);
-		expect(screen.getByText('Create API Key')).toBeInTheDocument();
+		expect(screen.getByText("Create API Key")).toBeInTheDocument();
 	});
 
-	it('shows warning message initially', () => {
+	it("shows warning message initially", () => {
 		render(<APIKeyModal isOpen={true} onClose={vi.fn()} />);
 		expect(screen.getByText(/save your api key/i)).toBeInTheDocument();
 	});
 
-	it('has key name input field', () => {
+	it("has key name input field", () => {
 		render(<APIKeyModal isOpen={true} onClose={vi.fn()} />);
 		expect(screen.getByLabelText(/key name/i)).toBeInTheDocument();
 	});
 
-	it('calls onKeyCreated when key is generated', async () => {
+	it("calls onKeyCreated when key is generated", async () => {
 		const onKeyCreated = vi.fn();
-		render(<APIKeyModal isOpen={true} onClose={vi.fn()} onKeyCreated={onKeyCreated} />);
-		
+		render(
+			<APIKeyModal
+				isOpen={true}
+				onClose={vi.fn()}
+				onKeyCreated={onKeyCreated}
+			/>,
+		);
+
 		const input = screen.getByLabelText(/key name/i);
-		fireEvent.change(input, { target: { value: 'Test Key' } });
-		
+		fireEvent.change(input, { target: { value: "Test Key" } });
+
 		const generateButton = screen.getByText(/generate key/i);
 		fireEvent.click(generateButton);
-		
+
 		await waitFor(() => {
-			expect(onKeyCreated).toHaveBeenCalledWith({ name: 'Test Key', key: expect.any(String) });
+			expect(onKeyCreated).toHaveBeenCalledWith({
+				name: "Test Key",
+				key: expect.any(String),
+			});
 		});
 	});
 
-	it('shows error when name is empty', async () => {
+	it("shows error when name is empty", async () => {
 		render(<APIKeyModal isOpen={true} onClose={vi.fn()} />);
-		
+
 		const generateButton = screen.getByText(/generate key/i);
 		fireEvent.click(generateButton);
-		
+
 		await waitFor(() => {
 			expect(screen.getByText(/please enter a name/i)).toBeInTheDocument();
 		});
 	});
 
-	it('disables generate button while submitting', async () => {
+	it("disables generate button while submitting", async () => {
 		render(<APIKeyModal isOpen={true} onClose={vi.fn()} />);
-		
+
 		const input = screen.getByLabelText(/key name/i);
-		fireEvent.change(input, { target: { value: 'Test Key' } });
-		
+		fireEvent.change(input, { target: { value: "Test Key" } });
+
 		const generateButton = screen.getByText(/generate key/i);
 		fireEvent.click(generateButton);
-		
+
 		expect(generateButton).toBeDisabled();
 	});
 
-	it('calls onClose when close button is clicked', () => {
+	it("calls onClose when close button is clicked", () => {
 		const onClose = vi.fn();
 		render(<APIKeyModal isOpen={true} onClose={onClose} />);
-		
-		const closeButton = screen.getByText('Close');
+
+		const closeButton = screen.getByText("Close");
 		fireEvent.click(closeButton);
-		
+
 		expect(onClose).toHaveBeenCalled();
 	});
 });

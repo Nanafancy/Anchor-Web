@@ -4,7 +4,9 @@ const stubStorage = (() => {
 	const store = {};
 	return {
 		getItem(key) {
-			return Object.prototype.hasOwnProperty.call(store, key) ? store[key] : null;
+			return Object.prototype.hasOwnProperty.call(store, key)
+				? store[key]
+				: null;
 		},
 		setItem(key, value) {
 			store[key] = String(value);

@@ -99,7 +99,8 @@ export function useRecoveryStatus(
 					startPolling();
 				}
 			} else {
-				const errorMessage = response.error || "Failed to fetch recovery status";
+				const errorMessage =
+					response.error || "Failed to fetch recovery status";
 				setError(errorMessage);
 				setLoading("error");
 				onError?.(errorMessage);

@@ -13,7 +13,8 @@ jest.mock("@/utils/explorerUrl", () => ({
 }));
 
 describe("ExplorerLink component", () => {
-	const validAddress = "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
+	const validAddress =
+		"GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
 	const invalidAddress = "INVALID_ADDRESS";
 
 	it("should render as a link with valid address", () => {
@@ -106,9 +107,7 @@ describe("ExplorerLink component", () => {
 	});
 
 	it("should use default title for valid address", () => {
-		render(
-			<ExplorerLink address={validAddress} network="mainnet" />,
-		);
+		render(<ExplorerLink address={validAddress} network="mainnet" />);
 
 		const link = screen.getByRole("link");
 		expect(link).toHaveAttribute("title", "View on Stellar Explorer (mainnet)");
@@ -127,11 +126,7 @@ describe("ExplorerLink component", () => {
 		expect(button1).toHaveAttribute("data-variant", "outline");
 
 		const { container: container2 } = render(
-			<ExplorerLink
-				address={validAddress}
-				network="mainnet"
-				variant="link"
-			/>,
+			<ExplorerLink address={validAddress} network="mainnet" variant="link" />,
 		);
 
 		const button2 = container2.querySelector("button");
@@ -140,11 +135,7 @@ describe("ExplorerLink component", () => {
 
 	it("should support different button sizes", () => {
 		const { container } = render(
-			<ExplorerLink
-				address={validAddress}
-				network="mainnet"
-				size="lg"
-			/>,
+			<ExplorerLink address={validAddress} network="mainnet" size="lg" />,
 		);
 
 		const button = container.querySelector("button");
@@ -166,11 +157,7 @@ describe("ExplorerLink component", () => {
 
 	it("should handle account type", () => {
 		render(
-			<ExplorerLink
-				address={validAddress}
-				network="mainnet"
-				type="account"
-			/>,
+			<ExplorerLink address={validAddress} network="mainnet" type="account" />,
 		);
 
 		const link = screen.getByRole("link");

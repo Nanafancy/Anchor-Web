@@ -100,27 +100,13 @@ export function TestnetHint({
 						to fund new accounts with test XLM.
 					</p>
 					<div className="flex flex-wrap gap-2 pt-2">
-						<Button
-							variant="outline"
-							size="sm"
-							asChild
-							className="h-8 text-xs"
-						>
-							<a
-								href={FRIENDBOT_URL}
-								target="_blank"
-								rel="noopener noreferrer"
-							>
+						<Button variant="outline" size="sm" asChild className="h-8 text-xs">
+							<a href={FRIENDBOT_URL} target="_blank" rel="noopener noreferrer">
 								<ExternalLink className="h-3 w-3" />
 								Open Friendbot
 							</a>
 						</Button>
-						<Button
-							variant="outline"
-							size="sm"
-							asChild
-							className="h-8 text-xs"
-						>
+						<Button variant="outline" size="sm" asChild className="h-8 text-xs">
 							<a
 								href={FRIENDBOT_DOCS_URL}
 								target="_blank"

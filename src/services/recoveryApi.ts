@@ -6,6 +6,7 @@
  */
 
 import type { RecoveryTimeline, RecoveryTimelineEvent } from "@/types/recovery";
+import { getApiBaseUrl } from "@/lib/api/config";
 
 /**
  * API response types
@@ -38,7 +39,7 @@ interface ApiConfig {
  * Default API configuration
  */
 const DEFAULT_CONFIG: ApiConfig = {
-	baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api",
+	baseUrl: getApiBaseUrl() || "http://localhost:3000/api",
 	timeout: 10000,
 	retryAttempts: 3,
 	retryDelay: 1000,
@@ -58,7 +59,10 @@ function validateRecoveryTimeline(data: unknown): data is RecoveryTimeline {
 	if (
 		typeof timeline.id !== "string" ||
 		typeof timeline.walletId !== "string" ||
-		!(timeline.startedAt instanceof Date || typeof timeline.startedAt === "string") ||
+		!(
+			timeline.startedAt instanceof Date ||
+			typeof timeline.startedAt === "string"
+		) ||
 		!Array.isArray(timeline.events) ||
 		typeof timeline.status !== "string"
 	) {
@@ -270,7 +274,9 @@ export async function fetchRecoveryStatus(
 	// All retries exhausted
 	return {
 		success: false,
-		error: lastError?.message || "Failed to fetch recovery status after multiple attempts",
+		error:
+			lastError?.message ||
+			"Failed to fetch recovery status after multiple attempts",
 		timestamp: Date.now(),
 	};
 }
@@ -303,10 +309,7 @@ export async function fetchRecoveryEvents(
 
 	try {
 		const controller = new AbortController();
-		const timeoutId = setTimeout(
-			() => controller.abort(),
-			finalConfig.timeout,
-		);
+		const timeoutId = setTimeout(() => controller.abort(), finalConfig.timeout);
 
 		const response = await fetch(
 			`${finalConfig.baseUrl}/recovery/${recoveryId}/events`,

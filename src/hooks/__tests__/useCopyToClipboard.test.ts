@@ -29,7 +29,8 @@ jest.mock("@/utils/addressValidation", () => ({
 }));
 
 describe("useCopyToClipboard hook", () => {
-	const validAddress = "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
+	const validAddress =
+		"GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
 	const truncatedAddress = "GBZXN7...MADI";
 	const invalidAddress = "INVALID_ADDRESS";
 	const regularText = "Hello World";
