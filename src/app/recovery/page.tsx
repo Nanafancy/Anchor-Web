@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { InitiateRecoveryCTA } from "@/components/recovery/InitiateRecoveryCTA";
+import { Button } from "@/components/ui/button";
 import { RecoveryExplanation } from "@/components/recovery/RecoveryExplanation";
 import { RecoveryFAQ } from "@/components/recovery/RecoveryFAQ";
 import { RecoveryLoadingState } from "@/components/recovery/RecoveryLoadingState";
@@ -37,6 +37,19 @@ export default function RecoveryPage() {
 				{/* Loading skeleton while initial status is fetched */}
 				{recovery.state === "loading" ? (
 					<RecoveryLoadingState />
+				) : recovery.state === "error" ? (
+					<div className="rounded-xl border border-red-200 bg-red-50 p-6 space-y-4 dark:border-red-800 dark:bg-red-900/20">
+						<h3 className="font-semibold text-red-900 dark:text-red-200">
+							Recovery Error
+						</h3>
+						<p className="text-sm text-red-800 dark:text-red-300">
+							{recovery.errorMessage ??
+								"An unexpected error occurred during recovery."}
+						</p>
+						<Button variant="outline" onClick={recovery.resetRecovery}>
+							Retry
+						</Button>
+					</div>
 				) : (
 					<>
 						{/* Initiate Recovery CTA */}
