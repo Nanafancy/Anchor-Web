@@ -21,10 +21,15 @@ const publicEnvVars: EnvVar[] = [
 		description: "Public-facing URL of the application",
 	},
 	{
+		name: "NEXT_PUBLIC_API_URL",
+		required: false,
+		description: "Public API base URL for client-side requests",
+	},
+	{
 		name: "NEXT_PUBLIC_MUX_API_URL",
 		required: false,
 		defaultValue: "https://api.muxprotocol.com",
-		description: "Mux Protocol API endpoint",
+		description: "Legacy alias for the API base URL",
 	},
 ];
 

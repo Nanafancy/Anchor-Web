@@ -32,7 +32,6 @@ export function TopNav({ onMenuClick }: TopNavProps) {
 			dashboard: "Dashboard",
 			analytics: "Analytics",
 			users: "Users",
-			orders: "Orders",
 			documents: "Documents",
 			settings: "Settings",
 			wallets: "Wallets",

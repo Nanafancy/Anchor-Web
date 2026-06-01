@@ -6,6 +6,7 @@
  */
 
 import type { RecoveryTimeline, RecoveryTimelineEvent } from "@/types/recovery";
+import { getApiBaseUrl } from "@/lib/api/config";
 
 /**
  * API response types
@@ -38,7 +39,7 @@ interface ApiConfig {
  * Default API configuration
  */
 const DEFAULT_CONFIG: ApiConfig = {
-	baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api",
+	baseUrl: getApiBaseUrl() || "http://localhost:3000/api",
 	timeout: 10000,
 	retryAttempts: 3,
 	retryDelay: 1000,
