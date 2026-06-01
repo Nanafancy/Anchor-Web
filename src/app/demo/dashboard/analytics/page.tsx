@@ -6,32 +6,23 @@ import {
 	AnalyticsChart,
 	TopAssetsTable,
 	AnalyticsLoadingSkeleton,
-	AnalyticsEmptyState,
 } from "@/components/analytics";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { useAnalytics } from "@/hooks/useAnalytics";
 
 export default function AnalyticsPage() {
-	const { data, isLoading, isEmpty, isError, error, refetch } = useAnalytics();
+	const { data, isLoading, isError, error, refetch } = useAnalytics();
 
 	if (isLoading) {
 		return <AnalyticsLoadingSkeleton />;
 	}
 
-	if (isError) {
+	if (isError || !data) {
 		return (
 			<ErrorState
 				title="Failed to load analytics"
 				description={error ?? "An unexpected error occurred. Please try again."}
 				retry={{ onRetry: refetch }}
-			/>
-		);
-	}
-
-	if (isEmpty || !data) {
-		return (
-			<AnalyticsEmptyState
-				action={{ label: "Refresh", onClick: refetch }}
 			/>
 		);
 	}

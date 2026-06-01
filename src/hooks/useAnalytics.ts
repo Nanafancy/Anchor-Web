@@ -10,13 +10,12 @@ export interface AnalyticsData {
 	topAssets: AssetData[];
 }
 
-export type AnalyticsStatus = "idle" | "loading" | "success" | "empty" | "error";
+export type AnalyticsStatus = "idle" | "loading" | "success" | "error";
 
 export interface UseAnalyticsResult {
 	data: AnalyticsData | null;
 	status: AnalyticsStatus;
 	isLoading: boolean;
-	isEmpty: boolean;
 	isError: boolean;
 	error: string | null;
 	/** Re-trigger the fetch (e.g. after an error or range change). */
@@ -24,26 +23,10 @@ export interface UseAnalyticsResult {
 }
 
 /**
- * Returns true when the loaded data has no meaningful content to display.
- * All four collections must be non-empty for the page to be considered populated.
- */
-function isDataEmpty(data: AnalyticsData): boolean {
-	return (
-		data.metrics.length === 0 &&
-		data.volumeData.length === 0 &&
-		data.transactionsData.length === 0 &&
-		data.topAssets.length === 0
-	);
-}
-
-/**
  * Hook that manages analytics data fetching lifecycle.
  *
- * Exposes an `isEmpty` flag (status === "empty") so the page can render a
- * dedicated empty-state UI instead of blank charts when the API returns no data.
- *
  * Currently backed by mock data with a simulated async delay so the loading
- * skeleton is exercised in development. Swap the `loadAnalytics` function
+ * skeleton is exercised in development.  Swap the `loadAnalytics` function
  * body for a real API call when the backend is ready.
  */
 export function useAnalytics(): UseAnalyticsResult {
@@ -71,15 +54,13 @@ export function useAnalytics(): UseAnalyticsResult {
 
 				if (cancelled) return;
 
-				const loaded: AnalyticsData = {
+				setData({
 					metrics: mock.metrics,
 					volumeData: mock.volumeData,
 					transactionsData: mock.transactionsData,
 					topAssets: mock.topAssets,
-				};
-
-				setData(loaded);
-				setStatus(isDataEmpty(loaded) ? "empty" : "success");
+				});
+				setStatus("success");
 			} catch (err) {
 				if (cancelled) return;
 				const message =
@@ -100,7 +81,6 @@ export function useAnalytics(): UseAnalyticsResult {
 		data,
 		status,
 		isLoading: status === "loading" || status === "idle",
-		isEmpty: status === "empty",
 		isError: status === "error",
 		error,
 		refetch: () => setFetchKey((k) => k + 1),
