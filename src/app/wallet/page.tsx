@@ -135,46 +135,7 @@ export default function WalletPage() {
 					</div>
 				</section>
 
-				{/* Activity Placeholder */}
-				<section>
-					<div className="flex items-center justify-between mb-4">
-						<h2 className="text-xl font-bold text-neutral-900">
-							Recent Activity
-						</h2>
-						<button
-							disabled
-							className="text-sm font-medium text-neutral-400 cursor-not-allowed"
-						>
-							View All
-						</button>
-					</div>
-
-					<div className="bg-white rounded-2xl border border-neutral-200 shadow-sm min-h-[300px] flex flex-col items-center justify-center p-8 text-center">
-						<div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mb-4 text-neutral-400">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								strokeWidth={1.5}
-								stroke="currentColor"
-								className="w-8 h-8"
-							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-								/>
-							</svg>
-						</div>
-						<h3 className="text-lg font-semibold text-neutral-900">
-							No activity to show
-						</h3>
-						<p className="text-neutral-500 max-w-sm mt-2">
-							Your recent transactions will appear here once you start using
-							your wallet.
-						</p>
-					</div>
-				</section>
+				<RecentActivityFeed />
 			</div>
 		</div>
 	);
