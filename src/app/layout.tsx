@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ReactQueryProvider } from "@/lib/reactQuery/ReactQueryProvider";
 import { ApiProvider } from "@/lib/api/ApiContext";
+import { AuthProvider } from "@/context/AuthContext";
 
 const inter = Inter({
 	variable: "--font-sans",
@@ -82,7 +83,11 @@ export default function RootLayout({
 			<body
 				className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
 			>
-				<AuthProvider>{children}</AuthProvider>
+				<AuthProvider>
+					<ReactQueryProvider>
+						<ApiProvider>{children}</ApiProvider>
+					</ReactQueryProvider>
+				</AuthProvider>
 			</body>
 		</html>
 	);
