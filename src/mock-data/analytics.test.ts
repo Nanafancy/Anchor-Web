@@ -1,3 +1,12 @@
+/**
+ * Contract tests for src/mock-data/analytics.ts
+ *
+ * These tests verify that every export matches the shape documented in
+ * src/docs/Analytics_Data_Sources.md. If a field is added, removed, or
+ * renamed in the mock data, these tests will catch the drift before it
+ * reaches components or the real API integration.
+ */
+
 import { describe, expect, it } from "vitest";
 import {
 	metrics,
