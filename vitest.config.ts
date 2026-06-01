@@ -7,7 +7,7 @@ export default defineConfig({
 	test: {
 		environment: "jsdom",
 		globals: true,
-		setupFiles: ["./src/test/setup.ts"],
+		setupFiles: ["./src/test/setup.tsx"],
 		coverage: {
 			provider: "v8",
 			reporter: ["text", "lcov", "html"],
@@ -16,7 +16,6 @@ export default defineConfig({
 				"src/components/analytics/**",
 				"src/utils/**",
 				"src/hooks/**",
-				"src/services/**",
 				"src/mock-data/**",
 				"src/app/**/wallets/**",
 				"src/app/**/analytics/**",
