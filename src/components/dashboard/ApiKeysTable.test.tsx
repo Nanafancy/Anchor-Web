@@ -1,55 +1,54 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import { describe, it, vi, beforeEach, afterEach, expect } from 'vitest'
-import { ApiKeysTable } from './ApiKeysTable'
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { ApiKeysTable } from "./ApiKeysTable";
 
-const mockData = {
-  data: [
-    { id: '1', name: 'Key One', key: 'sk_1', status: 'Active', createdAt: '2024-01-01T00:00:00Z' },
-  ],
-}
+describe("ApiKeysTable", () => {
+	it("renders API keys table", () => {
+		render(<ApiKeysTable />);
+		expect(screen.getByText("API Keys")).toBeInTheDocument();
+	});
 
-describe('ApiKeysTable', () => {
-  beforeEach(() => {
-    vi.stubGlobal('fetch', vi.fn())
-  })
+	it("displays mock API keys", () => {
+		render(<ApiKeysTable />);
+		expect(screen.getByText("Default Key")).toBeInTheDocument();
+		expect(screen.getByText("Development Key")).toBeInTheDocument();
+	});
 
-  afterEach(() => {
-    vi.restoreAllMocks()
-  })
+	it("opens modal when create button is clicked", () => {
+		render(<ApiKeysTable />);
 
-  it('renders loading then data rows', async () => {
-    // @ts-ignore
-    fetch.mockResolvedValueOnce({ ok: true, json: async () => mockData })
+		const createButton = screen.getByText("Create new key");
+		fireEvent.click(createButton);
 
-    render(<ApiKeysTable />)
+		expect(screen.getByText("Create API Key")).toBeInTheDocument();
+	});
 
-    // Loading skeleton present
-    expect(screen.getByText(/API Keys/i)).toBeInTheDocument()
+	it("adds new key when modal creates one", async () => {
+		render(<ApiKeysTable />);
 
-    await waitFor(() => {
-      expect(screen.getByText('Key One')).toBeInTheDocument()
-    })
-  })
+		const createButton = screen.getByText("Create new key");
+		fireEvent.click(createButton);
 
-  it('shows empty state when no keys', async () => {
-    // @ts-ignore
-    fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ data: [] }) })
+		const input = screen.getByLabelText(/key name/i);
+		fireEvent.change(input, { target: { value: "New Test Key" } });
 
-    render(<ApiKeysTable />)
+		const generateButton = screen.getByText(/generate key/i);
+		fireEvent.click(generateButton);
 
-    await waitFor(() => {
-      expect(screen.getByText(/No API keys/i)).toBeInTheDocument()
-    })
-  })
+		await waitFor(() => {
+			expect(screen.getByText("New Test Key")).toBeInTheDocument();
+		});
+	});
 
-  it('shows error state on fetch failure', async () => {
-    // @ts-ignore
-    fetch.mockResolvedValueOnce({ ok: false, status: 500 })
+	it("revokes key when revoke button is clicked", async () => {
+		render(<ApiKeysTable />);
 
-    render(<ApiKeysTable />)
+		const revokeButtons = screen.getAllByText("Revoke");
+		fireEvent.click(revokeButtons[0]);
 
-    await waitFor(() => {
-      expect(screen.getByText(/Something went wrong/i)).toBeInTheDocument()
-    })
-  })
-})
+		await waitFor(() => {
+			const revokedBadge = screen.getAllByText("Revoked");
+			expect(revokedBadge.length).toBeGreaterThan(0);
+		});
+	});
+});
