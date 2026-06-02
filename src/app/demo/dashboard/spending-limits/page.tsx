@@ -1,6 +1,8 @@
 import { SpendingLimitsCard } from "@/components/dashboard/SpendingLimitsCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 
+const BILLING_DOCS_URL = "https://docs.mux.com/billing";
+
 export default function SpendingLimitsPage() {
 	return (
 		<div className="space-y-8">
