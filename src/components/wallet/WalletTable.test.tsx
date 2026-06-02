@@ -60,12 +60,16 @@ describe("WalletTable", () => {
 
 	it("renders the Add Wallet button when onAddWallet is provided", () => {
 		render(<WalletTable wallets={mockWallets} onAddWallet={vi.fn()} />);
-		expect(screen.getByRole("button", { name: /add wallet/i })).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: /add wallet/i }),
+		).toBeInTheDocument();
 	});
 
 	it("does not render the Add Wallet button when onAddWallet is omitted", () => {
 		render(<WalletTable wallets={mockWallets} />);
-		expect(screen.queryByRole("button", { name: /add wallet/i })).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole("button", { name: /add wallet/i }),
+		).not.toBeInTheDocument();
 	});
 
 	it("calls onAddWallet when the Add Wallet button is clicked", async () => {

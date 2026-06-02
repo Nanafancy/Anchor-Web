@@ -4,7 +4,8 @@ import {
 	ChartBarIcon,
 	CogIcon,
 	HomeIcon,
-	ShoppingCartIcon,
+	KeyIcon,
+	ShieldCheckIcon,
 	UsersIcon,
 	WalletIcon,
 	XMarkIcon,
@@ -19,7 +20,8 @@ const navigation = [
 	{ name: "Analytics", href: "/dashboard/analytics", icon: ChartBarIcon },
 	{ name: "Wallets", href: "/dashboard/wallets", icon: WalletIcon },
 	{ name: "Users", href: "/dashboard/users", icon: UsersIcon },
-	{ name: "Orders", href: "/dashboard/orders", icon: ShoppingCartIcon },
+	{ name: "API Keys", href: "/dashboard/api-keys", icon: KeyIcon },
+	{ name: "Spending Limits", href: "/dashboard/spending-limits", icon: ShieldCheckIcon },
 	{ name: "Settings", href: "/dashboard/settings", icon: CogIcon },
 ];
 

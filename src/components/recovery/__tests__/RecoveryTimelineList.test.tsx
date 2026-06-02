@@ -80,10 +80,7 @@ describe("RecoveryTimelineList", () => {
 	describe("Empty state", () => {
 		it("should render empty state when no events", () => {
 			render(
-				<RecoveryTimelineList
-					events={[]}
-					onEventClick={mockOnEventClick}
-				/>,
+				<RecoveryTimelineList events={[]} onEventClick={mockOnEventClick} />,
 			);
 
 			expect(
@@ -105,10 +102,7 @@ describe("RecoveryTimelineList", () => {
 
 		it("should render empty state with proper role", () => {
 			const { container } = render(
-				<RecoveryTimelineList
-					events={[]}
-					onEventClick={mockOnEventClick}
-				/>,
+				<RecoveryTimelineList events={[]} onEventClick={mockOnEventClick} />,
 			);
 
 			const emptyState = container.querySelector('[role="status"]');

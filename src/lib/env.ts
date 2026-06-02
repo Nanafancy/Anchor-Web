@@ -21,10 +21,15 @@ const publicEnvVars: EnvVar[] = [
 		description: "Public-facing URL of the application",
 	},
 	{
+		name: "NEXT_PUBLIC_API_URL",
+		required: false,
+		description: "Public API base URL for client-side requests",
+	},
+	{
 		name: "NEXT_PUBLIC_MUX_API_URL",
 		required: false,
 		defaultValue: "https://api.muxprotocol.com",
-		description: "Mux Protocol API endpoint",
+		description: "Legacy alias for the API base URL",
 	},
 ];
 
@@ -88,14 +93,13 @@ export function validateEnv(
 	}
 
 	if (errors.length > 0) {
-		if (typeof process !== "undefined" && process.env?.NODE_ENV === "production") {
-			throw new Error(
-				`Environment validation failed:\n${errors.join("\n")}`,
-			);
+		if (
+			typeof process !== "undefined" &&
+			process.env?.NODE_ENV === "production"
+		) {
+			throw new Error(`Environment validation failed:\n${errors.join("\n")}`);
 		}
-		console.error(
-			`[env] Environment validation errors:\n${errors.join("\n")}`,
-		);
+		console.error(`[env] Environment validation errors:\n${errors.join("\n")}`);
 	}
 
 	if (warnings.length > 0) {

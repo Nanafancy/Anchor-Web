@@ -1,8 +1,13 @@
-"use client";
-
-import { Clock, Wallet, ArrowUpRight, ArrowDownRight, AlertCircle } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CardSkeleton } from "@/components/ui/Skeleton";
+import { Button } from "@/components/ui/button";
+import {
+	Clock,
+	Wallet,
+	ArrowUpRight,
+	ArrowDownRight,
+	AlertCircle,
+} from "lucide-react";
 
 interface ActivityItem {
 	id: string;

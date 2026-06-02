@@ -18,11 +18,7 @@ function ArrowIcon({ direction }: { direction: "up" | "down" }) {
 			{direction === "up" ? (
 				<path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
 			) : (
-				<path
-					strokeLinecap="round"
-					strokeLinejoin="round"
-					d="M19 9l-7 7-7-7"
-				/>
+				<path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
 			)}
 		</svg>
 	);

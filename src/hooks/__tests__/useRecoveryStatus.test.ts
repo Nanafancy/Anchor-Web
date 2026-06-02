@@ -1,7 +1,10 @@
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { useRecoveryStatus } from "../useRecoveryStatus";
 import * as recoveryApi from "@/services/recoveryApi";
-import { mockRecoveryTimelineCompleted, mockRecoveryTimelineInProgress } from "@/mock-data/recovery";
+import {
+	mockRecoveryTimelineCompleted,
+	mockRecoveryTimelineInProgress,
+} from "@/mock-data/recovery";
 
 // Mock the API service
 jest.mock("@/services/recoveryApi");

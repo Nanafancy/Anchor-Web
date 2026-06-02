@@ -214,7 +214,8 @@ export function formatAddress(
 			error: null,
 		};
 	} catch (err) {
-		const errorMessage = err instanceof Error ? err.message : "Formatting error";
+		const errorMessage =
+			err instanceof Error ? err.message : "Formatting error";
 		return {
 			original: address,
 			formatted: address,
@@ -255,9 +256,10 @@ export function getAvailableFormats(): AddressFormatType[] {
  * @param options - Options to validate
  * @returns Validation result with error message if invalid
  */
-export function validateFormattingOptions(
-	options: AddressFormatterOptions,
-): { isValid: boolean; error: string | null } {
+export function validateFormattingOptions(options: AddressFormatterOptions): {
+	isValid: boolean;
+	error: string | null;
+} {
 	if (options.chunkSize !== undefined && options.chunkSize <= 0) {
 		return { isValid: false, error: "chunkSize must be greater than 0" };
 	}
@@ -266,7 +268,10 @@ export function validateFormattingOptions(
 		return { isValid: false, error: "groupSize must be greater than 0" };
 	}
 
-	if (options.separator !== undefined && typeof options.separator !== "string") {
+	if (
+		options.separator !== undefined &&
+		typeof options.separator !== "string"
+	) {
 		return { isValid: false, error: "separator must be a string" };
 	}
 

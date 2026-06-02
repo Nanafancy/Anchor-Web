@@ -81,7 +81,7 @@ const NetworkBadge = ({ network }: { network: TransactionNetwork }) => {
 
 // --- Main Component ---
 
-export default function TransactionsTable() {
+export default function TransactionsTable({ address }: { address?: string } = {}) {
 	const [search, setSearch] = useState("");
 	const [statusFilter, setStatusFilter] = useState<"all" | TransactionStatus>(
 		"all",
@@ -93,14 +93,11 @@ export default function TransactionsTable() {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemsPerPage, setItemsPerPage] = useState(5);
 
-	// Get unique wallet IDs from transactions
-	const uniqueWalletIds = useMemo(
-		() => Array.from(new Set(INITIAL_DATA.map((tx) => tx.walletId))).sort(),
-		[],
-	);
-
 	const filteredData = useMemo(() => {
 		return mockTransactions.filter((tx) => {
+			if (address && tx.from !== address && tx.to !== address) {
+				return false;
+			}
 			const q = search.toLowerCase();
 			const matchesSearch =
 				tx.hash.toLowerCase().includes(q) ||
@@ -212,9 +209,7 @@ export default function TransactionsTable() {
 							className="w-full sm:w-36 pl-9 pr-4 py-2 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 appearance-none cursor-pointer"
 							value={statusFilter}
 							onChange={(e) => {
-								setStatusFilter(
-									e.target.value as "all" | TransactionStatus,
-								);
+								setStatusFilter(e.target.value as "all" | TransactionStatus);
 								setCurrentPage(1);
 							}}
 							aria-label="Filter by status"
@@ -232,9 +227,7 @@ export default function TransactionsTable() {
 							className="w-full sm:w-32 px-3 py-2 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 appearance-none cursor-pointer"
 							value={networkFilter}
 							onChange={(e) => {
-								setNetworkFilter(
-									e.target.value as "all" | TransactionNetwork,
-								);
+								setNetworkFilter(e.target.value as "all" | TransactionNetwork);
 								setCurrentPage(1);
 							}}
 							aria-label="Filter by network"
@@ -380,19 +373,13 @@ export default function TransactionsTable() {
 									<div className="flex justify-between text-xs text-slate-500">
 										<span>
 											<span className="font-medium text-slate-700">From: </span>
-											<span
-												className="font-mono"
-												title={tx.from}
-											>
+											<span className="font-mono" title={tx.from}>
 												{truncate(tx.from)}
 											</span>
 										</span>
 										<span>
 											<span className="font-medium text-slate-700">To: </span>
-											<span
-												className="font-mono"
-												title={tx.to}
-											>
+											<span className="font-mono" title={tx.to}>
 												{truncate(tx.to)}
 											</span>
 										</span>
@@ -410,9 +397,7 @@ export default function TransactionsTable() {
 										</span>
 									</div>
 									{tx.memo && (
-										<p className="text-xs text-slate-400">
-											Memo: {tx.memo}
-										</p>
+										<p className="text-xs text-slate-400">Memo: {tx.memo}</p>
 									)}
 								</div>
 							</div>

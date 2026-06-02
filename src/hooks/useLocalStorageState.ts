@@ -2,7 +2,11 @@
 
 import { useCallback, useState } from "react";
 
-function getStoredValue<T>(key: string, initialValue: T, isStorageAvailable: boolean): T {
+function getStoredValue<T>(
+	key: string,
+	initialValue: T,
+	isStorageAvailable: boolean,
+): T {
 	if (typeof window === "undefined" || !isStorageAvailable) {
 		return initialValue;
 	}
@@ -41,9 +45,16 @@ export interface LocalStorageState<T> {
 	persist: () => boolean;
 }
 
-export function useLocalStorageState<T>(key: string, initialValue: T): LocalStorageState<T> {
-	const [storageAvailable] = useState<boolean>(() => checkStorageAvailability());
-	const [value, setValue] = useState<T>(() => getStoredValue(key, initialValue, storageAvailable));
+export function useLocalStorageState<T>(
+	key: string,
+	initialValue: T,
+): LocalStorageState<T> {
+	const [storageAvailable] = useState<boolean>(() =>
+		checkStorageAvailability(),
+	);
+	const [value, setValue] = useState<T>(() =>
+		getStoredValue(key, initialValue, storageAvailable),
+	);
 
 	const persist = useCallback(() => {
 		if (typeof window === "undefined" || !storageAvailable) {

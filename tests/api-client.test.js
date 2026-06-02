@@ -1,7 +1,11 @@
 const assert = require("node:assert");
 
 const { requestIdHeader, refreshSession } = require("../src/lib/api");
-const { saveSession, clearSession, createExpiredDemoSession } = require("../src/lib/session");
+const {
+	saveSession,
+	clearSession,
+	createExpiredDemoSession,
+} = require("../src/lib/session");
 
 assert.match(requestIdHeader(), /^req-[a-z0-9]+-\d+$/);
 assert.notStrictEqual(requestIdHeader(), requestIdHeader());
@@ -10,7 +14,9 @@ const stubStorage = (() => {
 	const store = {};
 	return {
 		getItem(key) {
-			return Object.prototype.hasOwnProperty.call(store, key) ? store[key] : null;
+			return Object.prototype.hasOwnProperty.call(store, key)
+				? store[key]
+				: null;
 		},
 		setItem(key, value) {
 			store[key] = String(value);

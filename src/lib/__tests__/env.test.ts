@@ -45,7 +45,9 @@ describe("validateEnv", () => {
 	});
 
 	it("should log warnings for missing vars", () => {
-		const consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const consoleWarnSpy = vi
+			.spyOn(console, "warn")
+			.mockImplementation(() => {});
 		const env: Record<string, string | undefined> = {};
 
 		validateEnv(env);

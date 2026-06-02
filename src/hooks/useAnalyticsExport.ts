@@ -2,7 +2,11 @@
 
 import { useCallback, useState } from "react";
 import { exportTransactions } from "@/utils/exportData";
-import type { ExportFormat, ExportStatus, Transaction } from "@/types/analytics";
+import type {
+	ExportFormat,
+	ExportStatus,
+	Transaction,
+} from "@/types/analytics";
 
 interface UseAnalyticsExportOptions {
 	/** Transactions to export. Defaults to `[]`. */
@@ -71,7 +75,9 @@ export function useAnalyticsExport({
 				setTimeout(reset, successResetDelay);
 			} catch (err) {
 				const message =
-					err instanceof Error ? err.message : "Export failed. Please try again.";
+					err instanceof Error
+						? err.message
+						: "Export failed. Please try again.";
 				setStatus("error");
 				setErrorMessage(message);
 			}

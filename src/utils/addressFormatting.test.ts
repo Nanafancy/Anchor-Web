@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-	truncateAddress,
-	validateStellarAddress,
-} from "./addressFormatting";
+import { truncateAddress, validateStellarAddress } from "./addressFormatting";
 
 // ─── truncateAddress ──────────────────────────────────────────────────────────
 
@@ -21,7 +18,8 @@ describe("truncateAddress", () => {
 // ─── validateStellarAddress ───────────────────────────────────────────────────
 
 describe("validateStellarAddress", () => {
-	const VALID_ADDRESS = "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
+	const VALID_ADDRESS =
+		"GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
 
 	it("accepts a valid 56-char G-address", () => {
 		const result = validateStellarAddress(VALID_ADDRESS);
