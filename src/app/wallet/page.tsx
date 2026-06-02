@@ -11,6 +11,7 @@ import { useWallets } from "@/hooks/useWallets";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/utils/dateFormatting";
 import { isWalletFunded } from "@/utils/walletUtils";
+import TransactionsTable from "@/components/TransactionsTable/TransactionsTable";
 
 export default function WalletPage() {
 	const { wallets, loading, error, refetch } = useWallets();
@@ -167,6 +168,12 @@ export default function WalletPage() {
 								</Button>
 							</div>
 						</div>
+					</section>
+				)}
+
+				{!loading && wallet && (
+					<section className="mt-8">
+						<TransactionsTable address={wallet.address} />
 					</section>
 				)}
 			</div>
