@@ -13,34 +13,11 @@ interface SpendingLimitsCardProps {
 export function SpendingLimitsCard({ loading = false }: SpendingLimitsCardProps) {
 	const [dailyLimit, setDailyLimit] = useState("5000");
 	const [transactionLimit, setTransactionLimit] = useState("1000");
-	const [notification, setNotification] = useState<string | null>(null);
-	const [notificationType, setNotificationType] = useState<
-		"success" | "error" | null
-	>(null);
-
-	const notificationTimeoutRef = useRef<number | null>(null);
-
-	const clearNotification = () => {
-		setNotification(null);
-		setNotificationType(null);
-		if (notificationTimeoutRef.current) {
-			window.clearTimeout(notificationTimeoutRef.current);
-			notificationTimeoutRef.current = null;
-		}
-	};
-
-	const showNotification = (message: string, type: "success" | "error") => {
-		clearNotification();
-		setNotification(message);
-		setNotificationType(type);
-		notificationTimeoutRef.current = window.setTimeout(() => {
-			clearNotification();
-		}, 3000);
-	};
+	const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
 	useEffect(() => {
 		try {
-			const stored = window.localStorage.getItem("spending-limits");
+			const stored = window.localStorage.getItem(STORAGE_KEY);
 			if (!stored) {
 				return;
 			}
@@ -50,7 +27,6 @@ export function SpendingLimitsCard({ loading = false }: SpendingLimitsCardProps)
 				typeof parsed?.dailyLimit === "number" &&
 				isFinite(parsed.dailyLimit)
 			) {
-				// eslint-disable-next-line react-hooks/set-state-in-effect
 				setDailyLimit(String(parsed.dailyLimit));
 			}
 
@@ -61,12 +37,48 @@ export function SpendingLimitsCard({ loading = false }: SpendingLimitsCardProps)
 				setTransactionLimit(String(parsed.transactionLimit));
 			}
 		} catch {
-			// Silently fail if storage is not available
+			// Ignore invalid stored data and continue with defaults.
+		}
+	}, []);
+
+	const dailyLimitError = getLimitError(dailyLimit, "Daily spending limit");
+	let transactionLimitError = getLimitError(
+		transactionLimit,
+		"Per-transaction limit",
+	);
+	const dailyLimitValue = parseLimit(dailyLimit);
+	const transactionLimitValue = parseLimit(transactionLimit);
+
+	const toastTimeoutRef = useRef<number | null>(null);
+
+	useEffect(() => {
+		try {
+			const stored = window.localStorage.getItem(STORAGE_KEY);
+			if (!stored) {
+				return;
+			}
+
+			const parsed = JSON.parse(stored);
+			if (
+				typeof parsed?.dailyLimit === "number" &&
+				isFinite(parsed.dailyLimit)
+			) {
+				setDailyLimit(String(parsed.dailyLimit));
+			}
+
+			if (
+				typeof parsed?.transactionLimit === "number" &&
+				isFinite(parsed.transactionLimit)
+			) {
+				setTransactionLimit(String(parsed.transactionLimit));
+			}
+		} catch {
+			// Ignore invalid stored data and continue with defaults.
 		}
 
 		return () => {
-			if (notificationTimeoutRef.current) {
-				window.clearTimeout(notificationTimeoutRef.current);
+			if (toastTimeoutRef.current) {
+				window.clearTimeout(toastTimeoutRef.current);
 			}
 		};
 	}, []);
@@ -81,57 +93,23 @@ export function SpendingLimitsCard({ loading = false }: SpendingLimitsCardProps)
 	}
 
 	const handleSave = () => {
-		const dailyValue = parseLimit(dailyLimit);
-		const transactionValue = parseLimit(transactionLimit);
+		window.localStorage.setItem(
+			STORAGE_KEY,
+			JSON.stringify({
+				dailyLimit: safeSaveValue(dailyLimit),
+				transactionLimit: safeSaveValue(transactionLimit),
+			}),
+		);
 
-		if (Number.isNaN(dailyValue) || Number.isNaN(transactionValue)) {
-			showNotification(
-				"Unable to save spending limits. Please enter valid numeric values.",
-				"error",
-			);
-			return;
+		setToastOpen(true);
+		if (toastTimeoutRef.current) {
+			window.clearTimeout(toastTimeoutRef.current);
 		}
 
-		try {
-			window.localStorage.setItem(
-				"spending-limits",
-				JSON.stringify({
-					dailyLimit: dailyValue,
-					transactionLimit: transactionValue,
-				}),
-			);
-			showNotification("Spending limits saved.", "success");
-		} catch {
-			showNotification(
-				"Unable to save spending limits. Please check your browser storage settings and try again.",
-				"error",
-			);
-		}
+		toastTimeoutRef.current = window.setTimeout(() => {
+			setToastOpen(false);
+		}, 3000);
 	};
-
-	return (
-		<div className="rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950 overflow-hidden">
-			<div className="p-6 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
-				<div className="flex items-center gap-3">
-					<div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-900">
-						<TrendingUp className="size-5 text-zinc-600 dark:text-zinc-400" />
-					</div>
-					<div>
-						<h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-							Spending Limits
-						</h2>
-						<p className="text-sm text-zinc-500 dark:text-zinc-400">
-							Control your API expenditure and transaction caps
-						</p>
-					</div>
-				</div>
-				<Badge
-					variant="outline"
-					className="bg-green-50 text-green-700 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20"
-				>
-					Active
-				</Badge>
-			</div>
 
   return (
     <div className="rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950 overflow-hidden">
