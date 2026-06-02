@@ -70,3 +70,21 @@ pnpm run dev
 * Webhooks and notifications for SDK events
 * Team access management
 * Audit logs for all wallet and API activity
+
+---
+
+## API Notes (local dev)
+
+This repo exposes a local JSON API used by the frontend for demo/testing:
+
+- `GET /api/api-keys` — returns a list of API keys (mocked data).
+- `GET /api/overview` — returns basic dashboard overview (mocked data).
+
+To run unit tests locally:
+
+```bash
+pnpm install
+pnpm run test
+```
+
+The test setup uses Vitest + Testing Library and includes tests for `ApiKeysTable`.
