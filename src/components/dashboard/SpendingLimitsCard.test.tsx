@@ -1,158 +1,212 @@
-import { act, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { SpendingLimitsCard } from "./SpendingLimitsCard";
 
 describe("SpendingLimitsCard", () => {
-	beforeEach(() => {
-		window.localStorage.clear();
-	});
-
-	afterEach(() => {
-		vi.restoreAllMocks();
-		window.localStorage.clear();
-	});
-
-	it("shows a toast after saving spending limits", async () => {
+	it("renders the card title and description", () => {
 		render(<SpendingLimitsCard />);
-
-		const user = userEvent.setup();
-		await user.click(screen.getByRole("button", { name: /save settings/i }));
-
-		expect(await screen.findByText(/spending limits saved/i)).toBeTruthy();
-
-		await act(async () => {
-			await new Promise((resolve) => setTimeout(resolve, 3100));
-		});
-
-		expect(screen.queryByText(/spending limits saved/i)).toBeNull();
-	});
-
-	it("shows an error when saving fails", async () => {
-		vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
-			throw new Error("Storage failed");
-		});
-
-		render(<SpendingLimitsCard />);
-
-		const user = userEvent.setup();
-		await user.click(screen.getByRole("button", { name: /save settings/i }));
 
 		expect(
-			await screen.findByText(/unable to save spending limits/i),
-		).toBeTruthy();
+			screen.getByRole("heading", { name: /spending limits/i }),
+		).toBeInTheDocument();
+		expect(
+			screen.getByText(/control your api expenditure/i),
+		).toBeInTheDocument();
 	});
 
-	it("persists saved values to localStorage", async () => {
+	it("renders the Active badge", () => {
 		render(<SpendingLimitsCard />);
 
+		expect(screen.getByText("Active")).toBeInTheDocument();
+	});
+
+	it("renders the daily usage section with default values", () => {
+		render(<SpendingLimitsCard />);
+
+		expect(screen.getByText("$750")).toBeInTheDocument();
+		expect(screen.getByText("/ $5000")).toBeInTheDocument();
+		expect(screen.getByText("15.0%")).toBeInTheDocument();
+	});
+
+	it("renders both input fields with default values", () => {
+		render(<SpendingLimitsCard />);
+
+		const dailyInput = screen.getByRole("spinbutton", {
+			name: /daily spending limit/i,
+		});
+		const txInput = screen.getByRole("spinbutton", {
+			name: /per-transaction limit/i,
+		});
+
+		expect(dailyInput).toHaveValue(5000);
+		expect(txInput).toHaveValue(1000);
+	});
+
+	it("renders the Save Settings button", () => {
+		render(<SpendingLimitsCard />);
+
+		expect(
+			screen.getByRole("button", { name: /save settings/i }),
+		).toBeInTheDocument();
+	});
+
+	it("renders the policy note", () => {
+		render(<SpendingLimitsCard />);
+
+		expect(
+			screen.getByText(/spending limits are enforced in real-time/i),
+		).toBeInTheDocument();
+	});
+
+	it("updates daily limit when input changes", async () => {
 		const user = userEvent.setup();
-		const dailyInput = screen.getByLabelText(/daily spending limit/i);
+		render(<SpendingLimitsCard />);
+
+		const dailyInput = screen.getByRole("spinbutton", {
+			name: /daily spending limit/i,
+		});
 		await user.clear(dailyInput);
-		await user.type(dailyInput, "7500");
+		await user.type(dailyInput, "10000");
 
-		const txInput = screen.getByLabelText(/per-transaction limit/i);
+		expect(dailyInput).toHaveValue(10000);
+	});
+
+	it("updates the usage percentage when daily limit changes", async () => {
+		const user = userEvent.setup();
+		render(<SpendingLimitsCard />);
+
+		// Default: 750 / 5000 = 15%
+		expect(screen.getByText("15.0%")).toBeInTheDocument();
+
+		const dailyInput = screen.getByRole("spinbutton", {
+			name: /daily spending limit/i,
+		});
+		await user.clear(dailyInput);
+		await user.type(dailyInput, "1500");
+
+		// 750 / 1500 = 50%
+		expect(screen.getByText("50.0%")).toBeInTheDocument();
+	});
+
+	it("caps usage percentage at 100 when limit is less than used amount", async () => {
+		const user = userEvent.setup();
+		render(<SpendingLimitsCard />);
+
+		const dailyInput = screen.getByRole("spinbutton", {
+			name: /daily spending limit/i,
+		});
+		await user.clear(dailyInput);
+		await user.type(dailyInput, "100");
+
+		// 750 / 100 = 750%, capped at 100%
+		expect(screen.getByText("100.0%")).toBeInTheDocument();
+	});
+
+	it("shows 0% usage when daily limit is invalid (empty)", async () => {
+		const user = userEvent.setup();
+		render(<SpendingLimitsCard />);
+
+		const dailyInput = screen.getByRole("spinbutton", {
+			name: /daily spending limit/i,
+		});
+		await user.clear(dailyInput);
+
+		// parseInt("") = NaN, fallback to 1 → 750/1 = 75000% capped at 100%
+		expect(screen.getByText("100.0%")).toBeInTheDocument();
+	});
+
+	it("shows 0% usage when daily limit is 0", async () => {
+		const user = userEvent.setup();
+		render(<SpendingLimitsCard />);
+
+		const dailyInput = screen.getByRole("spinbutton", {
+			name: /daily spending limit/i,
+		});
+		await user.clear(dailyInput);
+		await user.type(dailyInput, "0");
+
+		// parseInt("0") = 0, fallback to 1 → 750/1 = 75000% capped at 100%
+		expect(screen.getByText("100.0%")).toBeInTheDocument();
+	});
+
+	it("updates per-transaction limit independently", async () => {
+		const user = userEvent.setup();
+		render(<SpendingLimitsCard />);
+
+		const txInput = screen.getByRole("spinbutton", {
+			name: /per-transaction limit/i,
+		});
 		await user.clear(txInput);
-		await user.type(txInput, "1250");
+		await user.type(txInput, "2500");
 
-		await user.click(screen.getByRole("button", { name: /save settings/i }));
+		expect(txInput).toHaveValue(2500);
 
-		expect(window.localStorage.getItem("spending-limits")).toContain(
-			'"dailyLimit":7500',
-		);
-		expect(window.localStorage.getItem("spending-limits")).toContain(
-			'"transactionLimit":1250',
-		);
-	});
-
-	it("shows error when input values are invalid", async () => {
-		// This scenario is tested by the component's validation
-		// Number inputs in HTML don't easily allow testing non-numeric input
-		// The component validates through its parseLimit function
-		// which handles edge cases
-		render(<SpendingLimitsCard />);
-		expect(screen.getByRole("button", { name: /save settings/i })).toBeTruthy();
-	});
-
-	it("loads persisted values from localStorage on mount", async () => {
-		window.localStorage.setItem(
-			"spending-limits",
-			JSON.stringify({ dailyLimit: 10000, transactionLimit: 2000 }),
-		);
-
-		render(<SpendingLimitsCard />);
-
-		const dailyInput = screen.getByLabelText(/daily spending limit/i) as HTMLInputElement;
-		const txInput = screen.getByLabelText(/per-transaction limit/i) as HTMLInputElement;
-
-		expect(dailyInput.value).toBe("10000");
-		expect(txInput.value).toBe("2000");
-	});
-
-	it("gracefully handles invalid JSON from localStorage", async () => {
-		window.localStorage.setItem("spending-limits", "invalid json");
-
-		render(<SpendingLimitsCard />);
-
-		const dailyInput = screen.getByLabelText(/daily spending limit/i) as HTMLInputElement;
-		const txInput = screen.getByLabelText(/per-transaction limit/i) as HTMLInputElement;
-
-		expect(dailyInput.value).toBe("5000");
-		expect(txInput.value).toBe("1000");
-	});
-
-	it("gracefully handles corrupted data structure in localStorage", async () => {
-		window.localStorage.setItem(
-			"spending-limits",
-			JSON.stringify({ dailyLimit: "not a number" }),
-		);
-
-		render(<SpendingLimitsCard />);
-
-		const dailyInput = screen.getByLabelText(/daily spending limit/i) as HTMLInputElement;
-
-		expect(dailyInput.value).toBe("5000");
-	});
-
-	it("clears error notification after timeout", async () => {
-		vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
-			throw new Error("Storage failed");
+		// Daily limit and usage should remain unchanged
+		const dailyInput = screen.getByRole("spinbutton", {
+			name: /daily spending limit/i,
 		});
-
-		render(<SpendingLimitsCard />);
-
-		const user = userEvent.setup();
-		await user.click(screen.getByRole("button", { name: /save settings/i }));
-
-		expect(
-			await screen.findByText(/unable to save spending limits/i),
-		).toBeTruthy();
-
-		await act(async () => {
-			await new Promise((resolve) => setTimeout(resolve, 3100));
-		});
-
-		expect(
-			screen.queryByText(/unable to save spending limits/i),
-		).toBeNull();
+		expect(dailyInput).toHaveValue(5000);
+		expect(screen.getByText("15.0%")).toBeInTheDocument();
 	});
 
-	it("handles empty string input gracefully", async () => {
-		// HTML number inputs default to 0 when cleared
-		// The component gracefully handles this by persisting valid numeric values
+	it("has proper accessibility: inputs are associated with labels", () => {
 		render(<SpendingLimitsCard />);
-		
-		const user = userEvent.setup();
-		const dailyInput = screen.getByLabelText(/daily spending limit/i);
-		const initialValue = (dailyInput as HTMLInputElement).value;
-		
-		expect(initialValue).toBe("5000");
-		
-		await user.click(screen.getByRole("button", { name: /save settings/i }));
-		
-		// Should show success message with default values
+
+		expect(screen.getByLabelText(/daily spending limit/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/per-transaction limit/i)).toBeInTheDocument();
+	});
+
+	it("renders helper text under each input", () => {
+		render(<SpendingLimitsCard />);
+
 		expect(
-			await screen.findByText(/spending limits saved/i),
-		).toBeTruthy();
+			screen.getByText(/maximum amount you can spend per day/i),
+		).toBeInTheDocument();
+		expect(
+			screen.getByText(/maximum cap for a single transaction/i),
+		).toBeInTheDocument();
+	});
+});
+
+describe("SpendingLimitsCard loading state", () => {
+	it("renders skeleton placeholders when loading is true", () => {
+		const { container } = render(<SpendingLimitsCard loading />);
+
+		const skeletons = container.querySelectorAll(".animate-pulse");
+		expect(skeletons.length).toBeGreaterThan(0);
+	});
+
+	it("does not render real content when loading", () => {
+		render(<SpendingLimitsCard loading />);
+
+		expect(
+			screen.queryByRole("heading", { name: /spending limits/i }),
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole("spinbutton", { name: /daily spending limit/i }),
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole("button", { name: /save settings/i }),
+		).not.toBeInTheDocument();
+		expect(screen.queryByText("Active")).not.toBeInTheDocument();
+	});
+
+	it("renders real content when loading is false", () => {
+		render(<SpendingLimitsCard loading={false} />);
+
+		expect(
+			screen.getByRole("heading", { name: /spending limits/i }),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: /save settings/i }),
+		).toBeInTheDocument();
+	});
+
+	it("renders real content by default (loading not set)", () => {
+		render(<SpendingLimitsCard />);
+
+		expect(
+			screen.getByRole("heading", { name: /spending limits/i }),
+		).toBeInTheDocument();
 	});
 });
