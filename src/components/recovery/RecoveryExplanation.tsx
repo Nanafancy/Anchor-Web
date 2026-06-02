@@ -1,4 +1,5 @@
 import { RecoveryStatus } from "./RecoveryStatus";
+import { RecoveryDocsLink } from "./RecoveryDocsLink";
 
 export function RecoveryExplanation() {
 	return (
@@ -39,18 +40,21 @@ export function RecoveryExplanation() {
 			{/* Recovery Explanation Section */}
 			<section className="rounded-xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
 				<div className="space-y-6">
-					<div>
-						<h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 mb-2">
-							What is Invisible Wallet Recovery?
-						</h2>
-						<p className="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
-							Invisible Wallet Recovery is an automatic system that ensures your
-							wallet remains accessible even if you lose access to your device
-							or account. Unlike traditional wallets that require seed phrases
-							or private keys, Mux&apos;s invisible recovery system works
-							seamlessly in the background without requiring any action from
-							you.
-						</p>
+					<div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+						<div>
+							<h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 mb-2">
+								What is Invisible Wallet Recovery?
+							</h2>
+							<p className="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+								Invisible Wallet Recovery is an automatic system that ensures your
+								wallet remains accessible even if you lose access to your device
+								or account. Unlike traditional wallets that require seed phrases
+								or private keys, Mux&apos;s invisible recovery system works
+								seamlessly in the background without requiring any action from
+								you.
+							</p>
+						</div>
+						<RecoveryDocsLink />
 					</div>
 
 					<div className="border-t border-zinc-200 dark:border-zinc-800 pt-6">
