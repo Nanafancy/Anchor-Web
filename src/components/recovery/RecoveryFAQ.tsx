@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { RecoveryDocsLink } from "./RecoveryDocsLink";
 
 export interface FAQItem {
 	id: string;
@@ -140,7 +141,7 @@ export function RecoveryFAQ({
 					No FAQ items available.
 				</p>
 			) : (
-				<div role="list">
+				<div role="list" className="mb-4">
 					{items.map((item) => (
 						<div key={item.id} role="listitem">
 							<FAQRow
@@ -152,6 +153,13 @@ export function RecoveryFAQ({
 					))}
 				</div>
 			)}
+
+			<div className="mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+				<p className="text-sm text-zinc-600 dark:text-zinc-400">
+					Looking for more technical details? Check out our complete recovery guide.
+				</p>
+				<RecoveryDocsLink />
+			</div>
 		</section>
 	);
 }
