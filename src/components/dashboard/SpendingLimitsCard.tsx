@@ -15,6 +15,75 @@ export function SpendingLimitsCard({
 }: SpendingLimitsCardProps) {
 	const [dailyLimit, setDailyLimit] = useState("5000");
 	const [transactionLimit, setTransactionLimit] = useState("1000");
+	const [saveMessage, setSaveMessage] = useState<string | null>(null);
+
+	useEffect(() => {
+		try {
+			const stored = window.localStorage.getItem(STORAGE_KEY);
+			if (!stored) {
+				return;
+			}
+
+			const parsed = JSON.parse(stored);
+			if (
+				typeof parsed?.dailyLimit === "number" &&
+				isFinite(parsed.dailyLimit)
+			) {
+				setDailyLimit(String(parsed.dailyLimit));
+			}
+
+			if (
+				typeof parsed?.transactionLimit === "number" &&
+				isFinite(parsed.transactionLimit)
+			) {
+				setTransactionLimit(String(parsed.transactionLimit));
+			}
+		} catch {
+			// Ignore invalid stored data and continue with defaults.
+		}
+	}, []);
+
+	const dailyLimitError = getLimitError(dailyLimit, "Daily spending limit");
+	let transactionLimitError = getLimitError(
+		transactionLimit,
+		"Per-transaction limit",
+	);
+	const dailyLimitValue = parseLimit(dailyLimit);
+	const transactionLimitValue = parseLimit(transactionLimit);
+
+	const toastTimeoutRef = useRef<number | null>(null);
+
+	useEffect(() => {
+		try {
+			const stored = window.localStorage.getItem(STORAGE_KEY);
+			if (!stored) {
+				return;
+			}
+
+			const parsed = JSON.parse(stored);
+			if (
+				typeof parsed?.dailyLimit === "number" &&
+				isFinite(parsed.dailyLimit)
+			) {
+				setDailyLimit(String(parsed.dailyLimit));
+			}
+
+			if (
+				typeof parsed?.transactionLimit === "number" &&
+				isFinite(parsed.transactionLimit)
+			) {
+				setTransactionLimit(String(parsed.transactionLimit));
+			}
+		} catch {
+			// Ignore invalid stored data and continue with defaults.
+		}
+
+		return () => {
+			if (toastTimeoutRef.current) {
+				window.clearTimeout(toastTimeoutRef.current);
+			}
+		};
+	}, []);
 
 	// Dummy usage data: 750 / 5000 = 15%
 	const usedAmount = 750;
@@ -25,29 +94,24 @@ export function SpendingLimitsCard({
 		return <SpendingLimitsCardSkeleton />;
 	}
 
-	return (
-		<div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-			<div className="flex items-center justify-between border-b border-zinc-200 p-6 dark:border-zinc-800">
-				<div className="flex items-center gap-3">
-					<div className="rounded-lg bg-zinc-100 p-2 dark:bg-zinc-900">
-						<TrendingUp className="size-5 text-zinc-600 dark:text-zinc-400" />
-					</div>
-					<div>
-						<h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-							Spending Limits
-						</h2>
-						<p className="text-sm text-zinc-500 dark:text-zinc-400">
-							Control your API expenditure and transaction caps
-						</p>
-					</div>
-				</div>
-				<Badge
-					variant="outline"
-					className="border-green-200 bg-green-50 text-green-700 dark:border-green-500/20 dark:bg-green-500/10 dark:text-green-400"
-				>
-					Active
-				</Badge>
-			</div>
+	const handleSave = () => {
+		window.localStorage.setItem(
+			STORAGE_KEY,
+			JSON.stringify({
+				dailyLimit: safeSaveValue(dailyLimit),
+				transactionLimit: safeSaveValue(transactionLimit),
+			}),
+		);
+
+		setToastOpen(true);
+		if (toastTimeoutRef.current) {
+			window.clearTimeout(toastTimeoutRef.current);
+		}
+
+		toastTimeoutRef.current = window.setTimeout(() => {
+			setToastOpen(false);
+		}, 3000);
+	};
 
 			<div className="space-y-8 p-6">
 				<div className="space-y-3">

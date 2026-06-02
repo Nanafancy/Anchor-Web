@@ -37,7 +37,12 @@ function formatDate(iso: string): string {
 // --- Sub-components ---
 
 /** Default sort: newest transactions first. */
-const DEFAULT_SORT: SortConfig = { key: "date", direction: "desc" };
+type SortConfig = {
+	key: keyof Transaction;
+	direction: "asc" | "desc";
+};
+
+const DEFAULT_SORT: SortConfig = { key: "createdAt", direction: "desc" };
 
 const StatusPill = ({ status }: { status: TransactionStatus }) => {
 	const styles: Record<TransactionStatus, string> = {
@@ -76,7 +81,7 @@ const NetworkBadge = ({ network }: { network: TransactionNetwork }) => {
 
 // --- Main Component ---
 
-export default function TransactionsTable() {
+export default function TransactionsTable({ address }: { address?: string } = {}) {
 	const [search, setSearch] = useState("");
 	const [statusFilter, setStatusFilter] = useState<"all" | TransactionStatus>(
 		"all",
@@ -84,21 +89,15 @@ export default function TransactionsTable() {
 	const [networkFilter, setNetworkFilter] = useState<
 		"all" | TransactionNetwork
 	>("all");
-	const [sortConfig, setSortConfig] = useState<{
-		key: keyof Transaction;
-		direction: "asc" | "desc";
-	} | null>(null);
+	const [sortConfig, setSortConfig] = useState<SortConfig>(DEFAULT_SORT);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemsPerPage, setItemsPerPage] = useState(5);
 
-	// Get unique wallet IDs from transactions
-	const uniqueWalletIds = useMemo(
-		() => Array.from(new Set(INITIAL_DATA.map((tx) => tx.walletId))).sort(),
-		[],
-	);
-
 	const filteredData = useMemo(() => {
 		return mockTransactions.filter((tx) => {
+			if (address && tx.from !== address && tx.to !== address) {
+				return false;
+			}
 			const q = search.toLowerCase();
 			const matchesSearch =
 				tx.hash.toLowerCase().includes(q) ||
@@ -114,7 +113,6 @@ export default function TransactionsTable() {
 	}, [search, statusFilter, networkFilter]);
 
 	const sortedData = useMemo(() => {
-		if (!sortConfig) return filteredData;
 		return [...filteredData].sort((a, b) => {
 			const aVal = a[sortConfig.key] ?? "";
 			const bVal = b[sortConfig.key] ?? "";
@@ -152,7 +150,7 @@ export default function TransactionsTable() {
 		setSearch("");
 		setStatusFilter("all");
 		setNetworkFilter("all");
-		setSortConfig(null);
+		setSortConfig(DEFAULT_SORT);
 		setCurrentPage(1);
 	};
 
@@ -182,6 +180,7 @@ export default function TransactionsTable() {
 						<input
 							type="text"
 							placeholder="Hash, address, memo…"
+						aria-label="Search transactions"
 							className="w-full pl-9 pr-8 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-slate-400"
 							value={search}
 							onChange={(e) => {
@@ -256,37 +255,62 @@ export default function TransactionsTable() {
 				<div className="hidden lg:grid grid-cols-12 gap-2 p-4 border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-500 uppercase tracking-wider select-none">
 					<div
 						className="col-span-3 flex items-center gap-1 cursor-pointer hover:text-indigo-600"
+						role="button"
+						aria-sort={
+							sortConfig.key === "hash"
+								? sortConfig.direction === "asc"
+									? "ascending"
+									: "descending"
+								: "none"
+						}
 						onClick={() => handleSort("hash")}
 					>
 						Tx Hash
-						{sortConfig?.key === "hash" && <ArrowUpDown size={12} />}
+						{sortConfig.key === "hash" && <ArrowUpDown size={12} />}
 					</div>
 					<div className="col-span-2">From</div>
 					<div className="col-span-2">To</div>
 					<div
 						className="col-span-2 flex items-center gap-1 cursor-pointer hover:text-indigo-600"
+						role="button"
+						aria-sort={
+							sortConfig.key === "amountXlm"
+								? sortConfig.direction === "asc"
+									? "ascending"
+									: "descending"
+								: "none"
+						}
 						onClick={() => handleSort("amountXlm")}
 					>
 						Amount (XLM)
-						{sortConfig?.key === "amountXlm" && <ArrowUpDown size={12} />}
+						{sortConfig.key === "amountXlm" && <ArrowUpDown size={12} />}
 					</div>
 					<div className="col-span-1">Status</div>
 					<div className="col-span-1">Network</div>
 					<div
 						className="col-span-1 flex items-center gap-1 cursor-pointer hover:text-indigo-600"
+						role="button"
+						aria-sort={
+							sortConfig.key === "createdAt"
+								? sortConfig.direction === "asc"
+									? "ascending"
+									: "descending"
+								: "none"
+						}
 						onClick={() => handleSort("createdAt")}
 					>
 						Date
-						{sortConfig?.key === "createdAt" && <ArrowUpDown size={12} />}
+						{sortConfig.key === "createdAt" && <ArrowUpDown size={12} />}
 					</div>
 				</div>
 
 				<div className="divide-y divide-slate-100">
 					{currentData.length > 0 ? (
 						currentData.map((tx) => (
-							<div
-								key={tx.hash}
-								className="group p-4 hover:bg-slate-50 transition-colors"
+								<div
+									key={tx.hash}
+									data-testid="tx-row"
+									className="group p-4 hover:bg-slate-50 transition-colors"
 							>
 								{/* Desktop row */}
 								<div className="hidden lg:grid grid-cols-12 gap-2 items-center">
