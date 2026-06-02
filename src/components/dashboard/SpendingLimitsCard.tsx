@@ -13,7 +13,41 @@ interface SpendingLimitsCardProps {
 export function SpendingLimitsCard({ loading = false }: SpendingLimitsCardProps) {
 	const [dailyLimit, setDailyLimit] = useState("5000");
 	const [transactionLimit, setTransactionLimit] = useState("1000");
-	const [toastOpen, setToastOpen] = useState(false);
+	const [saveMessage, setSaveMessage] = useState<string | null>(null);
+
+	useEffect(() => {
+		try {
+			const stored = window.localStorage.getItem(STORAGE_KEY);
+			if (!stored) {
+				return;
+			}
+
+			const parsed = JSON.parse(stored);
+			if (
+				typeof parsed?.dailyLimit === "number" &&
+				isFinite(parsed.dailyLimit)
+			) {
+				setDailyLimit(String(parsed.dailyLimit));
+			}
+
+			if (
+				typeof parsed?.transactionLimit === "number" &&
+				isFinite(parsed.transactionLimit)
+			) {
+				setTransactionLimit(String(parsed.transactionLimit));
+			}
+		} catch {
+			// Ignore invalid stored data and continue with defaults.
+		}
+	}, []);
+
+	const dailyLimitError = getLimitError(dailyLimit, "Daily spending limit");
+	let transactionLimitError = getLimitError(
+		transactionLimit,
+		"Per-transaction limit",
+	);
+	const dailyLimitValue = parseLimit(dailyLimit);
+	const transactionLimitValue = parseLimit(transactionLimit);
 
 	const toastTimeoutRef = useRef<number | null>(null);
 
@@ -49,11 +83,6 @@ export function SpendingLimitsCard({ loading = false }: SpendingLimitsCardProps)
 		};
 	}, []);
 
-<<<<<<< spending-limits-save-success-toast
-	const usedAmount = 750;
-	const totalLimit = Number.parseInt(dailyLimit) || 1;
-	const usagePercentage = Math.min((usedAmount / totalLimit) * 100, 100);
-=======
   // Dummy usage data: 750 / 5000 = 15%
   const usedAmount = 750;
   const totalLimit = Number.parseInt(dailyLimit) || 1;
@@ -62,7 +91,6 @@ export function SpendingLimitsCard({ loading = false }: SpendingLimitsCardProps)
 	if (loading) {
 		return <SpendingLimitsCardSkeleton />;
 	}
->>>>>>> staging
 
 	const handleSave = () => {
 		window.localStorage.setItem(
