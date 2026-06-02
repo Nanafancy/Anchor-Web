@@ -63,7 +63,7 @@ This repo now includes a minimal auth flow and API client support for dev mode:
 * `src/lib/api.js` adds request header support with `x-request-id` and automatic session refresh on `401`
 * `src/lib/session.js` persists auth state in `localStorage` and clears stale sessions gracefully
 * `src/hooks/useWallets.ts` adds a wallet query hook that loads wallets from `/api/wallets`
-* `src/app/api/auth/refresh/route.ts` and `/api/wallets/route.ts` simulate auth-protected backend behavior for local testing
+* `src/app/api/auth/refresh/route.ts`, `/api/wallets/route.ts`, and `/api/wallets/[id]/route.ts` simulate auth-protected backend behavior for local testing
 
 ### Smoke tests
 

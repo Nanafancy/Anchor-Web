@@ -2,8 +2,8 @@ import {
 	FRIENDBOT_DOCS_URL,
 	FRIENDBOT_URL,
 	getFriendbotUrl,
-	isValidAddressForFriendbot,
 	isFriendbotEligible,
+	isValidAddressForFriendbot,
 } from "../friendbot";
 
 describe("friendbot utilities", () => {

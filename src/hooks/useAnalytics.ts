@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { ChartDataPoint, AssetData, Metric } from "@/mock-data/analytics";
+import type { AssetData, ChartDataPoint, Metric } from "@/mock-data/analytics";
 
 export interface AnalyticsData {
 	metrics: Metric[];

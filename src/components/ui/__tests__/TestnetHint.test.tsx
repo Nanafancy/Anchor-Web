@@ -1,7 +1,7 @@
+import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { FRIENDBOT_DOCS_URL, FRIENDBOT_URL } from "@/utils/friendbot";
 import { TestnetHint } from "../TestnetHint";
-import { FRIENDBOT_URL, FRIENDBOT_DOCS_URL } from "@/utils/friendbot";
 
 describe("TestnetHint component", () => {
 	describe("default variant", () => {

@@ -8,7 +8,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { metrics, volumeData, transactionsData, topAssets } from "./analytics";
+import { metrics, topAssets, transactionsData, volumeData } from "./analytics";
 
 // ---------------------------------------------------------------------------
 // metrics

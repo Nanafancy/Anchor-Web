@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { copyToClipboard } from "@/utils/copyToClipboard";
 import { getAddressToCopy, isSafeToCopy } from "@/utils/addressValidation";
+import { copyToClipboard } from "@/utils/copyToClipboard";
 
 interface UseCopyToClipboardReturn {
 	copy: (text: string, fullAddress?: string) => Promise<void>;

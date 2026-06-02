@@ -6,8 +6,9 @@
  * - Has correct ARIA attributes for accessibility
  * - Renders the expected structural skeleton elements
  */
-import { describe, expect, it } from "vitest";
+
 import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import { AuthLoadingSkeleton } from "../AuthLoadingSkeleton";
 
 describe("AuthLoadingSkeleton", () => {

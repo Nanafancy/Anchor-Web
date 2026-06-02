@@ -4,11 +4,12 @@
  * Verifies that DashboardLayout renders the AuthLoadingSkeleton while
  * isLoading is true, and renders children once auth has resolved.
  */
-import { describe, expect, it } from "vitest";
+
 import { render, screen } from "@testing-library/react";
-import { DashboardLayout } from "../DashboardLayout";
+import { describe, expect, it } from "vitest";
 import { AuthProvider } from "@/context/AuthContext";
 import { NetworkProvider } from "@/context/NetworkContext";
+import { DashboardLayout } from "../DashboardLayout";
 
 function renderWithProviders(ui: React.ReactElement) {
 	return render(

@@ -1,22 +1,45 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { NetworkBadge } from "@/components/wallet/NetworkBadge";
+import ReceiveWalletModal from "@/components/wallet/ReceiveWalletModal";
 import { StatusIndicator } from "@/components/wallet/StatusIndicator";
 import { useWallets } from "@/hooks/useWallets";
-import { Button } from "@/components/ui/button";
+import { isValidStellarAddress } from "@/utils/addressValidation";
 import { formatDate } from "@/utils/dateFormatting";
 import { isWalletFunded } from "@/utils/walletUtils";
 import TransactionsTable from "@/components/TransactionsTable/TransactionsTable";
 
 export default function WalletPage() {
 	const { wallets, loading, error, refetch } = useWallets();
+	const pathname = usePathname();
+	const router = useRouter();
+	const searchParams = useSearchParams();
+	const [isReceiveOpen, setIsReceiveOpen] = useState(false);
 
 	const wallet = wallets?.[0] ?? null;
+	const canReceive = !!wallet && isValidStellarAddress(wallet.address.trim());
+	const receiveParam = searchParams.get("receive");
+
+	useEffect(() => {
+		setIsReceiveOpen(receiveParam === "1");
+	}, [receiveParam]);
+
+	const openReceive = () => {
+		setIsReceiveOpen(true);
+		router.replace(`${pathname}?receive=1`, { scroll: false });
+	};
+
+	const closeReceive = () => {
+		setIsReceiveOpen(false);
+		router.replace(pathname, { scroll: false });
+	};
 
 	return (
 		<div className="min-h-screen bg-neutral-50 text-neutral-900 font-sans p-6 md:p-12">
@@ -125,47 +148,81 @@ export default function WalletPage() {
 						</dl>
 
 						<div className="border-t border-neutral-200 pt-6">
-							<div className="flex items-center justify-between">
+							<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 								<div>
 									<p className="text-sm font-medium text-neutral-900">
-										Send funds from this wallet
+										Send or receive funds
 									</p>
 									<p className="text-sm text-neutral-500 mt-0.5">
 										{isWalletFunded(wallet)
-											? "Transfer XLM or tokens to another Stellar address"
-											: "This wallet has no funds to send"}
+											? "Send tokens out or show the receive QR stub for incoming transfers."
+											: "Show the receive QR stub or copy the address to accept incoming transfers."}
 									</p>
 								</div>
-								<Button
-									disabled={!isWalletFunded(wallet)}
-									title={
-										isWalletFunded(wallet)
-											? "Send funds from this wallet"
-											: "Wallet must be funded to send"
-									}
-									aria-label={
-										isWalletFunded(wallet)
-											? "Send funds"
-											: "Cannot send: wallet is not funded"
-									}
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										strokeWidth={2}
-										stroke="currentColor"
-										className="w-4 h-4"
-										aria-hidden="true"
+								<div className="flex flex-wrap gap-3">
+									<Button
+										disabled={!isWalletFunded(wallet)}
+										title={
+											isWalletFunded(wallet)
+												? "Send funds from this wallet"
+												: "Wallet must be funded to send"
+										}
+										aria-label={
+											isWalletFunded(wallet)
+												? "Send funds"
+												: "Cannot send: wallet is not funded"
+										}
 									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
-										/>
-									</svg>
-									Send
-								</Button>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={2}
+											stroke="currentColor"
+											className="w-4 h-4"
+											aria-hidden="true"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
+											/>
+										</svg>
+										Send
+									</Button>
+										<Button
+											variant="outline"
+											onClick={openReceive}
+											disabled={!canReceive}
+											title={
+												canReceive
+												? "Show receive QR stub"
+												: "Wallet address is invalid"
+										}
+										aria-label={
+											canReceive
+												? "Receive funds"
+												: "Cannot receive: wallet address is invalid"
+										}
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={2}
+											stroke="currentColor"
+											className="w-4 h-4"
+											aria-hidden="true"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												d="M12 3v18m9-9H3"
+											/>
+										</svg>
+										Receive
+									</Button>
+								</div>
 							</div>
 						</div>
 					</section>
@@ -177,6 +234,12 @@ export default function WalletPage() {
 					</section>
 				)}
 			</div>
+
+			<ReceiveWalletModal
+				isOpen={isReceiveOpen}
+				wallet={wallet}
+				onClose={closeReceive}
+			/>
 		</div>
 	);
 }

@@ -10,10 +10,9 @@ describe("Sidebar navigation", () => {
 			"href",
 			"/dashboard/api-keys",
 		);
-		expect(screen.getByRole("link", { name: /Spending Limits/i })).toHaveAttribute(
-			"href",
-			"/dashboard/spending-limits",
-		);
+		expect(
+			screen.getByRole("link", { name: /Spending Limits/i }),
+		).toHaveAttribute("href", "/dashboard/spending-limits");
 		expect(screen.queryByRole("link", { name: /Orders/i })).toBeNull();
 	});
 });

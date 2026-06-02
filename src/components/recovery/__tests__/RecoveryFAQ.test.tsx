@@ -1,8 +1,8 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { FAQ_ITEMS, RecoveryFAQ } from "../RecoveryFAQ";
 import type { FAQItem } from "../RecoveryFAQ";
+import { FAQ_ITEMS, RecoveryFAQ } from "../RecoveryFAQ";
 
 const SAMPLE: FAQItem[] = [
 	{ id: "q1", question: "First question?", answer: "First answer." },

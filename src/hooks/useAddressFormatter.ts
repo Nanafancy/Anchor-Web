@@ -7,13 +7,13 @@ import { useMemo, useState } from "react";
 import {
 	type AddressFormatType,
 	type AddressFormatterOptions,
+	compareAddresses,
+	extractFullAddress,
 	type FormattedAddress,
 	formatAddress,
 	formatAddresses,
-	compareAddresses,
-	extractFullAddress,
-	getFormatDescription,
 	getAvailableFormats,
+	getFormatDescription,
 } from "@/utils/addressFormatter";
 
 /**

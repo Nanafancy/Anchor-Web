@@ -8,6 +8,7 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { NetworkProvider } from "@/context/NetworkContext";
 import { Sidebar } from "./Sidebar";
 import { TopNav } from "./TopNav";
 
@@ -16,8 +17,13 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const pathname = usePathname();
+
+	return <DashboardLayoutShell key={pathname}>{children}</DashboardLayoutShell>;
+}
+
+function DashboardLayoutShell({ children }: DashboardLayoutProps) {
+	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const sidebarRef = useRef<HTMLDivElement>(null);
 
 	const closeSidebar = useCallback(() => {
@@ -27,11 +33,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 	const toggleSidebar = useCallback(() => {
 		setSidebarOpen((prev) => !prev);
 	}, []);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: close sidebar on route change
-	useEffect(() => {
-		closeSidebar();
-	}, [pathname]);
 
 	// Lock body scroll when sidebar is open on mobile
 	useEffect(() => {
@@ -81,40 +82,41 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 	);
 
 	return (
-		<div
-			className="relative flex min-h-screen bg-gray-50"
-			onKeyDown={handleKeyDown}
-			onTouchStart={handleTouchStart}
-			onTouchEnd={handleTouchEnd}
-		>
-			{/* Mobile Overlay */}
-			{sidebarOpen && (
-				<div
-					className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-					onClick={closeSidebar}
-					aria-hidden="true"
-				/>
-			)}
+		<NetworkProvider>
+			<div
+				className="relative flex min-h-screen bg-gray-50"
+				onKeyDown={handleKeyDown}
+				onTouchStart={handleTouchStart}
+				onTouchEnd={handleTouchEnd}
+			>
+				{/* Mobile Overlay */}
+				{sidebarOpen && (
+					<div
+						className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+						onClick={closeSidebar}
+						aria-hidden="true"
+					/>
+				)}
 
-			{/* Sidebar */}
-			<div ref={sidebarRef}>
-				<Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
-			</div>
+				{/* Sidebar */}
+				<div ref={sidebarRef}>
+					<Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+				</div>
 
-			<div className="flex flex-col flex-1 min-w-0">
-				{/* TopNav */}
-				<TopNav onMenuClick={toggleSidebar} />
+				<div className="flex flex-col flex-1 min-w-0">
+					{/* TopNav */}
+					<TopNav onMenuClick={toggleSidebar} />
 
-				{/* Main */}
-				<main className="flex-1">
-					<div className="py-6">
-						<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-							{children}
+					{/* Main */}
+					<main className="flex-1">
+						<div className="py-6">
+							<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+								{children}
+							</div>
 						</div>
-					</div>
-				</main>
+					</main>
+				</div>
 			</div>
-		</div>
 		</NetworkProvider>
 	);
 }

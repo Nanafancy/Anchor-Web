@@ -1,7 +1,7 @@
-import { render, screen, fireEvent, act } from "@testing-library/react";
-import { describe, it, expect, beforeEach } from "vitest";
-import { NetworkProvider } from "@/context/NetworkContext";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it } from "vitest";
 import { TopNav } from "@/components/layouts/TopNav";
+import { NetworkProvider } from "@/context/NetworkContext";
 
 // next/navigation is used by TopNav; mock it
 vi.mock("next/navigation", () => ({

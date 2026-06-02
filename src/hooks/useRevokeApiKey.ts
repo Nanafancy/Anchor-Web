@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import type { ApiKey } from "@/mock-data/api-keys";
+import { useCallback, useState } from "react";
 import { revokeKey } from "@/lib/api";
+import type { ApiKey } from "@/mock-data/api-keys";
 
 export function useRevokeApiKey() {
 	const [loading, setLoading] = useState(false);

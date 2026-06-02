@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { WalletTable } from "../WalletTable";
 import type { Wallet } from "@/types/wallet";
+import { WalletTable } from "../WalletTable";
 
 // Mock the useCopyToClipboard hook
 jest.mock("@/hooks/useCopyToClipboard", () => ({

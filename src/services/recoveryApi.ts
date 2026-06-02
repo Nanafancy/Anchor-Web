@@ -5,8 +5,8 @@
  * Implements error handling, retry logic, and request/response validation
  */
 
-import type { RecoveryTimeline, RecoveryTimelineEvent } from "@/types/recovery";
 import { getApiBaseUrl } from "@/lib/api/config";
+import type { RecoveryTimeline, RecoveryTimelineEvent } from "@/types/recovery";
 
 /**
  * API response types

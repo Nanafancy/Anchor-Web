@@ -1,10 +1,10 @@
-import { renderHook, act } from "@testing-library/react";
-import { useRecoveryTimeline } from "../useRecoveryTimeline";
+import { act, renderHook } from "@testing-library/react";
 import {
 	mockRecoveryTimelineCompleted,
-	mockRecoveryTimelineInProgress,
 	mockRecoveryTimelineFailed,
+	mockRecoveryTimelineInProgress,
 } from "@/mock-data/recovery";
+import { useRecoveryTimeline } from "../useRecoveryTimeline";
 
 describe("useRecoveryTimeline", () => {
 	describe("Initial state", () => {
