@@ -9,10 +9,16 @@
  * - signIn persists session and sets cookie
  * - signOut clears session and cookie
  */
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
-import { renderHook, act, waitFor } from "@testing-library/react";
+
+import { act, renderHook, waitFor } from "@testing-library/react";
 import React from "react";
-import { AuthProvider, useAuth, SESSION_STORAGE_KEY, SESSION_COOKIE_NAME } from "../AuthContext";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import {
+	AuthProvider,
+	SESSION_COOKIE_NAME,
+	SESSION_STORAGE_KEY,
+	useAuth,
+} from "../AuthContext";
 
 function wrapper({ children }: { children: React.ReactNode }) {
 	return React.createElement(AuthProvider, null, children);
@@ -88,7 +94,11 @@ describe("AuthContext — session lifecycle (issue #46)", () => {
 		const { result } = renderHook(() => useAuth(), { wrapper });
 		await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-		const user = { name: "Test User", email: "test@example.com", role: "developer" };
+		const user = {
+			name: "Test User",
+			email: "test@example.com",
+			role: "developer",
+		};
 		act(() => {
 			result.current.signIn(user);
 		});

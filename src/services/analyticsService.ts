@@ -10,7 +10,7 @@
  */
 
 import type ApiClient from "@/lib/api/client";
-import type { Metric, ChartDataPoint, AssetData } from "@/mock-data/analytics";
+import type { AssetData, ChartDataPoint, Metric } from "@/mock-data/analytics";
 
 // ---------------------------------------------------------------------------
 // Response shapes expected from the backend

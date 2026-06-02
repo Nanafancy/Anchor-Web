@@ -1,10 +1,10 @@
+import { mockRecoveryTimelineCompleted } from "@/mock-data/recovery";
 import {
-	fetchRecoveryStatus,
 	fetchRecoveryEvents,
+	fetchRecoveryStatus,
 	pollRecoveryStatus,
 	type RecoveryStatusResponse,
 } from "../recoveryApi";
-import { mockRecoveryTimelineCompleted } from "@/mock-data/recovery";
 
 // Mock fetch
 global.fetch = jest.fn();

@@ -3,8 +3,8 @@
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { getExplorerUrl, isValidStellarAddress } from "@/utils/explorerUrl";
 import type { ExplorerType } from "@/utils/explorerUrl";
+import { getExplorerUrl, isValidStellarAddress } from "@/utils/explorerUrl";
 
 interface ExplorerLinkProps {
 	address: string;

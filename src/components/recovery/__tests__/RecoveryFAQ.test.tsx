@@ -1,5 +1,14 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { RecoveryFAQ } from "../RecoveryFAQ";
+import { render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it } from "vitest";
+import type { FAQItem } from "../RecoveryFAQ";
+import { FAQ_ITEMS, RecoveryFAQ } from "../RecoveryFAQ";
+
+const SAMPLE: FAQItem[] = [
+	{ id: "q1", question: "First question?", answer: "First answer." },
+	{ id: "q2", question: "Second question?", answer: "Second answer." },
+	{ id: "q3", question: "Third question?", answer: "Third answer." },
+];
 
 describe("RecoveryFAQ", () => {
 	it("renders FAQ heading and items", () => {

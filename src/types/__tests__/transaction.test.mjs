@@ -3,8 +3,9 @@
  * Run with: node --experimental-vm-modules src/types/__tests__/transaction.test.mjs
  * Or: node --test src/types/__tests__/transaction.test.mjs
  */
-import { describe, it } from "node:test";
+
 import assert from "node:assert/strict";
+import { describe, it } from "node:test";
 
 // Inline the mock data to avoid TS/ESM resolution issues in plain Node
 const mockTransactions = [

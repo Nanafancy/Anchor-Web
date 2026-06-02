@@ -1,11 +1,11 @@
 "use client";
 
 import {
-	AnalyticsHeader,
-	MetricsCards,
 	AnalyticsChart,
-	TopAssetsTable,
+	AnalyticsHeader,
 	AnalyticsLoadingSkeleton,
+	MetricsCards,
+	TopAssetsTable,
 } from "@/components/analytics";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { useAnalytics } from "@/hooks/useAnalytics";

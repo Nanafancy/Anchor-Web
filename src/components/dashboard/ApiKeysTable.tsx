@@ -3,6 +3,7 @@
 import { Check, Copy, Key, Shield, ShieldOff } from "lucide-react";
 import { useState } from "react";
 import APIKeyModal from "@/components/APIKeyModal";
+import APIKeyModal from "@/components/APIKeyModal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -16,7 +17,6 @@ import {
 } from "@/components/ui/table";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { type ApiKey, mockApiKeys } from "@/mock-data/api-keys";
-import APIKeyModal from "@/components/APIKeyModal";
 
 // ---------------------------------------------------------------------------
 // Revoke confirmation — inline per-row

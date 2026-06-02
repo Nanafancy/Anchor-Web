@@ -1,10 +1,10 @@
 "use client";
 
-import { AnalyticsHeader } from "@/components/analytics/AnalyticsHeader";
-import { MetricsCards } from "@/components/analytics/MetricsCards";
 import { AnalyticsChart } from "@/components/analytics/AnalyticsChart";
-import { TopAssetsTable } from "@/components/analytics/TopAssetsTable";
+import { AnalyticsHeader } from "@/components/analytics/AnalyticsHeader";
 import { AnalyticsLoadingSkeleton } from "@/components/analytics/AnalyticsLoadingSkeleton";
+import { MetricsCards } from "@/components/analytics/MetricsCards";
+import { TopAssetsTable } from "@/components/analytics/TopAssetsTable";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { useAnalytics } from "@/hooks/useAnalytics";
 

@@ -1,6 +1,6 @@
-import { renderHook, act } from "@testing-library/react";
-import { useNetworkFilter } from "../useNetworkFilter";
+import { act, renderHook } from "@testing-library/react";
 import type { Wallet } from "@/types/wallet";
+import { useNetworkFilter } from "../useNetworkFilter";
 
 describe("useNetworkFilter", () => {
 	describe("Initial state", () => {

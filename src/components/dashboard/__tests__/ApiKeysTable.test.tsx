@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { ApiKeysTable } from "../ApiKeysTable";
 import type { ApiKey } from "@/mock-data/api-keys";
+import { ApiKeysTable } from "../ApiKeysTable";
 
 const activeKey: ApiKey = {
 	id: "test-1",

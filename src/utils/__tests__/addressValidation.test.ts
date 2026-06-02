@@ -2,9 +2,9 @@ import {
 	expandTruncatedAddress,
 	getAddressToCopy,
 	getAddressValidationError,
-	isValidStellarAddress,
-	isTruncatedAddress,
 	isSafeToCopy,
+	isTruncatedAddress,
+	isValidStellarAddress,
 	sanitizeAddress,
 	validateAddressForCopy,
 } from "../addressValidation";

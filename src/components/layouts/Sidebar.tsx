@@ -21,7 +21,11 @@ const navigation = [
 	{ name: "Wallets", href: "/dashboard/wallets", icon: WalletIcon },
 	{ name: "Users", href: "/dashboard/users", icon: UsersIcon },
 	{ name: "API Keys", href: "/dashboard/api-keys", icon: KeyIcon },
-	{ name: "Spending Limits", href: "/dashboard/spending-limits", icon: ShieldCheckIcon },
+	{
+		name: "Spending Limits",
+		href: "/dashboard/spending-limits",
+		icon: ShieldCheckIcon,
+	},
 	{ name: "Settings", href: "/dashboard/settings", icon: CogIcon },
 ];
 

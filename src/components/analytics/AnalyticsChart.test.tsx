@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { AnalyticsChart } from "./AnalyticsChart";
 import type { ChartDataPoint } from "@/mock-data/analytics";
+import { AnalyticsChart } from "./AnalyticsChart";
 
 const DATA: ChartDataPoint[] = [
 	{ date: "Mon", value: 100 },

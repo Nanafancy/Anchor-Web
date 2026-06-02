@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { exportTransactions } from "@/utils/exportData";
 import type {
 	ExportFormat,
 	ExportStatus,
 	Transaction,
 } from "@/types/analytics";
+import { exportTransactions } from "@/utils/exportData";
 
 interface UseAnalyticsExportOptions {
 	/** Transactions to export. Defaults to `[]`. */

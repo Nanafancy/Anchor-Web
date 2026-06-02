@@ -1,8 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { RecoveryTimelineEvent } from "./RecoveryTimelineEvent";
 import type { RecoveryTimelineListProps } from "@/types/recovery";
+import { RecoveryTimelineEvent } from "./RecoveryTimelineEvent";
 
 /**
  * RecoveryTimelineList component displays a list of recovery timeline events

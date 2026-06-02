@@ -43,6 +43,29 @@ describe("useWallets", () => {
 		expect(result.current.error).toBeNull();
 	});
 
+	it("normalizes API date strings into Date objects", async () => {
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockResolvedValue({
+				ok: true,
+				json: () =>
+					Promise.resolve([
+						{
+							...mockWallet,
+							createdAt: "2024-01-15T10:30:00Z",
+							lastActivity: "2024-01-16T10:30:00Z",
+						},
+					]),
+			}),
+		);
+
+		const { result } = renderHook(() => useWallets());
+		await waitFor(() => expect(result.current.loading).toBe(false));
+
+		expect(result.current.wallets[0].createdAt).toBeInstanceOf(Date);
+		expect(result.current.wallets[0].lastActivity).toBeInstanceOf(Date);
+	});
+
 	it("sets error on non-ok response", async () => {
 		vi.stubGlobal(
 			"fetch",
@@ -96,6 +119,27 @@ describe("useWallet", () => {
 		await waitFor(() => expect(result.current.loading).toBe(false));
 		expect(result.current.wallet).toEqual(mockWallet);
 		expect(result.current.error).toBeNull();
+	});
+
+	it("normalizes API date strings into Date objects", async () => {
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockResolvedValue({
+				ok: true,
+				json: () =>
+					Promise.resolve({
+						...mockWallet,
+						createdAt: "2024-01-15T10:30:00Z",
+						lastActivity: "2024-01-16T10:30:00Z",
+					}),
+			}),
+		);
+
+		const { result } = renderHook(() => useWallet("wallet-001"));
+		await waitFor(() => expect(result.current.loading).toBe(false));
+
+		expect(result.current.wallet?.createdAt).toBeInstanceOf(Date);
+		expect(result.current.wallet?.lastActivity).toBeInstanceOf(Date);
 	});
 
 	it("sets error to 'not_found' on 404", async () => {

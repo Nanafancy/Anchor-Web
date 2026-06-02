@@ -1,10 +1,10 @@
-import { renderHook, act, waitFor } from "@testing-library/react";
-import { useRecoveryStatus } from "../useRecoveryStatus";
-import * as recoveryApi from "@/services/recoveryApi";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import {
 	mockRecoveryTimelineCompleted,
 	mockRecoveryTimelineInProgress,
 } from "@/mock-data/recovery";
+import * as recoveryApi from "@/services/recoveryApi";
+import { useRecoveryStatus } from "../useRecoveryStatus";
 
 // Mock the API service
 jest.mock("@/services/recoveryApi");
