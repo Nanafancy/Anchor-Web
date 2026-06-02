@@ -1,6 +1,6 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { RecoveryTimelineEvent } from "../RecoveryTimelineEvent";
+import { fireEvent, render, screen } from "@testing-library/react";
 import type { RecoveryTimelineEvent as RecoveryTimelineEventType } from "@/types/recovery";
+import { RecoveryTimelineEvent } from "../RecoveryTimelineEvent";
 
 describe("RecoveryTimelineEvent", () => {
 	const mockEvent: RecoveryTimelineEventType = {

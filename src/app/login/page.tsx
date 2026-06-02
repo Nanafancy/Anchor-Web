@@ -170,9 +170,7 @@ export default function LoginPage() {
 
 				{/* Login card */}
 				<div className="rounded-2xl border border-gray-200 bg-white px-8 py-10 shadow-sm">
-					<h2 className="mb-6 text-lg font-semibold text-gray-900">
-						Sign in
-					</h2>
+					<h2 className="mb-6 text-lg font-semibold text-gray-900">Sign in</h2>
 
 					{/* Global submit error */}
 					{submitError && (
@@ -208,9 +206,7 @@ export default function LoginPage() {
 								onChange={handleChange}
 								disabled={isSubmitting}
 								aria-invalid={!!fieldErrors.email}
-								aria-describedby={
-									fieldErrors.email ? "email-error" : undefined
-								}
+								aria-describedby={fieldErrors.email ? "email-error" : undefined}
 								className={[
 									"block w-full rounded-lg border px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400",
 									"focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0",
@@ -284,9 +280,7 @@ export default function LoginPage() {
 								"text-sm font-semibold text-white transition-colors",
 								"focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
 								"disabled:cursor-not-allowed disabled:opacity-60",
-								isSubmitting
-									? "bg-blue-400"
-									: "bg-blue-600 hover:bg-blue-700",
+								isSubmitting ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700",
 							].join(" ")}
 							data-testid="login-submit"
 						>

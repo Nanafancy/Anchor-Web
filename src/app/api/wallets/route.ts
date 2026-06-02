@@ -1,5 +1,5 @@
-import { dummyWallets } from "@/mock-data/wallets";
 import { NextResponse } from "next/server";
+import { dummyWallets } from "@/mock-data/wallets";
 
 const VALID_ACCESS_TOKEN = "mock-access-token";
 

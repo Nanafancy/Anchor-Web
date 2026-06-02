@@ -1,8 +1,8 @@
-import { useState, useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type {
+	RecoveryEventStatus,
 	RecoveryTimeline,
 	RecoveryTimelineEvent,
-	RecoveryEventStatus,
 } from "@/types/recovery";
 
 /**

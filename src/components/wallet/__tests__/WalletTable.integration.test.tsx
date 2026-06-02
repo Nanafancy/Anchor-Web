@@ -1,7 +1,7 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import { WalletTable } from "../WalletTable";
+import React from "react";
 import type { Wallet } from "@/types/wallet";
+import { WalletTable } from "../WalletTable";
 
 // Mock the TestnetHint component
 jest.mock("@/components/ui/TestnetHint", () => ({

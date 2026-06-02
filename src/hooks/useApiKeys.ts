@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import type { ApiKey } from "@/mock-data/api-keys";
+import { useCallback, useEffect, useState } from "react";
 import { fetchApiKeys } from "@/lib/api";
+import type { ApiKey } from "@/mock-data/api-keys";
 
 export function useApiKeys() {
 	const [data, setData] = useState<ApiKey[] | null>(null);

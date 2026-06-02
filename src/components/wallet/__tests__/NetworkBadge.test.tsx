@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { NetworkBadge } from "../NetworkBadge";
 import type { WalletNetwork } from "@/types/wallet";
+import { NetworkBadge } from "../NetworkBadge";
 
 describe("NetworkBadge", () => {
 	describe("Rendering", () => {

@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { Wallet } from "@/types/wallet";
 import { getApiBaseUrl } from "@/lib/api/config";
+import type { Wallet } from "@/types/wallet";
+import { normalizeWallets } from "@/utils/walletSerialization";
 
 interface UseWalletsResult {
 	wallets: Wallet[];
@@ -24,6 +25,7 @@ export function useWallets(): UseWalletsResult {
 		let cancelled = false;
 		setLoading(true);
 		setError(null);
+		setWallets([]);
 
 		const base = getApiBaseUrl();
 		if (!base) {
@@ -38,7 +40,7 @@ export function useWallets(): UseWalletsResult {
 				return res.json() as Promise<Wallet[]>;
 			})
 			.then((data) => {
-				if (!cancelled) setWallets(data);
+				if (!cancelled) setWallets(normalizeWallets(data));
 			})
 			.catch((err: unknown) => {
 				if (!cancelled)

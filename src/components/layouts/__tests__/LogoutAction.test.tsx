@@ -8,12 +8,13 @@
  * - Clicking "Sign out" in TopNav clears the session
  * - Logout button is absent when no user is signed in
  */
-import { describe, expect, it, vi, afterEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { Sidebar } from "../Sidebar";
-import { TopNav } from "../TopNav";
+
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { AuthProvider } from "@/context/AuthContext";
 import { NetworkProvider } from "@/context/NetworkContext";
+import { Sidebar } from "../Sidebar";
+import { TopNav } from "../TopNav";
 
 /** Seed sessionStorage with a valid authenticated session. */
 function seedSession() {

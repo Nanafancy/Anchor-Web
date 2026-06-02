@@ -1,7 +1,7 @@
 "use client";
 
-import { RefreshCw, Wallet, Activity, TrendingUp } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Activity, RefreshCw, TrendingUp, Wallet } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CardSkeleton } from "@/components/ui/Skeleton";
 

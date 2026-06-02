@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { NetworkFilter } from "../NetworkFilter";
 
 describe("NetworkFilter", () => {
@@ -371,7 +371,7 @@ describe("NetworkFilter", () => {
 				/>,
 			);
 
-			let testnetButton = screen.getByLabelText("Filter by Testnet");
+			const testnetButton = screen.getByLabelText("Filter by Testnet");
 			expect(testnetButton).toHaveAttribute("aria-pressed", "true");
 
 			// User clicks mainnet

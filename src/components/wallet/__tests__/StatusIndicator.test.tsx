@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { StatusIndicator } from "../StatusIndicator";
 import type { WalletStatus } from "@/types/wallet";
+import { StatusIndicator } from "../StatusIndicator";
 
 describe("StatusIndicator", () => {
 	describe("Rendering", () => {

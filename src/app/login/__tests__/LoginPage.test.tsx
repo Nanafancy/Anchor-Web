@@ -12,10 +12,11 @@
  * - Disables form while submitting
  * - Redirects authenticated users away from the login page
  */
-import { describe, expect, it, vi, afterEach, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import LoginPage from "../page";
+
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthProvider } from "@/context/AuthContext";
+import LoginPage from "../page";
 
 // ---------------------------------------------------------------------------
 // Mocks

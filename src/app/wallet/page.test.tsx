@@ -1,7 +1,24 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import WalletPage from "./page";
 import type { Wallet } from "@/types/wallet";
+
+const replaceMock = vi.fn();
+let searchParamsValue = new URLSearchParams("");
+
+vi.mock("next/navigation", () => ({
+	usePathname: () => "/wallet",
+	useRouter: () => ({
+		replace: (href: string) => {
+			replaceMock(href);
+			const query = href.includes("?") ? href.split("?")[1] : "";
+			searchParamsValue = new URLSearchParams(query);
+		},
+	}),
+	useSearchParams: () => searchParamsValue,
+}));
+
+import WalletPage from "./page";
 
 const mockFundedWallet: Wallet = {
 	id: "w-1",
@@ -28,6 +45,8 @@ beforeEach(() => {
 afterEach(() => {
 	vi.restoreAllMocks();
 	vi.unstubAllEnvs();
+	replaceMock.mockReset();
+	searchParamsValue = new URLSearchParams("");
 });
 
 describe("WalletPage", () => {
@@ -101,7 +120,8 @@ describe("WalletPage", () => {
 		});
 	});
 
-	it("shows 'Send funds from this wallet' text for funded wallets", async () => {
+	it("opens the receive modal from the wallet details page", async () => {
+		const user = userEvent.setup();
 		vi.stubGlobal(
 			"fetch",
 			vi.fn().mockResolvedValue({
@@ -114,15 +134,63 @@ describe("WalletPage", () => {
 
 		await waitFor(() => {
 			expect(
-				screen.getByText(/send funds from this wallet/i),
+				screen.getByRole("button", { name: /receive funds/i }),
 			).toBeInTheDocument();
+		});
+
+		await user.click(screen.getByRole("button", { name: /receive funds/i }));
+
+		const dialog = screen.getByRole("dialog");
+		expect(dialog).toBeInTheDocument();
+		expect(within(dialog).getByText(/qr stub/i)).toBeInTheDocument();
+		expect(
+			within(dialog).getByText(mockFundedWallet.address),
+		).toBeInTheDocument();
+		expect(replaceMock).toHaveBeenCalledWith("/wallet?receive=1", {
+			scroll: false,
+		});
+	});
+
+	it("opens the receive modal from a deep-linked receive query param", async () => {
+		searchParamsValue = new URLSearchParams("receive=1");
+
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockResolvedValue({
+				ok: true,
+				json: () => Promise.resolve([mockFundedWallet]),
+			}),
+		);
+
+		render(<WalletPage />);
+
+		await waitFor(() => {
+			expect(screen.getByRole("dialog")).toBeInTheDocument();
+		});
+	});
+
+	it("shows send and receive guidance for funded wallets", async () => {
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockResolvedValue({
+				ok: true,
+				json: () => Promise.resolve([mockFundedWallet]),
+			}),
+		);
+
+		render(<WalletPage />);
+
+		await waitFor(() => {
+			expect(screen.getByText(/send or receive funds/i)).toBeInTheDocument();
 			expect(
-				screen.getByText(/transfer xlm or tokens to another stellar address/i),
+				screen.getByText(
+					/send tokens out or show the receive qr stub for incoming transfers/i,
+				),
 			).toBeInTheDocument();
 		});
 	});
 
-	it("shows 'This wallet has no funds to send' text for unfunded wallets", async () => {
+	it("shows receive guidance for unfunded wallets", async () => {
 		vi.stubGlobal(
 			"fetch",
 			vi.fn().mockResolvedValue({
@@ -135,7 +203,9 @@ describe("WalletPage", () => {
 
 		await waitFor(() => {
 			expect(
-				screen.getByText(/this wallet has no funds to send/i),
+				screen.getByText(
+					/show the receive qr stub or copy the address to accept incoming transfers/i,
+				),
 			).toBeInTheDocument();
 		});
 	});

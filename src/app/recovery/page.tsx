@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { InitiateRecoveryCTA } from "@/components/recovery/InitiateRecoveryCTA";
 import { RecoveryExplanation } from "@/components/recovery/RecoveryExplanation";
 import { RecoveryFAQ } from "@/components/recovery/RecoveryFAQ";
 import { RecoveryLoadingState } from "@/components/recovery/RecoveryLoadingState";
-import { InitiateRecoveryCTA } from "@/components/recovery/InitiateRecoveryCTA";
 import { useRecovery } from "@/hooks/useRecovery";
 
 export default function RecoveryPage() {

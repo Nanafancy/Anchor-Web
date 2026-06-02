@@ -1,11 +1,11 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { RecoveryTimelineList } from "../RecoveryTimelineList";
+import { fireEvent, render, screen } from "@testing-library/react";
 import {
 	mockRecoveryEvents,
 	mockRecoveryTimelineCompleted,
-	mockRecoveryTimelineInProgress,
 	mockRecoveryTimelineFailed,
+	mockRecoveryTimelineInProgress,
 } from "@/mock-data/recovery";
+import { RecoveryTimelineList } from "../RecoveryTimelineList";
 
 describe("RecoveryTimelineList", () => {
 	const mockOnEventClick = jest.fn();

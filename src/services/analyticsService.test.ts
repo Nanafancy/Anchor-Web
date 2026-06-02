@@ -1,11 +1,11 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type ApiClient from "@/lib/api/client";
 import {
-	fetchMetrics,
-	fetchVolumeData,
-	fetchTransactionsData,
-	fetchTopAssets,
 	fetchAllAnalytics,
+	fetchMetrics,
+	fetchTopAssets,
+	fetchTransactionsData,
+	fetchVolumeData,
 } from "./analyticsService";
 
 // ---------------------------------------------------------------------------
